@@ -7,12 +7,15 @@
     "url": "ssh://git@git.earthdata.nasa.gov:7999/edsc/earthdata-timeline.git"
   },
   "browserify": {
-    "transform": ["coffeeify"]
+    "transform": [
+      "coffeeify"
+    ]
   },
   "devDependencies": {
     "browserify": "^11.0.1",
     "coffee-script": "latest",
     "coffeeify": "^1.1.0",
+    "del": "^2.0.0",
     "grunt": "latest",
     "grunt-browserify": "latest",
     "grunt-contrib-clean": "latest",
@@ -20,6 +23,13 @@
     "grunt-contrib-copy": "latest",
     "grunt-contrib-less": "latest",
     "grunt-contrib-watch": "latest",
-    "gulp": "^3.9.0"
+    "gulp": "^3.9.0",
+    "gulp-less": "^3.0.3",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^1.5.2",
+    "gulp-uglify": "^1.4.0",
+    "gulp-util": "^3.0.6",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
   }
 }
