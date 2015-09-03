@@ -1,0 +1,25 @@
+{
+  "name": "earthdata-timeline",
+  "description": "Timeline component used by Earthdata Search",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@git.earthdata.nasa.gov:7999/edsc/earthdata-timeline.git"
+  },
+  "browserify": {
+    "transform": ["coffeeify"]
+  },
+  "devDependencies": {
+    "browserify": "^11.0.1",
+    "coffee-script": "latest",
+    "coffeeify": "^1.1.0",
+    "grunt": "latest",
+    "grunt-browserify": "latest",
+    "grunt-contrib-clean": "latest",
+    "grunt-contrib-coffee": "latest",
+    "grunt-contrib-copy": "latest",
+    "grunt-contrib-less": "latest",
+    "grunt-contrib-watch": "latest",
+    "gulp": "^3.9.0"
+  }
+}
