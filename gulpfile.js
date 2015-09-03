@@ -7,7 +7,9 @@ var gulp        = require('gulp'),
     buffer      = require('vinyl-buffer'),
     uglify      = require('gulp-uglify'),
     gutil       = require('gulp-util'),
-    rename      = require("gulp-rename");
+    rename      = require("gulp-rename"),
+    watch       = require('gulp-watch'),
+    batch       = require('gulp-batch');
 
 gulp.task('clean', function() {
   return del(['./dist', './tmp']);
@@ -34,9 +36,14 @@ gulp.task('compile', function() {
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(uglify())
-    .on('error', gutil.log)
     .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest('./dist/js/'));
+});
+
+gulp.task('watch', function () {
+  watch('src/**/*', batch(function (events, done) {
+    gulp.start('build', done);
+  }));
 });
 
 gulp.task('build', ['compile', 'less']);
