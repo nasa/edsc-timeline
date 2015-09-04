@@ -11,6 +11,12 @@ var gulp        = require('gulp'),
     watch       = require('gulp-watch'),
     batch       = require('gulp-batch');
 
+var emitError = function(err) {
+  gutil.log(gutil.colors.red("Error:"), err);
+  gutil.beep();
+  this.emit('end');
+};
+
 gulp.task('clean', function() {
   return del(['./dist', './tmp']);
 });
@@ -19,6 +25,7 @@ gulp.task('less', function () {
   return gulp.src('./src/css/timeline.less')
     .pipe(sourcemaps.init())
     .pipe(less())
+    .on('error', emitError)
     .pipe(rename('edsc-timeline.css'))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./dist/css/'));
@@ -26,12 +33,13 @@ gulp.task('less', function () {
 
 gulp.task('compile', function() {
   var b = browserify({
-    entries: ['./src/js/timeline.coffee'],
-    extensions: ['.coffee'],
+    extensions: ['.js', '.coffee'],
     debug: true
   });
+  b.add('./src/js/timeline.coffee');
 
   return b.bundle()
+    .on('error', emitError)
     .pipe(source('edsc-timeline.min.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
