@@ -5,7 +5,7 @@ time range selection as well as keyboard and touch interaction
 For a basic usage example and a testbed for changes,
 see demo/index.html
 
-The ECHO Forms plugin was developed as a component of
+The edsc-timeline plugin was developed as a component of
 [Earthdata Search](https://github.com/nasa/earthdata-search).
 
 ## Installation
