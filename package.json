@@ -6,6 +6,10 @@
     "type": "git",
     "url": "ssh://git@git.earthdata.nasa.gov:7999/edsc/earthdata-timeline.git"
   },
+  "copyright": {
+    "year": "© 2007-2014",
+    "organization": "United States Government as represented by the Administrator of the National Aeronautics and Space Administration. All Rights Reserved."
+  },
   "author": {
     "name": "Patrick Quinn",
     "email": "patrick@element84.com"
@@ -29,6 +33,7 @@
     "gulp": "^3.9.0",
     "gulp-batch": "^1.0.5",
     "gulp-less": "^3.0.3",
+    "gulp-license": "^1.0.0",
     "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^1.5.2",
     "gulp-uglify": "^1.4.0",

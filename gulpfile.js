@@ -1,15 +1,16 @@
-var gulp        = require('gulp'),
-    browserify  = require('browserify'),
-    source      = require('vinyl-source-stream'),
+var browserify  = require('browserify'),
     del         = require('del'),
+    fs          = require('fs'),
+    gulp        = require('gulp'),
+    batch       = require('gulp-batch'),
     less        = require('gulp-less'),
+    license     = require('gulp-license'),
     sourcemaps  = require('gulp-sourcemaps'),
-    buffer      = require('vinyl-buffer'),
     uglify      = require('gulp-uglify'),
     gutil       = require('gulp-util'),
     watch       = require('gulp-watch'),
-    batch       = require('gulp-batch'),
-    fs          = require('fs');
+    source      = require('vinyl-source-stream'),
+    buffer      = require('vinyl-buffer');
 
 var emitError = function(err) {
   gutil.log(gutil.colors.red("Error:"), err);
@@ -29,6 +30,7 @@ gulp.task('less', function () {
       .pipe(sourcemaps.init())
       .pipe(less())
       .on('error', emitError)
+      .pipe(license('apache', pkg.copyright))
       .pipe(sourcemaps.write('.'))
       .pipe(gulp.dest('./dist/css/'));
   }
@@ -55,6 +57,7 @@ gulp.task('compile', function() {
       .pipe(buffer())
       .pipe(sourcemaps.init({loadMaps: true}))
       .pipe(uglify())
+      .pipe(license('apache', pkg.copyright))
       .pipe(sourcemaps.write('./'))
       .pipe(gulp.dest('./dist/js/'));
   }
