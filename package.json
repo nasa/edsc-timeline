@@ -6,6 +6,17 @@
     "type": "git",
     "url": "ssh://git@git.earthdata.nasa.gov:7999/edsc/earthdata-timeline.git"
   },
+  "author": {
+    "name": "Patrick Quinn",
+    "email": "patrick@element84.com"
+  },
+  "maintainers": [
+    {
+      "name": "Patrick Quinn",
+      "email": "patrick@element84.com"
+    }
+  ],
+  "license": "Apache-2.0",
   "browserify": {
     "transform": [
       "coffeeify"
