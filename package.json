@@ -1,7 +1,7 @@
 {
-  "name": "earthdata-timeline",
+  "name": "edsc-timeline",
   "description": "Timeline component used by Earthdata Search",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "repository": {
     "type": "git",
     "url": "ssh://git@git.earthdata.nasa.gov:7999/edsc/earthdata-timeline.git"
@@ -36,5 +36,10 @@
     "gulp-watch": "^4.3.5",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
+  },
+  "scripts": {
+    "prepublish": "gulp",
+    "test": "gulp spec",
+    "start": "gulp watch"
   }
 }

@@ -17,27 +17,25 @@ the Javascript, and the CSS on a page, for instance:
     <script src="edsc-timeline/js/edsc-timeline.min.js"></script>
     <link rel="stylesheet" href="edsc-timeline/css/edsc-timeline.css">
 
+## Usage
+
+Coming soon.
+
 ## Developing
 
-### Building
-
 To compile assets for exporting you'll need to do the following:
-Download & install the installation package for node and npm from http://nodejs.org/ (it's one package for both npm and node.js)
 
-Then set up your npm repo list with the latest files:
+Download & install the installation package for node and npm from http://nodejs.org/
 
-    $ cd /path/to/plugin/source/
-    $ npm install
-
-make sure `./node_modules/.bin` and `/usr/local/bin` are in your path.
+Make sure `./node_modules/.bin` and `/usr/local/bin` are in your path.
 
 To compile:
 
-    $ gulp
+    $ npm install
 
 To watch for filesystem changes and rebuild automatically:
 
-    $ gulp watch
+    $ npm start
 
 ## Contributing
 

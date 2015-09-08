@@ -7,9 +7,9 @@ var gulp        = require('gulp'),
     buffer      = require('vinyl-buffer'),
     uglify      = require('gulp-uglify'),
     gutil       = require('gulp-util'),
-    rename      = require("gulp-rename"),
     watch       = require('gulp-watch'),
-    batch       = require('gulp-batch');
+    batch       = require('gulp-batch'),
+    fs          = require('fs');
 
 var emitError = function(err) {
   gutil.log(gutil.colors.red("Error:"), err);
@@ -22,30 +22,45 @@ gulp.task('clean', function() {
 });
 
 gulp.task('less', function () {
-  return gulp.src('./src/css/timeline.less')
-    .pipe(sourcemaps.init())
-    .pipe(less())
-    .on('error', emitError)
-    .pipe(rename('edsc-timeline.css'))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('./dist/css/'));
+  var pkg = JSON.parse(fs.readFileSync('./package.json')),
+      path = './src/css/' + pkg.name + '.less';
+  if (fs.existsSync(path)) {
+    return gulp.src(path)
+      .pipe(sourcemaps.init())
+      .pipe(less())
+      .on('error', emitError)
+      .pipe(sourcemaps.write('.'))
+      .pipe(gulp.dest('./dist/css/'));
+  }
+  else {
+    return gutil.noop();
+  }
 });
 
 gulp.task('compile', function() {
-  var b = browserify({
-    extensions: ['.js', '.coffee'],
-    debug: true
-  });
-  b.add('./src/js/timeline.coffee');
+  var pkg = JSON.parse(fs.readFileSync('./package.json')),
+      path = './src/js/' + pkg.name + '.coffee',
+      b;
 
-  return b.bundle()
-    .on('error', emitError)
-    .pipe(source('edsc-timeline.min.js'))
-    .pipe(buffer())
-    .pipe(sourcemaps.init({loadMaps: true}))
-    .pipe(uglify())
-    .pipe(sourcemaps.write('./'))
-    .pipe(gulp.dest('./dist/js/'));
+  if (fs.existsSync(path)) {
+    b = browserify({
+      extensions: ['.js', '.coffee'],
+      debug: true
+    });
+    b.add(path);
+
+    return b.bundle()
+      .on('error', emitError)
+      .pipe(source(pkg.name + '.min.js'))
+      .pipe(buffer())
+      .pipe(sourcemaps.init({loadMaps: true}))
+      .pipe(uglify())
+      .pipe(sourcemaps.write('./'))
+      .pipe(gulp.dest('./dist/js/'));
+  }
+  else {
+    return gutil.noop();
+  }
 });
 
 gulp.task('watch', function () {
