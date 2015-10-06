@@ -1,3 +1,4 @@
+require '../css/edsc-timeline.less'
 stringUtil = require('./util/string')
 pluginUtil = require('./util/plugin')
 dateUtil = require('./util/date')
@@ -636,7 +637,6 @@ class Timeline extends pluginUtil.Base
       @_pan(dx, false)
     draggable.on 'dragend', (e) =>
       dx = e.offset.x
-      @root.trigger('draggingpan')
       @_dragging = false
       @_pan(dx)
 

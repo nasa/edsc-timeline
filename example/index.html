@@ -2,9 +2,8 @@
 <html>
   <head>
     <title>Timeline Plugin Example</title>
-    <link rel="stylesheet" href="../dist/css/edsc-timeline.css">
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script src="../dist/js/edsc-timeline.min.js"></script>
+    <script src="../dist/edsc-timeline.min.js"></script>
   </head>
   <body>
     <h1>Timeline Plugin Example</h1>
@@ -17,8 +16,10 @@
         min: new Date(2015, 01) / 1000,
         max: new Date() / 1000,
         resolution: 'day',
-        //intervals: [[new Date(0) / 1000, new Date() / 1000]]
-        intervals: [[new Date(2015, 04) / 1000, new Date(2015, 05) / 1000], [new Date(2015, 06) / 1000, new Date() / 1000]]
+        intervals: [
+          [new Date(2015, 04) / 1000, new Date(2015, 05) / 1000],
+          [new Date(2015, 06) / 1000, new Date() / 1000]
+        ]
       };
       var row = {
         id: "somedata",
@@ -26,15 +27,13 @@
         min: new Date(0),
         max: new Date(),
         color: '#ff0000',
-        load: function(start, end, resolution, callback) {
-          callback([[new Date(0), new Date()]]);
-        },
         canFocusTimespan: function(start, stop) {
           return true;
         }
       };
 
       $timeline.on('timeline.temporalchange', function(start, end) {
+        console.log('temporal change');
         if (start) {
         }
         else {
