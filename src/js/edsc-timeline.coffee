@@ -1,4 +1,5 @@
 require '../css/edsc-timeline.less'
+buildDom = require('../html/timeline.hbs')
 stringUtil = require('./util/string')
 pluginUtil = require('./util/plugin')
 dateUtil = require('./util/date')
@@ -113,10 +114,14 @@ class Timeline extends pluginUtil.Base
 
     @_rows = []
 
-    @root.addClass('timeline')
-    @root.attr('tabindex', '1')
-    @root.append(@_buildDom())
-    @root.append(@_createDisplay())
+    dom = buildDom
+      ROW_TEXT_OFFSET: ROW_TEXT_OFFSET
+      TOP_HEIGHT: TOP_HEIGHT
+    @root = $(dom)
+    console.log @root
+    root.append(@root)
+    @_createDisplay()
+    #@root.append(@_createDisplay())
 
     @_data = {}
 
@@ -131,18 +136,18 @@ class Timeline extends pluginUtil.Base
 
     @_updateTimeline()
 
-    @root.on 'click.timeline', @scope('.date-label'), @_onLabelClick
-    @root.on 'mouseover.timeline', @scope('.date-label'), @_onLabelMouseover
-    @root.on 'mouseout.timeline', @scope('.date-label'), @_onLabelMouseout
-    @root.on 'mouseover.timeline', @scope('.data'), @_onDataMouseover
-    @root.on 'mouseout.timeline', @scope('.data'), @_onDataMouseout
-    @root.on 'keydown.timeline', @_onKeydown
+    @root.on "click.#{namespace}", @scope('.date-label'), @_onLabelClick
+    @root.on "mouseover.#{namespace}", @scope('.date-label'), @_onLabelMouseover
+    @root.on "mouseout.#{namespace}", @scope('.date-label'), @_onLabelMouseout
+    @root.on "mouseover.#{namespace}", @scope('.data'), @_onDataMouseover
+    @root.on "mouseout.#{namespace}", @scope('.data'), @_onDataMouseout
+    @root.on "keydown.#{namespace}", @_onKeydown
 
-    @root.on 'focusout.timeline', (e) =>
+    @root.on "focusout.#{namespace}", (e) =>
       @root.removeClass('hasfocus')
       @_hasFocus = false
       @_forceRedraw()
-    @root.on 'focusin.timeline', (e) =>
+    @root.on "focusin.#{namespace}", (e) =>
       hovered = document.querySelector("#{@scope('.date-label')}:hover")
       @_onLabelClick(currentTarget: hovered) if hovered?
       @root.addClass('hasfocus')
@@ -152,8 +157,8 @@ class Timeline extends pluginUtil.Base
       setTimeout((=> @_hasFocus = true), 500)
 
   destroy: ->
-    @root.find('svg').remove()
-    @root.off('.timeline')
+    @root.remove()
+    @root.off('.' + @namespace)
     super()
 
   range: ->
@@ -496,46 +501,35 @@ class Timeline extends pluginUtil.Base
     el.setAttribute('transform', "translate(#{x}, #{y})")
     el
 
-  _buildDom: ->
-    $('<div class="timeline-tools">
-        <h1></h1>
-        <div class="timeline-tools-zoom">
-          <a class="timeline-zoom-in" href="#">+</a>
-          <a class="timeline-zoom-out" href="#">&#8722;</a>
-        </div>
-      </div>
+  _findScoped: (sel) ->
+    @root.find(@scope(sel))[0]
 
-      <div class="timeline-tooltip top">
-        <div class="tooltip-arrow"></div>
-        <div class="inner"></div>
-      </div>')
+  _translateScoped: (sel, x, y) ->
+    el = @_findScoped(sel)
+    @_translate(el, x, y)
+    el
 
   _createDisplay: ->
-    @svg = svg = @_buildSvgElement('svg', class: @scope('display'))
-
     offset = @root.find(@scope('.tools')).width()
 
-    selection = @_createSelectionOverlay(svg)
-    @_translate(selection, offset, 0)
+    @svg = svg = @_findScoped('.display')
+    console.log svg
 
-    top = @_buildRect(class: @scope('display-top'), y: 0, y1: TOP_HEIGHT)
-    @_setupTemporalSelection(top)
-    @_translate(top, offset, 0)
+    node = svg.firstElementChild
+    while node
+      @_translate(node, offset, 0)
+      node = node.nextElementSibling
 
-    focus = @_createFocusOverlay(svg)
-    @_translate(focus, offset, 0)
+    @selectionOverlay = @_findScoped('.selection')
+    @focusOverlay = @_findScoped('.focus')
+    @overlay = @_findScoped('.overlay')
+    @olRows  = @_findScoped('.row')
+    @timeline = @_findScoped('.draggable')
 
-    overlay = @_createFixedOverlay(svg)
-    @_translate(overlay, offset, 0)
+    @tlRows = @_findScoped('.rows')
+    @axis = @_findScoped('.axis')
 
-    timeline = @_createTimeline(svg)
-    @_translate(timeline, offset, 0)
-
-    svg.appendChild(timeline)
-    svg.appendChild(top)
-    svg.appendChild(overlay)
-    svg.appendChild(selection)
-    svg.appendChild(focus)
+    @_setupTemporalSelection(@_findScoped('.display-top'))
 
     @_setupDragBehavior(svg)
     @_setupScrollBehavior(svg)
@@ -625,9 +619,7 @@ class Timeline extends pluginUtil.Base
       doScroll(0, -deltaY, touchCenter)
 
   _setupDragBehavior: (svg) ->
-    #draggable = new TimelineDraggable(svg, @animate)
     el = svg.querySelector(@scope('.draggable'));
-    #draggable = new Draggabilly(el, axis: 'x')
     draggable = new Draggable(el, @animate)
 
     dx = 0
@@ -637,6 +629,7 @@ class Timeline extends pluginUtil.Base
       @_pan(dx, false)
     draggable.on 'dragend', (e) =>
       dx = e.offset.x
+      @root.trigger('draggingpan')
       @_dragging = false
       @_pan(dx)
 
@@ -667,44 +660,6 @@ class Timeline extends pluginUtil.Base
   _finishPan: =>
     @_updateTimeline()
     @_panStartX = @_panStart = @_panEnd = null
-
-  _createSelectionOverlay: (svg) ->
-    @selectionOverlay = @_buildSvgElement('g', class: @scope('selection'))
-
-  _createFocusOverlay: (svg) ->
-    @focusOverlay = @_buildSvgElement('g', class: @scope('focus'))
-
-  _createFixedOverlay: (svg) ->
-    @overlay = overlay = @_buildSvgElement('g', class: @scope('overlay'))
-
-    @olRows = rows = @_buildSvgElement('g', class: @scope('row'))
-    @_translate(rows, 5, ROW_TEXT_OFFSET)
-
-    overlay.appendChild(rows)
-
-    overlay
-
-  _createTimeline: (svg) ->
-    @timeline = timeline = @_buildSvgElement('g', class: @scope('draggable'))
-
-    background = @_buildSvgElement 'rect',
-      class: @scope('background')
-      x: MIN_X
-      y: MIN_Y
-      width: MAX_X - MIN_X
-      height: MAX_Y - MIN_Y
-
-    @tlRows = rows = @_buildSvgElement('g')
-    @_translate(rows, 0, TOP_HEIGHT)
-
-    @axis = axis = @_buildSvgElement('g')
-    @_translate(axis, 0, TOP_HEIGHT)
-
-    timeline.appendChild(background)
-    timeline.appendChild(axis)
-    timeline.appendChild(rows)
-
-    timeline
 
   _buildIndicatorArrow: (id, transform) ->
     g = @_buildSvgElement('g',

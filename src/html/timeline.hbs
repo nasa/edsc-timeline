@@ -1,0 +1,28 @@
+<div class="timeline" tabindex="1">
+  <div class="timeline-tools">
+    <h1></h1>
+    <div class="timeline-tools-zoom">
+      <a class="timeline-zoom-in" href="#">+</a>
+      <a class="timeline-zoom-out" href="#">&#8722;</a>
+    </div>
+  </div>
+
+  <div class="timeline-tooltip top">
+    <div class="tooltip-arrow"></div>
+    <div class="inner"></div>
+  </div>
+
+  <svg class="timeline-display" xmlns="http://www.w3.org/2000/svg">
+    <g class="timeline-draggable">
+      <rect class="timeline-background" x="-50000" y="-50000" width="100000" height="100000"></rect>
+      <g class="timeline-axis" transform="translate(0, {{TOP_HEIGHT}})"></g>
+      <g class="timeline-rows" transform="translate(0, {{TOP_HEIGHT}})"></g>
+    </g>
+    <rect class="timeline-display-top" x="-50000" y="0" width="100000" height="{{TOP_HEIGHT}}"></rect>
+    <g class="timeline-selection"></g>
+    <g class="timeline-focus"></g>
+    <g class="timeline-overlay">
+      <g class="timeline-row" transform="translate(5, {{ROW_TEXT_OFFSET}})"></g>
+    </g>
+  </svg>
+</div>

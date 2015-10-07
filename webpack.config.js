@@ -16,6 +16,7 @@ module.exports = {
       { test: /\.coffee$/, loader: "coffee" },
       { test: /\.(coffee\.md|litcoffee)$/, loader: "coffee?literate" },
       { test: /\.(gif|png)$/, loader: "url-loader?limit=100000" },
+      { test: /\.hbs$/, loader: "handlebars-loader" },
       { test: /\.jpg$/, loader: "file-loader" }
     ]
   },
