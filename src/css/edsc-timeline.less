@@ -1,10 +1,10 @@
 @button-dark-bottom-gradient: #315880;
 
-.timeline * {
+.timeline-container * {
   box-sizing: border-box;
 }
 
-.timeline {
+.timeline-container {
   height: 100px;
   min-height: 100px;
   position: relative;
@@ -24,7 +24,7 @@
 
 }
 
-.timeline.hasfocus {
+.timeline-container.hasfocus {
   outline: none;
 }
 
@@ -189,7 +189,7 @@
   stroke: desaturate(#3498db, 50%);
 }
 
-.timeline.hasfocus .timeline-unfocused {
+.timeline-container.hasfocus .timeline-unfocused {
   stroke: #3498db;
 }
 

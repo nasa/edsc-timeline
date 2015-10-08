@@ -101,12 +101,15 @@ class Timeline extends pluginUtil.Base
 
     @animate = options.animate ? true
     @end = (options.end || new Date()) - 0
+    @autoHide = options.autoHide ? true
+
     @start = @end - ZOOM_LEVELS[@_zoom]
     @originPx = 0
 
     dom = buildDom
       ROW_TEXT_OFFSET: ROW_TEXT_OFFSET
       TOP_HEIGHT: TOP_HEIGHT
+    @parent = @root
     @root = $(dom).appendTo(@root)
 
     @_setupDomVars()
@@ -115,12 +118,15 @@ class Timeline extends pluginUtil.Base
 
     @_updateTimeline()
 
+    @show() unless @autoHide
+
 
   destroy: ->
     for behavior in @_behaviors
       behavior.removeFrom(this)
     @root.remove()
     super()
+    @parent
 
   range: ->
     # Query and draw bounds that are 3x wider than needed, centered on the visible range.
@@ -138,19 +144,20 @@ class Timeline extends pluginUtil.Base
   show: ->
     @root.show()
     @_setHeight()
-    null
+    @parent
 
   hide: ->
     @root.hide()
     @_setHeight()
     @focus()
-    null
+    @parent
 
-  loadstart: (id, start, end, resolution) ->
+  loadstart: (id) ->
     match = @root[0].getElementsByClassName(id)
     if match.length > 0
       match[0].setAttribute('class', "#{match[0].getAttribute('class')} #{@scope('loading')}")
       @_empty(match[0])
+    @parent
 
   data: (id, data) =>
     row = @_getRow(id)
@@ -158,6 +165,7 @@ class Timeline extends pluginUtil.Base
     @_data[id] = [data.start, data.end, data.resolution, data.intervals, row.color]
     @_drawData(id)
     @_drawIndicators(id)
+    @parent
 
   _drawIndicators: (id) ->
     row = null
@@ -245,16 +253,17 @@ class Timeline extends pluginUtil.Base
     @rows(@_rows)
 
   rows: (rows) ->
-    if rows?.length > 0
-      @_rows = ($.extend({}, row) for row in rows)
-      @_updateRowNames()
-      @_drawTemporalBounds()
-      @_empty(@tlRows)
-      @_data = {}
-      @show()
-    else
-      @hide()
-    @_rows
+    @_rows = ($.extend({}, row) for row in rows)
+    @_updateRowNames()
+    @_drawTemporalBounds()
+    @_empty(@tlRows)
+    @_data = {}
+    if @autoHide
+      if rows?.length > 0
+        @show()
+      else
+        @hide()
+    @parent
 
   timeSpanToPx: (t) ->
     t / @scale
@@ -272,16 +281,15 @@ class Timeline extends pluginUtil.Base
 
   zoomIn: ->
     @_deltaZoom(-1)
+    @parent
 
   zoomOut: ->
     @_deltaZoom(1)
+    @parent
 
   zoom: (arg) ->
-    if arg?
-      @_deltaZoom(arg - @_zoom)
-      null
-    else
-      @_zoom
+    @_deltaZoom(arg - @_zoom) if arg?
+    @_zoom
 
   center: (arg) ->
     if arg?
@@ -344,7 +352,7 @@ class Timeline extends pluginUtil.Base
       root.trigger(@scopedEventName('focusremove'), eventArgs)
     root.trigger(@scopedEventName('focuschange'), eventArgs)
     @_forceRedraw()
-    null
+    @parent
 
   panToTime: (time) ->
     @_pan(@timeSpanToPx(@end - time))
@@ -518,11 +526,13 @@ class Timeline extends pluginUtil.Base
       setRemoveEvent = if ranges.length > 0 then 'temporalset' else 'temporalremove'
       @root.trigger(@scopedEventName(setRemoveEvent), ranges[0])
       @root.trigger(@scopedEventName('temporalchange'), ranges[0])
+    @parent
 
   setRowTemporal: (id, ranges) ->
     row = @_getRow(id)
     if row
       row.temporal = ranges
+    @parent
 
   _getRow: (id) ->
     for row in @_rows
