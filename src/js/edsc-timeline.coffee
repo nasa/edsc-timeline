@@ -329,7 +329,8 @@ class Timeline extends pluginUtil.Base
     @_empty(overlay)
 
     if t0?
-      root.trigger(@scopedEventName('focusset'), [t0, t1, RESOLUTIONS[@_zoom - 1]])
+      eventArgs = [new Date(t0), new Date(t1), RESOLUTIONS[@_zoom - 1]]
+      root.trigger(@scopedEventName('focusset'), eventArgs)
       startPt = @timeToPosition(t0)
       stopPt = @timeToPosition(t1)
 
@@ -339,7 +340,9 @@ class Timeline extends pluginUtil.Base
       right = @_buildRect(class: @scope('unfocused'), x: stopPt)
       overlay.appendChild(right)
     else
-      root.trigger(@scopedEventName('focusremove'))
+      eventArgs = []
+      root.trigger(@scopedEventName('focusremove'), eventArgs)
+    root.trigger(@scopedEventName('focuschange'), eventArgs)
     @_forceRedraw()
     null
 
@@ -511,7 +514,10 @@ class Timeline extends pluginUtil.Base
     return if @_globalTemporal == ranges
     @_globalTemporal = ranges
     @_drawTemporalBounds()
-    @root.trigger(@scopedEventName('temporalchange'), ranges[0]) if event
+    if event
+      setRemoveEvent = if ranges.length > 0 then 'temporalset' else 'temporalremove'
+      @root.trigger(@scopedEventName(setRemoveEvent), ranges[0])
+      @root.trigger(@scopedEventName('temporalchange'), ranges[0])
 
   setRowTemporal: (id, ranges) ->
     row = @_getRow(id)

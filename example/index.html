@@ -29,13 +29,18 @@
         color: '#ff0000'
       };
 
-      $timeline.on('temporalchange.timeline', function(e, start, end) {
-        if (!!start) {
-          console.log('temporal change', start, end);
-        }
-        else {
-          console.log('temporal cleared');
-        }
+      $timeline.on('temporalset.timeline', function(e, start, end) {
+        console.log('temporal set', start, end);
+      });
+      $timeline.on('temporalremove.timeline', function(e) {
+        console.log('temporal cleared');
+      });
+
+      $timeline.on('focusset.timeline', function(e, start, end, resolution) {
+        console.log('focus set', start, end, resolution);
+      });
+      $timeline.on('focusremove.timeline', function(e) {
+        console.log('focus cleared');
       });
 
       $timeline.timeline();
