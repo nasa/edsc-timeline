@@ -12,6 +12,7 @@ ScrollBehavior = require('./timeline/behaviors/scroll')
 DragBehavior = require('./timeline/behaviors/drag')
 TemporalFocusBehavior = require('./timeline/behaviors/temporalFocus')
 DataMouseoverBehavior = require('./timeline/behaviors/dataMouseover')
+ClickZoomBehavior = require('./timeline/behaviors/clickZoom')
 
 # Height for the top area, where arrows are drawn for date selection
 TOP_HEIGHT = 19
@@ -271,11 +272,9 @@ class Timeline extends pluginUtil.Base
     Math.floor((p - originPx) * scale + start)
 
   zoomIn: ->
-    @root.trigger('buttonzoom')
     @_deltaZoom(-1)
 
   zoomOut: ->
-    @root.trigger('buttonzoom')
     @_deltaZoom(1)
 
   zoom: (arg) ->
@@ -292,22 +291,23 @@ class Timeline extends pluginUtil.Base
     else
       Math.round((@end + @start) / 2)
 
-  _deltaZoom: (levels, center_t=@center()) ->
+  _deltaZoom: (levels, center_t=@center(), preserveCenterPx=true) ->
     @_zoom = Math.min(Math.max(@_zoom + levels, 2), ZOOM_LEVELS.length - 1)
 
     @root.toggleClass(@scope('max-zoom'), @_zoom == ZOOM_LEVELS.length - 1)
     @root.toggleClass(@scope('min-zoom'), @_zoom == 2)
 
-    # We want to zoom in a way that keeps the center_t at the same pixel so you
-    # can double-click or scoll-wheel to zoom and your mouse stays over the same time
-
-    x = @timeToPosition(center_t)
-
     timeSpan = ZOOM_LEVELS[@_zoom]
 
-    scale = timeSpan / @width
+    if preserveCenterPx
+      # We want to zoom in a way that keeps the center_t at the same pixel so you
+      # can double-click or scoll-wheel to zoom and your mouse stays over the same time
+      scale = timeSpan / @width
+      x = @timeToPosition(center_t)
+      @start = center_t - (scale * (x - @originPx))
+    else
+      @start = center_t - timeSpan / 2
 
-    @start = center_t - (scale * (x - @originPx))
     @end = @start + timeSpan
 
     @scale = scale
@@ -321,8 +321,9 @@ class Timeline extends pluginUtil.Base
     (!focus && !t0) || (focus && t0 && Math.abs(t0 - focus) < 1000)
 
   focus: (t0, t1) ->
-    t0 = null if  @isFocus(t0)
+    t0 = null if @isFocus(t0)
     @_focus = t0
+    @_focusEnd = t1
 
     root = @root
     overlay = @focusOverlay
@@ -348,14 +349,18 @@ class Timeline extends pluginUtil.Base
 
   _getTransformX: svgUtil.getTransformX
 
+  _allTemporal: ->
+    result = []
+    result = result.concat(@_globalTemporal) if @_globalTemporal
+    result = result.concat(row.temporal) for row in @_rows when row.temporal
+    result
+
   _canFocusTimespan: (t0, t1) ->
-    allTemporal = []
-    allTemporal = allTemporal.concat(@_globalTemporal) if @_globalTemporal
-    allTemporal = allTemporal.concat(row.temporal) for row in @_rows when row.temporal
+    allTemporal = @_allTemporal()
     return true if allTemporal.length == 0
 
     for [start, stop] in allTemporal
-      return true if t0 < start < t1 || t0 < stop < t1 || (start < t1 && stop > t0)
+      return true if start < t1 && stop > t0
     false
 
   _timespanForLabel: (group) ->
@@ -401,7 +406,8 @@ class Timeline extends pluginUtil.Base
       new ScrollBehavior(),
       new DragBehavior(),
       new TemporalFocusBehavior(),
-      new DataMouseoverBehavior()
+      new DataMouseoverBehavior(),
+      new ClickZoomBehavior()
     ]
     for behavior in @_behaviors
       behavior.addTo(this)
