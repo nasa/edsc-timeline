@@ -1,11 +1,17 @@
 require '../css/edsc-timeline.less'
 buildDom = require('../html/timeline.hbs')
+buildInterval = require('../html/interval.hbs')
 stringUtil = require('./util/string')
 pluginUtil = require('./util/plugin')
-dateUtil = require('./util/date')
 svgUtil = require('./util/svg')
 Draggable = require('./timeline/draggable')
+TemporalDisplay = require('./timeline/temporalDisplay')
 TemporalFencepost = require('./timeline/fencepost')
+TemporalSelectionBehavior = require('./timeline/behaviors/temporalSelection')
+ScrollBehavior = require('./timeline/behaviors/scroll')
+DragBehavior = require('./timeline/behaviors/drag')
+TemporalFocusBehavior = require('./timeline/behaviors/temporalFocus')
+DataMouseoverBehavior = require('./timeline/behaviors/dataMouseover')
 
 # Height for the top area, where arrows are drawn for date selection
 TOP_HEIGHT = 19
@@ -83,80 +89,35 @@ ZOOM_LEVELS = [
   MS_PER_DECADE * 5
 ]
 
-class TemporalSelection
-  constructor: (parent, @left, @right, attrs) ->
-    @left.on 'update', @update, this
-    @right.on 'update', @update, this
-
-    @rect = svgUtil.buildSvgElement('rect', attrs)
-    parent.appendChild(@rect)
-    @update()
-
-  dispose: ->
-    {left, right, update, rect} = this
-    left.off 'update', update, this
-    right.off 'update', update, this
-
-    rect.parentNode.removeChild(rect)
-    @rect = null
-
-  update: (attrs) ->
-    x = Math.min(@left.x, @right.x)
-    width = Math.abs(@right.x - @left.x)
-
-    svgUtil.updateSvgElement @rect, $.extend({}, attrs, {x: x, width: width})
-    this
-
-
 class Timeline extends pluginUtil.Base
   constructor: (root, namespace, options={}) ->
     super(root, namespace, options)
 
-    @_rows = []
-
-    dom = buildDom
-      ROW_TEXT_OFFSET: ROW_TEXT_OFFSET
-      TOP_HEIGHT: TOP_HEIGHT
-    @root = $(dom)
-    console.log @root
-    root.append(@root)
-    @_createDisplay()
-    #@root.append(@_createDisplay())
-
     @_data = {}
+    @_loadedRange = []
+    @_rows = []
+    @_zoom = 4
 
     @animate = options.animate ? true
-
-    @_zoom = 4
     @end = (options.end || new Date()) - 0
     @start = @end - ZOOM_LEVELS[@_zoom]
     @originPx = 0
 
-    @_loadedRange = []
+    dom = buildDom
+      ROW_TEXT_OFFSET: ROW_TEXT_OFFSET
+      TOP_HEIGHT: TOP_HEIGHT
+    @root = $(dom).appendTo(@root)
+
+    @_setupDomVars()
+    @_setupDisplay()
+    @_setupBehaviors()
 
     @_updateTimeline()
 
-    @root.on "click.#{namespace}", @scope('.date-label'), @_onLabelClick
-    @root.on "mouseover.#{namespace}", @scope('.date-label'), @_onLabelMouseover
-    @root.on "mouseout.#{namespace}", @scope('.date-label'), @_onLabelMouseout
-    @root.on "mouseover.#{namespace}", @scope('.data'), @_onDataMouseover
-    @root.on "mouseout.#{namespace}", @scope('.data'), @_onDataMouseout
-    @root.on "keydown.#{namespace}", @_onKeydown
-
-    @root.on "focusout.#{namespace}", (e) =>
-      @root.removeClass('hasfocus')
-      @_hasFocus = false
-      @_forceRedraw()
-    @root.on "focusin.#{namespace}", (e) =>
-      hovered = document.querySelector("#{@scope('.date-label')}:hover")
-      @_onLabelClick(currentTarget: hovered) if hovered?
-      @root.addClass('hasfocus')
-      @_forceRedraw()
-      # We want click behavior when we have focus, but not when the focus came from the
-      # click's mousedown.  Ugh.
-      setTimeout((=> @_hasFocus = true), 500)
 
   destroy: ->
+    for behavior in @_behaviors
+      behavior.removeFrom(this)
     @root.remove()
     @root.off('.' + @namespace)
     super()
@@ -195,10 +156,6 @@ class Timeline extends pluginUtil.Base
     row = @_getRow(id)
     @_loadedRange = [data.start, data.end, data.resolution]
     @_data[id] = [data.start, data.end, data.resolution, data.intervals, row.color]
-    @_drawData(id)
-    @_drawIndicators(id)
-
-
     @_drawData(id)
     @_drawIndicators(id)
 
@@ -273,48 +230,6 @@ class Timeline extends pluginUtil.Base
     @_drawIndicators(id)
 
     null
-
-  _onDataMouseover: (e) =>
-    tooltip = $('.timeline-tooltip')
-    data = e.target
-
-    id = data.parentNode.className.baseVal.split(' ')[0]
-    resolution = @_data[id][2]
-    intervals = @_data[id][3]
-    nodes = $(e.currentTarget.childNodes)
-    interval = intervals[nodes.index(data)]
-    start = interval[0] * 1000
-    stop = interval[1] * 1000
-    tooltip.find('.inner').text("#{@_dateWithResolution(start, resolution)} to #{@_dateWithResolution(stop, resolution)}")
-
-    matrix = data.getScreenCTM()
-    leftEdge = matrix.e + data.x.baseVal.value
-    rightEdge = leftEdge + data.width.baseVal.value
-    leftEdge = 0 if leftEdge < 0
-    rightEdge = window.innerWidth if rightEdge > window.innerWidth
-    tooltip.css("left", ((leftEdge + rightEdge)/2 - tooltip.width()/2) + "px")
-    dataTop = matrix.f
-    timelineTop = $('.timeline').offset().top
-    tooltip.css("top", (dataTop - timelineTop  - 33) + "px")
-
-    tooltip.show()
-
-  _onDataMouseout: (e) =>
-    $('.timeline-tooltip').hide()
-
-  _dateWithResolution: (date, resolution) ->
-    str = dateUtil.dateToHumanUTC(date).split(' ')
-    # str is ['03', 'Aug', '1987', '00:00', 'GMT']
-    index = RESOLUTIONS.indexOf(resolution)
-    if index > 1
-      str[3] = ''
-      str[4] = ''
-    if index > 2
-      str[0] = ''
-    if index > 3
-      str[1] = ''
-
-    str.join(' ')
 
   _forceRedraw: ->
     rect = @_buildRect(stroke: 'none', fill: 'none')
@@ -401,10 +316,12 @@ class Timeline extends pluginUtil.Base
     @_updateTimeline()
     @_drawTemporalBounds()
 
+  isFocus: (t0) ->
+    focus = @_focus
+    (!focus && !t0) || (focus && t0 && Math.abs(t0 - focus) < 1000)
+
   focus: (t0, t1) ->
-    if  Math.abs(t0 - @_focus) < 1000
-      return unless @_hasFocus # Regaining input focus, don't do anything (EDSC-323)
-      t0 = null
+    t0 = null if  @isFocus(t0)
     @_focus = t0
 
     root = @root
@@ -431,35 +348,14 @@ class Timeline extends pluginUtil.Base
 
   _getTransformX: svgUtil.getTransformX
 
-  _onKeydown: (e) =>
-    focus = @_focus
-    key = e.keyCode
-    left = 37
-    up = 38
-    right = 39
-    down = 40
-    if focus && (key == left || key == right)
-      @root.trigger('arrowpan')
-      zoom = @_zoom - 1
+  _canFocusTimespan: (t0, t1) ->
+    allTemporal = []
+    allTemporal = allTemporal.concat(@_globalTemporal) if @_globalTemporal
+    allTemporal = allTemporal.concat(row.temporal) for row in @_rows when row.temporal
+    return true if allTemporal.length == 0
 
-      focusEnd = @_roundTime(focus, zoom, 1)
-
-      if key == left
-        t0 = @_roundTime(focus, zoom, -1)
-        t1 = focus - 1
-        dx = @timeSpanToPx(focusEnd - focus)
-      else
-        t0 = focusEnd
-        t1 = @_roundTime(focus, zoom, 2) - 1
-        dx = -@timeSpanToPx(t1 - t0)
-
-      if @_canFocusTimespan(t0, t1)
-        @_pan(dx)
-        @focus(t0, t1)
-
-  _canFocusTimespan: (start, stop) ->
-    for row in @_rows
-      return true if !row.canFocusTimespan || row.canFocusTimespan(start, stop)
+    for [start, stop] in allTemporal
+      return true if t0 < start < t1 || t0 < stop < t1 || (start < t1 && stop > t0)
     false
 
   _timespanForLabel: (group) ->
@@ -470,30 +366,11 @@ class Timeline extends pluginUtil.Base
 
     [@positionToTime(x0), @positionToTime(x1) - 1]
 
-  _onLabelClick: (e) =>
-    return if @_dragging
-    @root.trigger('clicklabel')
-    label = e.currentTarget
-    [start, stop] = @_timespanForLabel(label)
-    if @_canFocusTimespan(start, stop)
-      @focus(start, stop)
-
-  _onLabelMouseover: (e) =>
-    label = e.currentTarget
-    [start, stop] = @_timespanForLabel(label)
-    unless @_canFocusTimespan(start, stop)
-      label.setAttribute('class', "#{@scope('date-label')} #{@scope('nofocus')}")
-
-  _onLabelMouseout: (e) =>
-    label = e.currentTarget
-    label.setAttribute('class', @scope('date-label'))
-
   _contains: (start0, end0, start1, end1) ->
     start0 < start1 < end0 && start0 < end1 < end0
 
   _empty: (node) ->
     $(node).empty()
-  # node.innerHTML = '' # Works for browsers but not capybara-webkit
 
   _buildSvgElement: svgUtil.buildSvgElement
 
@@ -501,137 +378,33 @@ class Timeline extends pluginUtil.Base
     el.setAttribute('transform', "translate(#{x}, #{y})")
     el
 
-  _findScoped: (sel) ->
-    @root.find(@scope(sel))[0]
+  _setupDomVars: ->
+    @svg = @_findScopedEl('.display')
+    @selectionOverlay = @_findScopedEl('.selection')
+    @focusOverlay = @_findScopedEl('.focus')
+    @overlay = @_findScopedEl('.overlay')
+    @olRows  = @_findScopedEl('.row')
+    @timeline = @_findScopedEl('.draggable')
+    @tlRows = @_findScopedEl('.rows')
+    @axis = @_findScopedEl('.axis')
 
-  _translateScoped: (sel, x, y) ->
-    el = @_findScoped(sel)
-    @_translate(el, x, y)
-    el
-
-  _createDisplay: ->
-    offset = @root.find(@scope('.tools')).width()
-
-    @svg = svg = @_findScoped('.display')
-    console.log svg
-
-    node = svg.firstElementChild
+  _setupDisplay: ->
+    offset = @_findScoped('.tools').width()
+    node = @svg.firstElementChild
     while node
       @_translate(node, offset, 0)
       node = node.nextElementSibling
 
-    @selectionOverlay = @_findScoped('.selection')
-    @focusOverlay = @_findScoped('.focus')
-    @overlay = @_findScoped('.overlay')
-    @olRows  = @_findScoped('.row')
-    @timeline = @_findScoped('.draggable')
-
-    @tlRows = @_findScoped('.rows')
-    @axis = @_findScoped('.axis')
-
-    @_setupTemporalSelection(@_findScoped('.display-top'))
-
-    @_setupDragBehavior(svg)
-    @_setupScrollBehavior(svg)
-
-    svg
-
-  _setupTemporalSelection: (el) ->
-    self = this
-    root = @root
-
-    $(el).on 'click', =>
-      root.trigger(@scopedEventName('temporalchange'), [])
-
-    draggable = new Draggable(el, @animate)
-
-    left = null
-    right = null
-
-    draggable.on 'dragstart', ({cursor}) =>
-      overlay = @selectionOverlay
-      @_empty(overlay)
-      [left, right] = @_createSelectionRegion(overlay, cursor.x, cursor.x, [0...@_rows.length])
-
-    draggable.on 'dragmove', (e) -> right._onUpdate(e)
-    draggable.on 'dragend', (e) ->
-      root.trigger('createdtemporal')
-      right._onEnd(e)
-
-  _setupScrollBehavior: (svg) ->
-    allowWheel = true
-
-    rateLimit = ->
-      allowWheel = false
-      setTimeout((-> allowWheel = true), 300)
-
-    getTime = (e) =>
-      draggable = @root.find(@scope('.draggable'))[0]
-      origin = @_getTransformX(draggable)
-
-      x = e.clientX - svg.clientLeft - origin
-      time = @positionToTime(x)
-
-    doScroll = (deltaX, deltaY, time) =>
-      return unless allowWheel
-      if Math.abs(deltaY) > Math.abs(deltaX)
-        levels = if deltaY > 0 then -1 else 1
-        @root.trigger('scrollzoom')
-        @_deltaZoom(levels, time)
-        rateLimit()
-      else if deltaX != 0
-        @root.trigger('scrollpan')
-        @_pan(deltaX)
-
-    # Safari
-    onWheel = (e) ->
-      deltaX = e.wheelDeltaX
-      deltaY = e.wheelDeltaY
-      doScroll(deltaX, deltaY, getTime(e))
-      e.preventDefault()
-
-    svg.addEventListener('mousewheel', onWheel)
-    svg.addEventListener('DOMMouseScroll', onWheel)
-
-    # Chrome/Firefox
-    svg.addEventListener 'wheel', (e) ->
-      return if e.type == "mousewheel"
-
-      # 'wheel' deltas are opposite from 'mousewheel'
-      deltaX = -e.deltaX
-      deltaY = -e.deltaY
-      doScroll(deltaX, deltaY, getTime(e))
-
-      e.preventDefault()
-
-    touchSeparation = 0
-    touchCenter = 0
-    svg.addEventListener 'touchstart', (e) ->
-      return unless e.touches && e.touches.length == 2
-      center = (e.touches[0].clientX + e.touches[1].clientX) / 2
-      time = getTime(clientX: center)
-      touchSeparation = Math.abs(e.touches[0].clientX - e.touches[1].clientX)
-      e.preventDefault()
-
-    svg.addEventListener 'touchmove', (e) ->
-      return unless e.touches && e.touches.length == 2
-      deltaY = Math.abs(e.touches[0].clientX - e.touches[1].clientX) - touchSeparation
-      doScroll(0, -deltaY, touchCenter)
-
-  _setupDragBehavior: (svg) ->
-    el = svg.querySelector(@scope('.draggable'));
-    draggable = new Draggable(el, @animate)
-
-    dx = 0
-    draggable.on 'dragmove', (e) =>
-      dx = e.offset.x
-      @_dragging = true if Math.abs(dx) > 5
-      @_pan(dx, false)
-    draggable.on 'dragend', (e) =>
-      dx = e.offset.x
-      @root.trigger('draggingpan')
-      @_dragging = false
-      @_pan(dx)
+  _setupBehaviors: ->
+    @_behaviors = [
+      new TemporalSelectionBehavior(),
+      new ScrollBehavior(),
+      new DragBehavior(),
+      new TemporalFocusBehavior(),
+      new DataMouseoverBehavior()
+    ]
+    for behavior in @_behaviors
+      behavior.addTo(this)
 
   _pan: (dx, commit=true) ->
     @_startPan() unless @_panStart?
@@ -730,7 +503,10 @@ class Timeline extends pluginUtil.Base
     root.trigger(@scopedEventName('rangechange'), range)
 
   setTemporal: (ranges) ->
+    return if @_globalTemporal == ranges
     @_globalTemporal = ranges
+    @_drawTemporalBounds()
+    @root.trigger(@scopedEventName('temporalchange'), [])
 
   setRowTemporal: (id, ranges) ->
     row = @_getRow(id)
@@ -768,6 +544,7 @@ class Timeline extends pluginUtil.Base
       rightX = Math.max(left.x, right.x)
       start = new Date(@positionToTime(leftX))
       stop = new Date(@positionToTime(rightX))
+      @setTemporal([[start, stop]])
       @root.trigger(@scopedEventName('temporalchange'), start, stop)
       null
 
@@ -777,7 +554,7 @@ class Timeline extends pluginUtil.Base
     right.on 'update', @_forceRedraw, this
 
     for index in indexes
-      new TemporalSelection overlay, left, right,
+      new TemporalDisplay overlay, left, right,
         class: @scope('selection-region')
         y: TOP_HEIGHT + ROW_HEIGHT * index
         height: ROW_HEIGHT
@@ -825,47 +602,25 @@ class Timeline extends pluginUtil.Base
       axis.appendChild(interval)
       time = prev
 
+  _buildSvgTemplate: (templateFn, context) ->
+    $('<svg xmlns="http://www.w3.org/2000/svg" />').html(templateFn(context)).children()[0]
+
   _buildIntervalDisplay: (x0, x1, text, subText) ->
-    g = @_buildSvgElement('g', class: @scope('date-label'))
-    @_translate(g, x0, 0)
     width = x1 - x0
-
-    if x1?
-      # Something to click on
-      bg = @_buildSvgElement 'rect',
-        x: 0
-        y: 0
-        width: width
-        height: MAX_Y - MIN_Y
-      g.appendChild(bg)
-
-    label = @_buildSvgElement('text', x: 5, y: 20, class: "#{@scope('axis-label')} #{@scope('axis-super-label')}")
-    label.textContent = text
-
-    lineClass = @scope('tick')
-    lineClass += ' ' + @scope('interval-start') if subText
-    line = @_buildSvgElement('line', class: lineClass, x1: 0, y1: MIN_Y, x2: 0, y2: MAX_Y)
-
-    circle = @_buildSvgElement('circle', class: @scope('tick-crossing'), r: 6, cx: width)
-
-    g.appendChild(line)
-    g.appendChild(circle)
-    g.appendChild(label)
-
-    if subText
-      subLabel = @_buildSvgElement('text', x: 5, y: 34, class: "#{@scope('axis-label')} #{@scope('axis-sub-label')}")
-      subLabel.textContent = subText
-      g.appendChild(subLabel)
-
-    g
+    @_buildSvgTemplate buildInterval,
+      ns: @namespace
+      width: width
+      x0: x0
+      x1: x1
+      text: text
+      subText: subText
 
   _setHeight: ->
-    if @_rows?.length > 0
-      rowsHeight = @_rows.length * ROW_HEIGHT + 2 * ROW_PADDING
-      @_translate(@axis, 0, TOP_HEIGHT + rowsHeight)
-      totalHeight = Math.max(TOP_HEIGHT + rowsHeight + AXIS_HEIGHT, 100)
-      @root.height(totalHeight)
-      $(@svg).height(totalHeight)
+    rowsHeight = @_rows.length * ROW_HEIGHT + 2 * ROW_PADDING
+    @_translate(@axis, 0, TOP_HEIGHT + rowsHeight)
+    totalHeight = Math.max(TOP_HEIGHT + rowsHeight + AXIS_HEIGHT, 100)
+    @root.height(totalHeight)
+    $(@svg).height(totalHeight)
 
 pluginUtil.create('timeline', Timeline)
 

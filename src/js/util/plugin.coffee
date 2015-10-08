@@ -90,5 +90,11 @@ class Base
   scopedEventName: (name) ->
     "#{name}.#{@namespace}"
 
+  _findScoped: (sel) ->
+    @root.find(@scope(sel))
+
+  _findScopedEl: (sel) ->
+    @root.find(@scope(sel))[0]
+
 exports.create = create
 exports.Base = Base
