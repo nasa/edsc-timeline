@@ -1,6 +1,11 @@
 var webpack = require("webpack"),
     fs = require('fs'),
-    pkg = JSON.parse(fs.readFileSync('./package.json'));
+    pkg = JSON.parse(fs.readFileSync('./package.json')),
+    license;
+
+license = fs.readFileSync('./LICENSE')
+  .toString()
+  .split(/\s+---\s+/, 1)[0];
 
 module.exports = {
   context: __dirname,
@@ -29,6 +34,7 @@ module.exports = {
     extensions: ['', '.js', '.json', '.coffee']
   },
   plugins: [
+    new webpack.BannerPlugin(license),
     new webpack.ProvidePlugin({
       $: "jquery",
       jQuery: "jquery",
