@@ -26,17 +26,15 @@
         title: "Some data name",
         min: new Date(0),
         max: new Date(),
-        color: '#ff0000',
-        canFocusTimespan: function(start, stop) {
-          return true;
-        }
+        color: '#ff0000'
       };
 
-      $timeline.on('timeline.temporalchange', function(start, end) {
-        console.log('temporal change');
-        if (start) {
+      $timeline.on('temporalchange.timeline', function(e, start, end) {
+        if (!!start) {
+          console.log('temporal change', start, end);
         }
         else {
+          console.log('temporal cleared');
         }
       });
 

@@ -18,7 +18,7 @@ module.exports = class
     @_left = @_right = @draggable = @tl = null
 
   clear: =>
-    @tl.setTemporal([])
+    @tl.setTemporal([], true)
 
   dragstart: (e) ->
     cursor = e.cursor

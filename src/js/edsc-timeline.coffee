@@ -120,7 +120,6 @@ class Timeline extends pluginUtil.Base
     for behavior in @_behaviors
       behavior.removeFrom(this)
     @root.remove()
-    @root.off('.' + @namespace)
     super()
 
   range: ->
@@ -508,11 +507,11 @@ class Timeline extends pluginUtil.Base
 
     root.trigger(@scopedEventName('rangechange'), range)
 
-  setTemporal: (ranges) ->
+  setTemporal: (ranges, event=false) ->
     return if @_globalTemporal == ranges
     @_globalTemporal = ranges
     @_drawTemporalBounds()
-    @root.trigger(@scopedEventName('temporalchange'), [])
+    @root.trigger(@scopedEventName('temporalchange'), ranges[0]) if event
 
   setRowTemporal: (id, ranges) ->
     row = @_getRow(id)
@@ -550,8 +549,7 @@ class Timeline extends pluginUtil.Base
       rightX = Math.max(left.x, right.x)
       start = new Date(@positionToTime(leftX))
       stop = new Date(@positionToTime(rightX))
-      @setTemporal([[start, stop]])
-      @root.trigger(@scopedEventName('temporalchange'), start, stop)
+      @setTemporal([[start, stop]], true)
       null
 
     left.on 'commit', update, this
@@ -635,6 +633,5 @@ pluginUtil.create('timeline', Timeline)
 # _setHeight: ->
 #    $('.master-overlay').masterOverlay().masterOverlay('contentHeightChanged')
 #
-# Implement canFocusTimespan
 # Respond to temporal selection / clear events
 # Set temporal when it changes
