@@ -20,11 +20,13 @@ module.exports = class
   clear: =>
     @tl.setTemporal([])
 
-  dragstart: ({cursor}) ->
+  dragstart: (e) ->
+    cursor = e.cursor
     tl = @tl
     overlay = tl.selectionOverlay
     tl._empty(overlay)
-    [@_left, @_right] = tl._createSelectionRegion(overlay, cursor.x, cursor.x, [0...tl._rows.length])
+    indexes = (i for i in [0...tl._rows.length])
+    [@_left, @_right] = tl._createSelectionRegion(overlay, cursor.x, cursor.x, indexes)
 
   dragmove: (e) ->
     @_right._onUpdate(e)
