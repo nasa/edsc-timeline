@@ -2,49 +2,78 @@
 <html>
   <head>
     <title>Timeline Plugin Example</title>
-    <link rel="stylesheet" href="../dist/css/edsc-timeline.css">
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script src="../dist/js/edsc-timeline.min.js"></script>
+    <script src="../dist/edsc-timeline.min.js"></script>
   </head>
   <body>
     <h1>Timeline Plugin Example</h1>
 
-    <div id="timeline"></div>
+    <h2>Empty timeline</h2>
+    <div id="timeline-empty" class="timeline"></div>
+
+    <h2>Timeline with multiple rows</h2>
+    <div id="timeline-multiple" class="timeline"></div>
 
     <script>
-      var $timeline = $('#timeline');
-      var ranges = {
+      var $timelines = $('.timeline');
+      var data1 = {
         min: new Date(2015, 01) / 1000,
         max: new Date() / 1000,
         resolution: 'day',
-        //intervals: [[new Date(0) / 1000, new Date() / 1000]]
-        intervals: [[new Date(2015, 04) / 1000, new Date(2015, 05) / 1000], [new Date(2015, 06) / 1000, new Date() / 1000]]
+        intervals: [
+          [new Date(2015, 04) / 1000, new Date(2015, 05) / 1000],
+          [new Date(2015, 06) / 1000, new Date() / 1000]
+        ]
       };
-      var row = {
-        id: "somedata",
-        title: "Some data name",
+      var data2 = {
+        min: new Date(2015, 01) / 1000,
+        max: new Date() / 1000,
+        resolution: 'day',
+        intervals: [
+          [new Date(2015, 04) / 1000, new Date(2015, 05) / 1000],
+          [new Date(2015, 06) / 1000, new Date() / 1000]
+        ]
+      };
+      var row1 = {
+        id: "examplerow1",
+        title: "Example row 1",
         min: new Date(0),
         max: new Date(),
-        color: '#ff0000',
-        load: function(start, end, resolution, callback) {
-          callback([[new Date(0), new Date()]]);
-        },
-        canFocusTimespan: function(start, stop) {
-          return true;
-        }
+      };
+      var row2 = {
+        id: "examplerow2",
+        title: "Example row 2",
+        min: new Date(0),
+        max: new Date(),
+        color: '#ff0000'
       };
 
-      $timeline.on('timeline.temporalchange', function(start, end) {
-        if (start) {
-        }
-        else {
-        }
+      $timelines.on('rangechange.timeline', function(e, start, end) {
+        console.log('range change', start, end);
       });
 
-      $timeline.timeline();
-      $timeline.timeline('rows', [row]);
-      $timeline.timeline('data', row.id, ranges);
-      $timeline.show();
+      $timelines.on('temporalset.timeline', function(e, start, end) {
+        console.log('temporal set', start, end);
+      });
+      $timelines.on('temporalremove.timeline', function(e) {
+        console.log('temporal cleared');
+      });
+
+      $timelines.on('focusset.timeline', function(e, start, end, resolution) {
+        console.log('focus set', start, end, resolution);
+      });
+      $timelines.on('focusremove.timeline', function(e) {
+        console.log('focus cleared');
+      });
+
+      $timelines
+        .timeline()
+        .timeline('show');
+
+      $('#timeline-multiple')
+        .timeline('rows', [row1, row2])
+        .timeline('data', row1.id, data1)
+        .timeline('data', row2.id, data2);
     </script>
   </body>
 </html>

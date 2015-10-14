@@ -33,6 +33,7 @@ module.exports = class Draggable
 
   dispose: ->
     @disable()
+    @_listeners = {}
 
   enable: ->
     el = @_element
@@ -68,7 +69,7 @@ module.exports = class Draggable
     this
 
   fire: (event, data) ->
-    console.log event, JSON.stringify(data)
+    #console.log event, JSON.stringify(data)
     listeners = @_listeners?[event]
     return this unless listeners?
 
@@ -122,7 +123,7 @@ module.exports = class Draggable
     document.removeEventListener("mouseup", @_mouseup)
     document.removeEventListener("touchend", @_mouseup)
     cancelAnimFrame(@_frameId) if @animate
-    @_end()
+    @_end() if @_dragging
 
   _start: ->
     @_dragging = true
@@ -175,7 +176,7 @@ module.exports = class Draggable
 
   _staticEnd: ->
     @_dragging = false
-    @fire('dragEnd', @_state())
+    @fire('dragend', @_state())
 
   _getLoc: ->
     # FIXME: y

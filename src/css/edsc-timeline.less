@@ -1,16 +1,21 @@
 @button-dark-bottom-gradient: #315880;
 
-.timeline * {
+.timeline-container * {
   box-sizing: border-box;
 }
 
-.timeline {
+.timeline-container {
   height: 100px;
   min-height: 100px;
   position: relative;
   border-top: 1px solid #727272;
   box-shadow: 0 -10px 15px 0 rgba(0,0,0,.3);
   display: none;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -ms-user-select: none;
 
   .busy {
     background-position: 0 bottom;
@@ -19,7 +24,7 @@
 
 }
 
-.timeline.hasfocus {
+.timeline-container.hasfocus {
   outline: none;
 }
 
@@ -184,7 +189,7 @@
   stroke: desaturate(#3498db, 50%);
 }
 
-.timeline.hasfocus .timeline-unfocused {
+.timeline-container.hasfocus .timeline-unfocused {
   stroke: #3498db;
 }
 

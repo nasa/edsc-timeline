@@ -14,7 +14,7 @@ module.exports = class TemporalFencepost extends Draggable
     super(@triangle, true)
 
     @on 'dragend', @_onEnd, this
-    @on 'predrag', @_onUpdate, this
+    @on 'predragmove', @_onUpdate, this
 
 
   dispose: ->
@@ -39,6 +39,6 @@ module.exports = class TemporalFencepost extends Draggable
     @update(e.cursor.x)
 
   _onEnd: (e) ->
-    @_onUpdate(e.cursor.x)
+    @_onUpdate(e)
     @fire('commit', x: e.cursor.x)
     @_startX = null

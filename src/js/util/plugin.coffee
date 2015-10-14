@@ -1,35 +1,6 @@
 stringUtil = require('./string')
 
-clickHandler = (pluginName, method, rootSelector, dataArg) ->
-  (e) ->
-    $this = $(this)
-    if $this.is('a') || $(e.target).closest('a').length == 0
-      $root = $this.closest(rootSelector)
-      if $root.length == 0
-        href = $this.attr('href')
-        $root = $(href) if href? && href.length > 1
-
-      $root[pluginName](method, $this.attr(dataArg))
-    false
-
-# Sets up onclick handlers
-setupClickHandlers = (pluginName, Class) ->
-  specialMethods = ['constructor', 'destroy']
-  $document = $(document)
-  prefix = stringUtil.dasherize(pluginName)
-  rootSelector = ".#{prefix}"
-
-  for own method, fn of Class.prototype
-    unless method in specialMethods || method.indexOf('_') == 0
-      classname = "#{prefix}-#{stringUtil.dasherize(method)}"
-
-      selector = ".#{classname}"
-      handler = clickHandler(pluginName, method, rootSelector, "data-#{classname}")
-      $document.on 'click', selector, handler
-
 create = (pluginName, Class) ->
-  setupClickHandlers(pluginName, Class) unless Class.noClickHandlers
-
   $.fn[pluginName] = (args...) ->
     if args.length > 0 && typeof args[0] == 'string'
       # Method call
@@ -89,6 +60,12 @@ class Base
 
   scopedEventName: (name) ->
     "#{name}.#{@namespace}"
+
+  _findScoped: (sel) ->
+    @root.find(@scope(sel))
+
+  _findScopedEl: (sel) ->
+    @root.find(@scope(sel))[0]
 
 exports.create = create
 exports.Base = Base

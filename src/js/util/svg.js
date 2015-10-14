@@ -4,12 +4,6 @@ var getTransformAttr = function(el) {
     || '';
 };
 
-var getLeftAttr = function(el) {
-  return el.getAttribute('left')
-    || el.parentNode.getAttribute('left')
-    || '';
-};
-
 var updateSvgElement = function(el, attrs) {
   var attr;
   if (attrs != null) {
@@ -30,7 +24,7 @@ exports.buildSvgElement = function(name, attrs) {
 };
 
 exports.getTransformX = function(el, defaultValue) {
-  var re, match, result, left;
+  var match, result;
   result = defaultValue || 0;
   if (el) {
     match = /^[^\d\-]*(-?[\d\.]+)/.exec(getTransformAttr(el));
