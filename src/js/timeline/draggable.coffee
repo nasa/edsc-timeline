@@ -102,7 +102,7 @@ module.exports = class Draggable
     e.preventDefault()
 
     unless @_dragging
-      @_startCursor = cursor
+      @_startCursor = {x: cursor.x - offset.x, y: cursor.y - offset.y}
       @_startLoc = @_currentLoc = @_getLoc()
 
     @_currentOffset = offset = {x: cursor.x - @_startCursor.x, y: cursor.y - @_startCursor.y}

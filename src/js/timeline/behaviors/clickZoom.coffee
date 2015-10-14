@@ -20,7 +20,6 @@ module.exports = class
     t1 = tlStart
 
     for [start, end] in allTemporal when start < tlEnd && end > tlStart
-      console.log start > tlStart, end < tlEnd
       t0 = Math.min(t0, start) if start > tlStart
       t1 = Math.max(t1, end) if end < tlEnd
 

@@ -17,10 +17,11 @@ module.exports = class
     @_right.dispose()
     @_left = @_right = @draggable = @tl = null
 
-  clear: =>
-    @tl.setTemporal([], true)
+  clear: (e) =>
+    @tl.clearTemporal(true) unless @_dragging
 
   dragstart: (e) ->
+    @_dragging = true
     cursor = e.cursor
     tl = @tl
     overlay = tl.selectionOverlay
@@ -34,3 +35,4 @@ module.exports = class
   dragend: (e) ->
     @tl.root.trigger("createdtemporal.#{@tl.namespace}")
     @_right._onEnd(e)
+    @_dragging = false

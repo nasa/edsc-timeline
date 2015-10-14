@@ -52,7 +52,7 @@
   },
   "scripts": {
     "prepublish": "webpack",
-    "test": "gulp spec",
+    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS",
     "start": "webpack -w"
   }
 }

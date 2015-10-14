@@ -66,6 +66,7 @@ module.exports = class
     up = 38
     right = 39
     down = 40
+
     if focus && (key == left || key == right)
       tl.root.trigger('arrowpan')
       zoom = tl._zoom - 1
