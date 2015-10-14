@@ -570,8 +570,6 @@ class Timeline extends pluginUtil.Base
     rows = @_rows
     @_empty(overlay)
 
-    return unless rows.length > 0
-
     globalIndexes = []
     for row, index in rows
       if row.temporal
