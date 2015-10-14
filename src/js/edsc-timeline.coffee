@@ -539,7 +539,7 @@ class Timeline extends pluginUtil.Base
   clearTemporal: (event=false) ->
     @setTemporal([], event)
     for row in @_rows
-      row.temporal = []
+      row.temporal = null
       if event
         @root.trigger(@scopedEventName('rowtemporalremove'), row.id)
         @root.trigger(@scopedEventName('rowtemporalchange'), row.id)
