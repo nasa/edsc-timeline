@@ -141,11 +141,13 @@ class Timeline extends pluginUtil.Base
     @end
 
   show: ->
+    @parent.show()
     @root.show()
     @_setHeight()
     @parent
 
   hide: ->
+    @parent.hide()
     @root.hide()
     @_setHeight()
     @focus()
@@ -343,7 +345,7 @@ class Timeline extends pluginUtil.Base
 
     if t0?
       eventArgs = [new Date(t0), new Date(t1), RESOLUTIONS[@_zoom - 1]]
-      root.trigger(@scopedEventName('focusset'), eventArgs)
+      @parent.trigger(@scopedEventName('focusset'), eventArgs)
       startPt = @timeToPosition(t0)
       stopPt = @timeToPosition(t1)
 
@@ -354,8 +356,8 @@ class Timeline extends pluginUtil.Base
       overlay.appendChild(right)
     else
       eventArgs = []
-      root.trigger(@scopedEventName('focusremove'), eventArgs)
-    root.trigger(@scopedEventName('focuschange'), eventArgs)
+      @parent.trigger(@scopedEventName('focusremove'), eventArgs)
+    @parent.trigger(@scopedEventName('focuschange'), eventArgs)
     @_forceRedraw()
     @parent
 
@@ -521,7 +523,7 @@ class Timeline extends pluginUtil.Base
       for node in @tlRows.childNodes
         node.setAttribute('class', "#{node.getAttribute('class')} #{@scope('loading')}")
 
-    root.trigger(@scopedEventName('rangechange'), range)
+    @parent.trigger(@scopedEventName('rangechange'), range)
 
   setTemporal: (ranges, event=false) ->
     return if @_globalTemporal == ranges
@@ -529,20 +531,21 @@ class Timeline extends pluginUtil.Base
     @_drawTemporalBounds()
     if event
       setRemoveEvent = if ranges.length > 0 then 'temporalset' else 'temporalremove'
-      @root.trigger(@scopedEventName(setRemoveEvent), ranges[0])
-      @root.trigger(@scopedEventName('temporalchange'), ranges[0])
+      rangeDates = (range ? new Date(range) for range in ranges[0] ? [])
+      @parent.trigger(@scopedEventName(setRemoveEvent), rangeDates)
+      @parent.trigger(@scopedEventName('temporalchange'), rangeDates)
     @parent
 
   getTemporal: ->
-    @_globalTemporal
+    ((time ? new Date(time) for time in temp) for temp in (@_globalTemporal ? []))
 
   clearTemporal: (event=false) ->
     @setTemporal([], event)
     for row in @_rows
       row.temporal = null
       if event
-        @root.trigger(@scopedEventName('rowtemporalremove'), row.id)
-        @root.trigger(@scopedEventName('rowtemporalchange'), row.id)
+        @parent.trigger(@scopedEventName('rowtemporalremove'), row.id)
+        @parent.trigger(@scopedEventName('rowtemporalchange'), row.id)
     @_drawTemporalBounds()
     @parent
 
@@ -552,13 +555,16 @@ class Timeline extends pluginUtil.Base
       row.temporal = ranges
       if event
         setRemoveEvent = if ranges.length > 0 then 'rowtemporalset' else 'rowtemporalremove'
-        @root.trigger(@scopedEventName(setRemoveEvent), row.id, ranges[0])
-        @root.trigger(@scopedEventName('rowtemporalchange'), row.id, ranges[0])
+        eventArgs = [row.id]
+        for range in ranges[0] ? []
+          eventArgs.push(range ? new Date(range))
+        @parent.trigger(@scopedEventName(setRemoveEvent), eventArgs)
+        @parent.trigger(@scopedEventName('rowtemporalchange'), eventArgs)
     @_drawTemporalBounds()
     @parent
 
   getRowTemporal: (id) ->
-    @_getRow(id)?.temporal ? []
+    ((time ? new Date(time) for time in temp) for temp in (@_getRow(id)?.temporal ? []))
 
   _getRow: (id) ->
     for row in @_rows
@@ -572,7 +578,7 @@ class Timeline extends pluginUtil.Base
 
     globalIndexes = []
     for row, index in rows
-      if row.temporal
+      if row.temporal?.length > 0
         @_createTemporalRegion(overlay, row.temporal, [index], row.id)
       else
         globalIndexes.push(index)
@@ -673,13 +679,6 @@ class Timeline extends pluginUtil.Base
     totalHeight = Math.max(TOP_HEIGHT + rowsHeight + AXIS_HEIGHT, 100)
     @root.height(totalHeight)
     $(@svg).height(totalHeight)
+    @parent.trigger(@scopedEventName('heightchange'), [totalHeight])
 
 pluginUtil.create('timeline', Timeline)
-
-# Integration FIXME:
-#
-# _setHeight: ->
-#    $('.master-overlay').masterOverlay().masterOverlay('contentHeightChanged')
-#
-# Respond to temporal selection / clear events
-# Set temporal when it changes
