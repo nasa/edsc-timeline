@@ -6,12 +6,13 @@ module.exports = class TemporalFencepost extends Draggable
     @line = svgUtil.buildSvgElement('line')
     @triangle = svgUtil.buildSvgElement('path')
 
+    @_startX = x
     @update(x)
 
     parent.appendChild(@line)
     parent.appendChild(@triangle)
 
-    super(@triangle, true)
+    super(@triangle, false)
 
     @on 'dragend', @_onEnd, this
     @on 'predragmove', @_onUpdate, this
@@ -36,9 +37,9 @@ module.exports = class TemporalFencepost extends Draggable
     this
 
   _onUpdate: (e) ->
-    @update(e.cursor.x)
+    @update(@_startX + e.offset.x)
 
   _onEnd: (e) ->
     @_onUpdate(e)
-    @fire('commit', x: e.cursor.x)
-    @_startX = null
+    @_startX += e.offset.x
+    @fire('commit', x: @_startX)

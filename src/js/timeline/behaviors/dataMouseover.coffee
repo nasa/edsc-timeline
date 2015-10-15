@@ -29,13 +29,13 @@ module.exports = class
     rightEdge = window.innerWidth if rightEdge > window.innerWidth
     tooltip.css("left", ((leftEdge + rightEdge)/2 - tooltip.width()/2) + "px")
     dataTop = matrix.f
-    timelineTop = $('.timeline').offset().top
+    timelineTop = $('.timeline-container').offset().top
     tooltip.css("top", (dataTop - timelineTop  - 33) + "px")
 
     tooltip.show()
 
   _onDataMouseout: (e) =>
-    @tl._findScoped('.tooltip').hide()
+    @tl._findScoped('.tooltip').hide().text('') # For some odd reason, .text is necessary for Jasmine
 
   _dateWithResolution: (date, resolution) ->
     str = new Date(date).toUTCString()

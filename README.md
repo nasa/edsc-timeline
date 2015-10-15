@@ -54,8 +54,8 @@ Row data objects have the following format:
 var row = {
   id: "examplerow1",      // Unique string used to identify the row
   title: "Example row 1", // Human-readable string used to label the row
-  min: new Date(0),       // Earliest date for which the row has data
-  max: new Date(),        // Latest date for which the row has data
+  min: new Date(0) / 1000,// Earliest unix timestamp for which the row has data
+  max: new Date() / 1000, // Latest unix timestamp for which the row has data
   color: '#ff0000'        // (Optional) Hex color to use for the row's data
 };
 
@@ -69,8 +69,8 @@ following format.
 
 ```javascript
 var data = {
-  min: new Date(2015, 01) / 1000, // UNIX timestamp of the start of the data
-  max: new Date() / 1000,         // UNIX timestamp of the end of the data
+  start: new Date(2015, 01) / 1000, // UNIX timestamp of the start of the data
+  end: new Date() / 1000,         // UNIX timestamp of the end of the data
   resolution: 'day',              // Time resolution of the data, "minute", "hour", "day", "month", or "year"
   intervals: [                    // Array of arrays of UNIX timestamps corresponding to
                                   // [start, end] intervals where data is present.

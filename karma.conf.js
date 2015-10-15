@@ -18,10 +18,10 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      { pattern: './spec/src/setup.js', included: true},
+      { pattern: './spec/setup.js', included: true},
       { pattern: './dist/' + pkg.name + '.min.js', included: true},
-      { pattern: './spec/src/helpers/*.coffee', included: true},
-      { pattern: './spec/src/**/*-spec.coffee', included: true}
+      { pattern: './spec/helpers/*', included: true},
+      { pattern: './spec/**/*-spec.coffee', included: true}
     ],
 
 
@@ -33,7 +33,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      "./spec/src/**/*": ["webpack"]
+      "./spec/**/*": ["webpack"]
     },
 
     webpack: {
@@ -74,6 +74,6 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: true
+    singleRun: false
   });
 };

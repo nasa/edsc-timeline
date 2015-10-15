@@ -4,7 +4,6 @@ buildInterval = require('../html/interval.hbs')
 stringUtil = require('./util/string')
 pluginUtil = require('./util/plugin')
 svgUtil = require('./util/svg')
-Draggable = require('./timeline/draggable')
 TemporalDisplay = require('./timeline/temporalDisplay')
 TemporalFencepost = require('./timeline/fencepost')
 TemporalSelectionBehavior = require('./timeline/behaviors/temporalSelection')
@@ -189,8 +188,8 @@ class Timeline extends pluginUtil.Base
 
     before_color = if before_start then color else 'transparent'
     after_color = if after_end then color else 'transparent'
-    document.getElementById("arrow-left-#{id}").setAttribute('style', "fill: #{before_color}")
-    document.getElementById("arrow-right-#{id}").setAttribute('style', "fill: #{after_color}")
+    document.getElementById("arrow-left-#{id}")?.setAttribute('style', "fill: #{before_color}")
+    document.getElementById("arrow-right-#{id}")?.setAttribute('style', "fill: #{after_color}")
     null
 
   _drawData: (id) ->
@@ -326,6 +325,12 @@ class Timeline extends pluginUtil.Base
   isFocus: (t0) ->
     focus = @_focus
     (!focus && !t0) || (focus && t0 && Math.abs(t0 - focus) < 1000)
+
+  getFocus: ->
+    if @_focus
+      [@_focus, @_focusEnd]
+    else
+      []
 
   focus: (t0, t1) ->
     t0 = null if @isFocus(t0)
@@ -528,11 +533,32 @@ class Timeline extends pluginUtil.Base
       @root.trigger(@scopedEventName('temporalchange'), ranges[0])
     @parent
 
-  setRowTemporal: (id, ranges) ->
+  getTemporal: ->
+    @_globalTemporal
+
+  clearTemporal: (event=false) ->
+    @setTemporal([], event)
+    for row in @_rows
+      row.temporal = null
+      if event
+        @root.trigger(@scopedEventName('rowtemporalremove'), row.id)
+        @root.trigger(@scopedEventName('rowtemporalchange'), row.id)
+    @_drawTemporalBounds()
+    @parent
+
+  setRowTemporal: (id, ranges, event=false) ->
     row = @_getRow(id)
     if row
       row.temporal = ranges
+      if event
+        setRemoveEvent = if ranges.length > 0 then 'rowtemporalset' else 'rowtemporalremove'
+        @root.trigger(@scopedEventName(setRemoveEvent), row.id, ranges[0])
+        @root.trigger(@scopedEventName('rowtemporalchange'), row.id, ranges[0])
+    @_drawTemporalBounds()
     @parent
+
+  getRowTemporal: (id) ->
+    @_getRow(id)?.temporal ? []
 
   _getRow: (id) ->
     for row in @_rows
@@ -544,19 +570,17 @@ class Timeline extends pluginUtil.Base
     rows = @_rows
     @_empty(overlay)
 
-    return unless rows.length > 0
-
     globalIndexes = []
     for row, index in rows
       if row.temporal
-        @_createTemporalRegion(overlay, row.temporal, [index])
+        @_createTemporalRegion(overlay, row.temporal, [index], row.id)
       else
         globalIndexes.push(index)
 
     if @_globalTemporal
       @_createTemporalRegion(overlay, @_globalTemporal, globalIndexes)
 
-  _createSelectionRegion: (overlay, x0, x1, indexes) ->
+  _createSelectionRegion: (overlay, x0, x1, indexes, rowId) ->
     left = new TemporalFencepost(overlay, x0, MAX_Y)
     right = new TemporalFencepost(overlay, x1, MAX_Y)
 
@@ -565,7 +589,10 @@ class Timeline extends pluginUtil.Base
       rightX = Math.max(left.x, right.x)
       start = new Date(@positionToTime(leftX))
       stop = new Date(@positionToTime(rightX))
-      @setTemporal([[start, stop]], true)
+      if rowId?
+        @setRowTemporal(rowId, [[start, stop]], true)
+      else
+        @setTemporal([[start, stop]], true)
       null
 
     left.on 'commit', update, this
@@ -580,9 +607,9 @@ class Timeline extends pluginUtil.Base
         height: ROW_HEIGHT
     [left, right]
 
-  _createTemporalRegion: (overlay, temporal, indexes) ->
+  _createTemporalRegion: (overlay, temporal, indexes, rowId) ->
     for [start, stop] in temporal
-      @_createSelectionRegion(overlay, @timeToPosition(start), @timeToPosition(stop), indexes)
+      @_createSelectionRegion(overlay, @timeToPosition(start), @timeToPosition(stop), indexes, rowId)
 
   _buildRect: (attrs) ->
     attrs = $.extend({x: MIN_X, x1: MAX_X, y: MIN_Y, y1: MAX_Y}, attrs)
@@ -623,17 +650,22 @@ class Timeline extends pluginUtil.Base
       time = prev
 
   _buildSvgTemplate: (templateFn, context) ->
-    $('<svg xmlns="http://www.w3.org/2000/svg" />').html(templateFn(context)).children()[0]
+    html = templateFn(context)
+    $svg = $('<svg xmlns="http://www.w3.org/2000/svg" />')
+    result = $svg.html(html).children()[0] # Ensures correct namespaces
+    result = $svg.append(html).children()[0] unless result? # Jasmine support
+    result
 
   _buildIntervalDisplay: (x0, x1, text, subText) ->
     width = x1 - x0
-    @_buildSvgTemplate buildInterval,
+    result = @_buildSvgTemplate buildInterval,
       ns: @namespace
       width: width
       x0: x0
       x1: x1
       text: text
       subText: subText
+    result
 
   _setHeight: ->
     rowsHeight = @_rows.length * ROW_HEIGHT + 2 * ROW_PADDING

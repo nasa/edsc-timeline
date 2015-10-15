@@ -2,7 +2,7 @@ Draggable = require('../draggable')
 
 module.exports = class
   addTo: (@tl) ->
-    el = @tl._findScopedEl('.draggable')
+    el = @tl._findScopedEl('.display')
     @_draggable = draggable = new Draggable(el, @animate)
     draggable.on 'dragmove', @_onDragMove, this
     draggable.on 'dragend', @_onDragEnd, this

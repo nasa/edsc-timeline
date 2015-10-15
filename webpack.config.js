@@ -35,7 +35,6 @@ module.exports = {
   },
   plugins: [
     new webpack.BannerPlugin(license),
-    new webpack.optimize.UglifyJsPlugin(),
     new webpack.ProvidePlugin({
       $: "jquery",
       jQuery: "jquery",
