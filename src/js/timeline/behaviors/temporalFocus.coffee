@@ -18,6 +18,7 @@ module.exports = class
 
   removeFrom: (tl) ->
     label = tl.scope('.date-label')
+    root = tl.root
     root.off(event, label, this[handler]) for own event, handler of @_labelEvents
     root.off(event, this[handler]) for own event, handler of @_rootEvents
 

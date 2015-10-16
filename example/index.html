@@ -29,6 +29,7 @@
         start: Date.UTC(2015, 1) / 1000,
         end: Date.UTC() / 1000,
         resolution: 'day',
+        color: '#ff0000',
         intervals: [
           [Date.UTC(2015, 4) / 1000, Date.UTC(2015, 5) / 1000],
           [Date.UTC(2015, 6) / 1000, Date.UTC(2015, 9) / 1000]
@@ -45,7 +46,6 @@
         title: "Example row 2",
         min: Date.UTC(0) / 1000,
         max: Date.UTC() / 1000,
-        color: '#ff0000'
       };
 
       $timelines.on('rangechange.timeline', function(e, start, end) {

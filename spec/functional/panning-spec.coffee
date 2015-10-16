@@ -5,7 +5,6 @@ describe 'Panning', ->
   describe 'when dragging the timeline', ->
     beforeEach ->
       @dt = @timespans.days(-25)
-      expect(@$tl).toHaveTimelineRange(@start, @present)
       @pan(@$tl, @dt)
 
     it 'updates the timeline range', ->

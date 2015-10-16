@@ -22,8 +22,8 @@ module.exports = class TemporalFencepost extends Draggable
     {line, triangle} = this
     @line = @triangle = null
 
-    line.parentNode.removeChild(line)
-    triangle.parentNode.removeChild(triangle)
+    line.parentNode?.removeChild(line)
+    triangle.parentNode?.removeChild(triangle)
     @disable()
 
   update: (x) ->

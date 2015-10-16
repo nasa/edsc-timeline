@@ -50,8 +50,8 @@
     "webpack": "^1.12.1"
   },
   "scripts": {
-    "prepublish": "webpack -p",
-    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS",
-    "start": "webpack -w"
+    "prepublish": "./node_modules/.bin/webpack -p",
+    "start": "./node_modules/.bin/webpack -w",
+    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS"
   }
 }

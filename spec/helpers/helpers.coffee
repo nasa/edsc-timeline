@@ -76,13 +76,15 @@ beforeEach ->
     x0 = $tl.timeline('timeToPosition', oldDate)
     x1 = $tl.timeline('timeToPosition', newDate)
     $el = @getFencepost($tl, oldDate)
+    offset = 0
     if $el.size() == 0
-      $el = $('.timeline-display-top')
+      $el = $tl.find('.timeline-display-top')
+      offset = $tl.position().left + $el.position().left
     else
       $el = $el.next()
 
     dx = x1 - x0
-    $el.simulate('drag', {dx: dx, dy: 0, x0: x0 + 24})
+    $el.simulate('drag', {dx: dx, dy: 0, x0: x0 + offset})
     $tl
 
   @clickDate = ($tl, label) ->

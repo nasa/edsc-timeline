@@ -4,6 +4,7 @@ describe 'Temporal selection', ->
       .timeline('rows', [@exampleRow, @exampleRow2])
       .timeline('data', 'examplerow', @exampleData)
       .timeline('data', 'examplerow2', @exampleData2)
+    @pan(@$tl, @timespans.days(-100)) # Ensures dragging calculations are correct after panning
     @globalStart = Date.UTC(2013, 7, 15)
     @globalEnd = Date.UTC(2013, 7, 30)
     @rowStart = Date.UTC(2013, 6, 15)

@@ -5,7 +5,7 @@ module.exports = class
     el = @tl._findScopedEl('.display-top')
     $(el).on 'click', @clear
 
-    @draggable = new Draggable(el, @animate)
+    @draggable = new Draggable(el, false)
       .on 'dragstart', @dragstart, this
       .on 'dragmove', @dragmove, this
       .on 'dragend', @dragend, this
@@ -13,8 +13,8 @@ module.exports = class
   removeFrom: (tl) ->
     tl._findScoped('.display-top').off 'click', @clear
     @draggable.dispose()
-    @_left.dispose()
-    @_right.dispose()
+    @_left?.dispose()
+    @_right?.dispose()
     @_left = @_right = @draggable = @tl = null
 
   clear: (e) =>
@@ -22,12 +22,12 @@ module.exports = class
 
   dragstart: (e) ->
     @_dragging = true
-    cursor = e.cursor
     tl = @tl
     overlay = tl.selectionOverlay
     tl._empty(overlay)
     indexes = (i for i in [0...tl._rows.length])
-    [@_left, @_right] = tl._createSelectionRegion(overlay, cursor.x, cursor.x, indexes)
+    x = e.cursor.x - e.offset.x
+    [@_left, @_right] = tl._createSelectionRegion(overlay, x, x, indexes)
 
   dragmove: (e) ->
     @_right._onUpdate(e)

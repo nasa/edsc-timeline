@@ -163,7 +163,7 @@ class Timeline extends pluginUtil.Base
   data: (id, data) =>
     row = @_getRow(id)
     @_loadedRange = [data.start, data.end, data.resolution]
-    @_data[id] = [data.start, data.end, data.resolution, data.intervals, row.color]
+    @_data[id] = [data.start, data.end, data.resolution, data.intervals, data.color]
     @_drawData(id)
     @_drawIndicators(id)
     @parent
@@ -177,8 +177,8 @@ class Timeline extends pluginUtil.Base
     [_, _, _, intervals, color] = @_data[id]
     color = color ? '#25c85b'
 
-    row_min = if row.min then new Date(row.min * 1000) else new Date(0)
-    row_max = if row.max then new Date(row.max * 1000) else new Date()
+    row_min = (row.min && new Date(row.min * 1000)) ? (row.time_start && new Date(row.time_start)) ? new Date(0)
+    row_max = (row.max && new Date(row.max * 1000)) ? (row.time_end && new Date(row.time_end)) ? new Date()
 
     before_start =
       row_max < @start ||
@@ -190,6 +190,7 @@ class Timeline extends pluginUtil.Base
 
     before_color = if before_start then color else 'transparent'
     after_color = if after_end then color else 'transparent'
+
     document.getElementById("arrow-left-#{id}")?.setAttribute('style', "fill: #{before_color}")
     document.getElementById("arrow-right-#{id}")?.setAttribute('style', "fill: #{after_color}")
     null
@@ -656,10 +657,10 @@ class Timeline extends pluginUtil.Base
       time = prev
 
   _buildSvgTemplate: (templateFn, context) ->
-    html = templateFn(context)
-    $svg = $('<svg xmlns="http://www.w3.org/2000/svg" />')
-    result = $svg.html(html).children()[0] # Ensures correct namespaces
-    result = $svg.append(html).children()[0] unless result? # Jasmine support
+    html = '<svg xmlns="http://www.w3.org/2000/svg">' + templateFn(context) + '</svg>'
+    $dom = $('<div />')
+    result = $dom.html(html).find('svg').children()[0] # Ensures correct namespaces
+    result = $dom.append(html).find('svg').children()[0] unless result? # Jasmine support
     result
 
   _buildIntervalDisplay: (x0, x1, text, subText) ->

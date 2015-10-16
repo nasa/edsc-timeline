@@ -29,13 +29,13 @@ module.exports = class
     rightEdge = window.innerWidth if rightEdge > window.innerWidth
     tooltip.css("left", ((leftEdge + rightEdge)/2 - tooltip.width()/2) + "px")
     dataTop = matrix.f
-    timelineTop = $('.timeline-container').offset().top
+    timelineTop = @tl.root.offset().top
     tooltip.css("top", (dataTop - timelineTop  - 33) + "px")
-
     tooltip.show()
 
   _onDataMouseout: (e) =>
-    @tl._findScoped('.tooltip').hide().text('') # For some odd reason, .text is necessary for Jasmine
+    tooltip = @tl._findScoped('.tooltip').hide()
+    tooltip.find('.inner').text('') # For some odd reason, this is necessary for Jasmine
 
   _dateWithResolution: (date, resolution) ->
     str = new Date(date).toUTCString()
@@ -44,9 +44,12 @@ module.exports = class
       .replace(/:[^:]*\s/, ' ') # Remove seconds
 
     if resolution == 'day' || resolution == 'month' || resolution == 'year'
-      str = str.replace(/\s\d+:\S+/, '') # Remove time
+      str = str.replace(/\s\d+:\S+/, '').replace(' GMT', '') # Remove time and time zone
+
+    if resolution == 'month' || resolution == 'year'
+      str = str.replace(/^\d+\s/, '') # Remove date
 
     if resolution == 'year'
-      str = str.replace(/^\S+\s/, '') # Remove date
+      str = str.replace(/^\S+\s/, '') # Remove month
 
     str

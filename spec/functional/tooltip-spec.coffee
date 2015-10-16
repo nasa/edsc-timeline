@@ -38,7 +38,7 @@ describe 'Tooltip', ->
 
       it 'displays a tooltip with day-level precision', ->
         expect($('.timeline-tooltip .inner').text())
-          .toEqual('01 Jun 2013 GMT to 01 Sep 2013 GMT')
+          .toEqual('01 Jun 2013 to 01 Sep 2013')
 
   describe 'when viewing data with month-level zoom level', ->
     hookBuildWithResolution('month')
@@ -48,7 +48,7 @@ describe 'Tooltip', ->
 
       it 'displays a tooltip with day-level precision', ->
         expect($('.timeline-tooltip .inner').text())
-          .toEqual('01 Jun 2013 GMT to 01 Sep 2013 GMT')
+          .toEqual('Jun 2013 to Sep 2013')
 
   describe 'when viewing data with year-level zoom level', ->
     hookBuildWithResolution('year')
@@ -58,4 +58,4 @@ describe 'Tooltip', ->
 
       it 'displays a tooltip with month-level precision', ->
         expect($('.timeline-tooltip .inner').text())
-          .toEqual('Jun 2013 GMT to Sep 2013 GMT')
+          .toEqual('2013 to 2013')
