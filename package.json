@@ -1,5 +1,6 @@
 {
   "name": "edsc-timeline",
+  "main": "src/js/edsc-timeline.coffee",
   "description": "Timeline component used by Earthdata Search",
   "version": "1.0.0",
   "repository": {
