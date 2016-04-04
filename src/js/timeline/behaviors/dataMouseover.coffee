@@ -13,6 +13,7 @@ module.exports = class
     tooltip = tl._findScoped('.tooltip')
     data = e.target
 
+    indeterminate = data.parentNode.className.baseVal.indexOf('indeterminate') != -1
     id = data.parentNode.className.baseVal.split(' ')[0]
     resolution = tl._data[id][2]
     intervals = tl._data[id][3]
@@ -20,7 +21,9 @@ module.exports = class
     interval = intervals[nodes.index(data)]
     start = interval[0] * 1000
     stop = interval[1] * 1000
-    tooltip.find('.inner').text("#{@_dateWithResolution(start, resolution)} to #{@_dateWithResolution(stop, resolution)}")
+    text = "#{@_dateWithResolution(start, resolution)} to #{@_dateWithResolution(stop, resolution)}"
+    text += " (Specific Ranges Unavailable)" if indeterminate
+    tooltip.find('.inner').text(text)
 
     matrix = data.getScreenCTM()
     leftEdge = matrix.e + data.x.baseVal.value
