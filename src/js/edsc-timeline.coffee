@@ -112,6 +112,7 @@ class Timeline extends pluginUtil.Base
     @root = $(dom).appendTo(@root)
 
     @_setupDomVars()
+    @_setupDefs()
     @_setupDisplay()
     @_setupBehaviors()
 
@@ -163,7 +164,7 @@ class Timeline extends pluginUtil.Base
   data: (id, data) =>
     row = @_getRow(id)
     @_loadedRange = [data.start, data.end, data.resolution]
-    @_data[id] = [data.start, data.end, data.resolution, data.intervals, data.color]
+    @_data[id] = [data.start, data.end, data.resolution, data.intervals, data.color, data.indeterminate]
     @_drawData(id)
     @_drawIndicators(id)
     @parent
@@ -205,7 +206,7 @@ class Timeline extends pluginUtil.Base
 
     zoom = @_zoom
 
-    [start, end, resolution, intervals, color] = @_data[id] ? [@start - 1 , @end + 1, RESOLUTIONS[zoom - 2], [], null]
+    [start, end, resolution, intervals, color, indeterminate] = @_data[id] ? [@start - 1 , @end + 1, RESOLUTIONS[zoom - 2], [], null]
 
     match = @root[0].getElementsByClassName(id)
     el = null
@@ -227,13 +228,15 @@ class Timeline extends pluginUtil.Base
         height: ROW_HEIGHT - 7
         rx: 10
         ry: 10
-      attrs['class'] = @scope('imprecise') if resolution != RESOLUTIONS[zoom - 2]
+      attrs['class'] = @scope('imprecise') if resolution && resolution != RESOLUTIONS[zoom - 2]
       rect = @_buildSvgElement 'rect', attrs
       rect.setAttribute('style', "fill: #{color}") if color?
       el.appendChild(rect)
 
     # Remove 'timeline-loading' class
-    el.setAttribute('class', "#{id} #{@scope('data')}")
+    className = "#{id} #{@scope('data')}"
+    className += " #{@scope('indeterminate')}" if indeterminate
+    el.setAttribute('class', className)
 
     @tlRows.appendChild(el)
 
@@ -410,6 +413,28 @@ class Timeline extends pluginUtil.Base
     @timeline = @_findScopedEl('.draggable')
     @tlRows = @_findScopedEl('.rows')
     @axis = @_findScopedEl('.axis')
+
+  _setupDefs: ->
+    stripeId = @scope("stripe")
+    stripe = @_buildSvgElement('pattern',
+      id: stripeId
+      patternUnits: "userSpaceOnUse"
+      width: 8
+      height: 8)
+    stripeLine = @_buildSvgElement('path', d: "M-2,2 l4,-4 M0,8 l8-8 M6,10 l4,-4")
+    stripeBox = @_buildSvgElement('rect', x: 0, y: 0, width: 8, height: 8)
+    stripe.appendChild(stripeBox)
+    stripe.appendChild(stripeLine)
+    mask = @_buildSvgElement('mask', id: @scope('stripe-mask'))
+    maskBox = @_buildSvgElement('rect',
+      x: MIN_X,
+      y: MIN_Y
+      width: MAX_X - MIN_X
+      height: MAX_Y - MIN_Y
+      style: "fill: url(##{stripeId})")
+    mask.appendChild(maskBox)
+    svgUtil.addDef(@svg, stripe)
+    svgUtil.addDef(@svg, mask)
 
   _setupDisplay: ->
     offset = @_findScoped('.tools').width()
