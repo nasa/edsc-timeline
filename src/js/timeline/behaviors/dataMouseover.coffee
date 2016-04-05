@@ -46,7 +46,7 @@ module.exports = class
       .replace(/^\S+\s/, '') # Remove leading word (day of week)
       .replace(/:[^:]*\s/, ' ') # Remove seconds
 
-    if resolution == 'day' || resolution == 'month' || resolution == 'year'
+    if !resolution || resolution == 'day' || resolution == 'month' || resolution == 'year'
       str = str.replace(/\s\d+:\S+/, '').replace(' GMT', '') # Remove time and time zone
 
     if resolution == 'month' || resolution == 'year'
