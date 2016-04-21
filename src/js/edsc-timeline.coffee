@@ -112,7 +112,6 @@ class Timeline extends pluginUtil.Base
     @root = $(dom).appendTo(@root)
 
     @_setupDomVars()
-    @_setupDefs()
     @_setupDisplay()
     @_setupBehaviors()
 
@@ -413,28 +412,6 @@ class Timeline extends pluginUtil.Base
     @timeline = @_findScopedEl('.draggable')
     @tlRows = @_findScopedEl('.rows')
     @axis = @_findScopedEl('.axis')
-
-  _setupDefs: ->
-    stripeId = @scope("stripe")
-    stripe = @_buildSvgElement('pattern',
-      id: stripeId
-      patternUnits: "userSpaceOnUse"
-      width: 8
-      height: 8)
-    stripeLine = @_buildSvgElement('path', d: "M-2,2 l4,-4 M0,8 l8-8 M6,10 l4,-4")
-    stripeBox = @_buildSvgElement('rect', x: 0, y: 0, width: 8, height: 8)
-    stripe.appendChild(stripeBox)
-    stripe.appendChild(stripeLine)
-    mask = @_buildSvgElement('mask', id: @scope('stripe-mask'))
-    maskBox = @_buildSvgElement('rect',
-      x: MIN_X,
-      y: MIN_Y
-      width: MAX_X - MIN_X
-      height: MAX_Y - MIN_Y
-      style: "fill: url(##{stripeId})")
-    mask.appendChild(maskBox)
-    svgUtil.addDef(@svg, stripe)
-    svgUtil.addDef(@svg, mask)
 
   _setupDisplay: ->
     offset = @_findScoped('.tools').width()
