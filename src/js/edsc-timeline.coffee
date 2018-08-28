@@ -1,4 +1,4 @@
-require '../css/edsc-timeline.less'
+require('../css/edsc-timeline.less')
 buildDom = require('../html/timeline.hbs')
 buildInterval = require('../html/interval.hbs')
 stringUtil = require('./util/string')

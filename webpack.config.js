@@ -8,6 +8,7 @@ license = fs.readFileSync('./LICENSE')
   .split(/\s+---\s+/, 1)[0];
 
 module.exports = {
+  mode: 'development',
   context: __dirname,
   entry: "./src/js/" + pkg.name + ".coffee",
   output: {
@@ -15,14 +16,12 @@ module.exports = {
     filename: pkg.name + ".min.js"
   },
   module: {
-    loaders: [
-      { test: /\.css$/, loader: "style!css" },
-      { test: /\.less$/, loader: "style!css!less" },
-      { test: /\.coffee$/, loader: "coffee" },
-      { test: /\.(coffee\.md|litcoffee)$/, loader: "coffee?literate" },
+    rules: [
+      { test: /\.css$/, loader: "style-loader!css-loader" },
+      { test: /\.less$/, loader: "style-loader!css-loader!less-loader" },
+      { test: /\.coffee$/, loader: "coffee-loader" },
       { test: /\.(gif|png)$/, loader: "url-loader?limit=100000" },
-      { test: /\.hbs$/, loader: "handlebars-loader" },
-      { test: /\.jpg$/, loader: "file-loader" }
+      { test: /\.hbs$/, loader: "handlebars-loader" }
     ]
   },
   devtool: '#sourcemap',
@@ -31,9 +30,11 @@ module.exports = {
     "window": "window"
   },
   resolve: {
-    extensions: ['', '.js', '.json', '.coffee']
+    extensions: ['.js', '.json', '.coffee']
   },
   plugins: [
+    // https://github.com/webpack/webpack/issues/6556
+    new webpack.LoaderOptionsPlugin({ options: {} }),
     new webpack.BannerPlugin(license),
     new webpack.ProvidePlugin({
       $: "jquery",
