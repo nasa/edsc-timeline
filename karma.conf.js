@@ -37,6 +37,7 @@ module.exports = function(config) {
     },
 
     webpack: {
+      mode: 'development',
       module: webpackConfig.module,
       resolve: webpackConfig.resolve,
       externals: {

@@ -69,8 +69,8 @@ beforeEach ->
         $focus = $tl.find('.timeline-focus')
         startPx = Math.floor($tl.timeline('timeToPosition', start))
         endPx = Math.floor($tl.timeline('timeToPosition', end))
-        hasLeftFocus = $focus.find("rect[width^=\"#{startPx + 100000}\"]").size() > 0
-        hasRightFocus = $focus.find("rect[x^=\"#{endPx}\"]").size() > 0
+        hasLeftFocus = $focus.find("rect[width^=\"#{startPx + 100000}\"]").length > 0
+        hasRightFocus = $focus.find("rect[x^=\"#{endPx}\"]").length > 0
 
         actualStart = actualEnd = null
         $children = $focus.children()
@@ -98,7 +98,7 @@ beforeEach ->
     toHaveNoFocusedTimeSpan: (util, customEqualityTesters) ->
       compare: ($tl) ->
         $focus = $tl.find('.timeline-focus')
-        result = $focus.children().size() == 0
+        result = $focus.children().length == 0
         {
           pass: result
           message: "Expected timeline #{to(!result)} have focus"
@@ -148,16 +148,35 @@ beforeEach ->
         startX = $tl.timeline('timeToPosition', start)
         endX = $tl.timeline('timeToPosition', end)
         width = Math.abs(endX - startX)
-        mag = $tl.width()
+        console.log 'width ' + width
 
-        hasStart = getFencepost($tl, start).size() > 0
-        hasEnd = getFencepost($tl, start).size() > 0
+        mag = $tl.width()
+        console.log 'mag width ' + mag
+
+        hasStart = getFencepost($tl, start).length > 0
+        console.log getFencepost($tl, start)
+        console.log 'hasStart ' + hasStart
+
+        hasEnd = getFencepost($tl, end).length > 0
+        console.log getFencepost($tl, end)
+        console.log 'hasEnd ' + hasEnd
+
         hasArea = false
         $selection.find('rect').each ->
           x = parseFloat($(this).attr('x'))
           w = parseFloat($(this).attr('width'))
-          hasArea = true if closeTo(startX, x, mag) && closeTo(width, w, mag)
+          console.log 'x ' + x
+          console.log 'w ' + w
+          if closeTo(startX, x, mag) && closeTo(width, w, mag)
+            console.log 'heyo'
+            hasArea = true
+            return false
+
+        console.log 'hasArea ' + hasArea
+
         result = hasStart && hasEnd && hasArea
+        console.log 'result ' + result
+        console.log '--'
         {
           pass: result
           message: "Expected timeline
