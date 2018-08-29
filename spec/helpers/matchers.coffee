@@ -148,35 +148,23 @@ beforeEach ->
         startX = $tl.timeline('timeToPosition', start)
         endX = $tl.timeline('timeToPosition', end)
         width = Math.abs(endX - startX)
-        console.log 'width ' + width
 
         mag = $tl.width()
-        console.log 'mag width ' + mag
 
         hasStart = getFencepost($tl, start).length > 0
-        console.log getFencepost($tl, start)
-        console.log 'hasStart ' + hasStart
 
         hasEnd = getFencepost($tl, end).length > 0
-        console.log getFencepost($tl, end)
-        console.log 'hasEnd ' + hasEnd
 
         hasArea = false
         $selection.find('rect').each ->
           x = parseFloat($(this).attr('x'))
           w = parseFloat($(this).attr('width'))
-          console.log 'x ' + x
-          console.log 'w ' + w
           if closeTo(startX, x, mag) && closeTo(width, w, mag)
-            console.log 'heyo'
             hasArea = true
             return false
 
-        console.log 'hasArea ' + hasArea
 
         result = hasStart && hasEnd && hasArea
-        console.log 'result ' + result
-        console.log '--'
         {
           pass: result
           message: "Expected timeline
