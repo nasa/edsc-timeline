@@ -77,9 +77,9 @@ beforeEach ->
     x1 = $tl.timeline('timeToPosition', newDate)
     $el = @getFencepost($tl, oldDate)
     offset = 0
-    if $el.size() == 0
+    if $el.length == 0
       $el = $tl.find('.timeline-display-top')
-      offset = $tl.position().left + $el.position().left
+      offset = $el.offset().left + $el.outerWidth() / 2 - $tl.offset().left
     else
       $el = $el.next()
 
