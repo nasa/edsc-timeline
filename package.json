@@ -30,7 +30,7 @@
     "es5-shim": "^4.5.10",
     "expose-loader": "^0.7.5",
     "file-loader": "^0.8.5",
-    "handlebars": "^4.1.2",
+    "handlebars": "^4.4.5",
     "handlebars-loader": "^1.7.0",
     "jasmine": "^3.2.0",
     "jasmine-core": "^2.99.1",
