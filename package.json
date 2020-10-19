@@ -1,11 +1,12 @@
 {
-  "name": "edsc-timeline",
-  "main": "src/js/edsc-timeline.coffee",
+  "name": "@edsc/timeline",
+  "title": "Earthdata Search Components: Timeline",
+  "main": "dist/edsc-timeline.min.js",
   "description": "Timeline component used by Earthdata Search",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "ssh://git@git.earthdata.nasa.gov:7999/edsc/earthdata-timeline.git"
+    "url": "git+https://github.com/nasa/edsc-timeline.git.git"
   },
   "copyright": {
     "year": "© 2007-2014",
@@ -19,9 +20,30 @@
     {
       "name": "Patrick Quinn",
       "email": "patrick@element84.com"
+    },
+    {
+      "name": "Ryan Abbott",
+      "email": "ryan@element84.com"
+    },
+    {
+      "name": "Matthew Crouch",
+      "email": "matthew@element84.com"
+    },
+    {
+      "name": "Trevor Lang",
+      "email": "trevor@element84.com"
     }
   ],
   "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/nasa/edsc-timeline/issues"
+  },
+  "homepage": "https://github.com/nasa/edsc-timeline/",
+  "keywords": [
+    "Earthdata Search",
+    "Timeline",
+    "NASA"
+  ],
   "devDependencies": {
     "ajv": "^6.5.3",
     "coffee-loader": "^0.7.3",
@@ -52,9 +74,9 @@
     "webpack-cli": "^3.1.0"
   },
   "scripts": {
-    "prepare": "./node_modules/.bin/webpack -p",
-    "start": "./node_modules/.bin/webpack -w",
-    "test": "./node_modules/.bin/karma start --single-run --browsers ChromeHeadlessNoSandbox"
+    "prepare": "webpack --mode production",
+    "start": "webpack --mode development --watch",
+    "test": "karma start --single-run --browsers ChromeHeadlessNoSandbox"
   },
   "dependencies": {}
 }
