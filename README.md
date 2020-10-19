@@ -12,11 +12,12 @@ The edsc-timeline plugin was developed as a component of
 
 ## Installation
 
-Copy the contents of the `dist/` folder to your site. Include jQuery and
-the Javascript on a page, for instance:
+    npm install @edsc/timeline
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <script src="edsc-timeline/edsc-timeline.min.js"></script>
+You will also need to include jQuery, for instance:
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+
 
 ## Usage
 

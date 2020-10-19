@@ -19,7 +19,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       { pattern: './spec/setup.js', included: true},
-      { pattern: './dist/' + pkg.name + '.min.js', included: true},
+      { pattern: './dist/edsc-timeline.min.js', included: true},
       { pattern: './spec/helpers/*', included: true},
       { pattern: './spec/**/*-spec.coffee', included: true}
     ],

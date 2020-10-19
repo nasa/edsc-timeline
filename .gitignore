@@ -2,3 +2,4 @@
 tmp/
 .idea
 npm-debug.log
+dist

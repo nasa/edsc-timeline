@@ -10,10 +10,10 @@ license = fs.readFileSync('./LICENSE')
 module.exports = {
   mode: 'development',
   context: __dirname,
-  entry: "./src/js/" + pkg.name + ".coffee",
+  entry: "./src/js/edsc-timeline.coffee",
   output: {
     path: __dirname + "/dist",
-    filename: pkg.name + ".min.js"
+    filename: "edsc-timeline.min.js"
   },
   module: {
     rules: [
