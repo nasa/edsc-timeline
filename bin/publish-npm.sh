@@ -9,6 +9,7 @@ echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
 
 # build package
 npm install
+npm run prepare
 
 # publish package
 # --access public because scoped packages default to private publishing
