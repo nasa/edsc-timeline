@@ -69,6 +69,7 @@
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
     "script-loader": "^0.6.1",
+    "snyk": "^1.420.1",
     "style-loader": "^0.12.4",
     "url-loader": "^1.1.1",
     "webpack": "^4.44.2",
