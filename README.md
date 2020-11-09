@@ -1,6 +1,7 @@
 <h1>Earthdata Search Components:<br>Timeline</h1>
 
-![Build Status](https://github.com/nasa/earthdata-search/workflows/CI/badge.svg?branch=master)
+[![npm version](https://badge.fury.io/js/%40edsc%2Ftimeline.svg)](https://badge.fury.io/js/%40edsc%2Ftimeline)
+![Build Status](https://github.com/nasa/edsc-timeline/workflows/CI/badge.svg?branch=master)
 
 A jQuery plugin implementing a timeline view of data, allowing
 time range selection as well as keyboard and touch interaction
