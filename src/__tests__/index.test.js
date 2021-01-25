@@ -9,10 +9,10 @@ Enzyme.configure({ adapter: new Adapter() })
 function setup() {
   const props = {}
 
-  const enzymeWrEDSCTimelineer = shallow(<EDSCTimeline {...props} />)
+  const enzymeWrapper = shallow(<EDSCTimeline {...props} />)
 
   return {
-    enzymeWrEDSCTimelineer,
+    enzymeWrapper,
     props
   }
 }
@@ -23,8 +23,8 @@ beforeEach(() => {
 
 describe('EDSCTimeline component', () => {
   test('renders hello', () => {
-    const { enzymeWrEDSCTimelineer } = setup()
+    const { enzymeWrapper } = setup()
 
-    expect(enzymeWrEDSCTimelineer.find('h3').text()).toEqual('Coming Soon!')
+    expect(enzymeWrapper.find('h3').text()).toEqual('Coming Soon!')
   })
 })
