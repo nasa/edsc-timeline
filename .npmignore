@@ -1,11 +1,11 @@
+.eslintignore
+.eslintrc
 .nvmrc
-.travis
-.travis.yml
+babel.config.js
 bin
+coverage
 example
 source.tgz
 src
 tmp
 webpack.config.js
-spec
-karma.conf.js
