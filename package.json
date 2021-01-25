@@ -1,7 +1,7 @@
 {
   "name": "@edsc/timeline",
   "title": "Earthdata Search Components: Timeline",
-  "main": "dist/edsc-timeline.min.js",
+  "main": "dist/index.js",
   "description": "Timeline component used by Earthdata Search",
   "version": "1.0.1",
   "repository": {
@@ -12,15 +12,7 @@
     "year": "© 2007-2020",
     "organization": "United States Government as represented by the Administrator of the National Aeronautics and Space Administration. All Rights Reserved."
   },
-  "author": {
-    "name": "Patrick Quinn",
-    "email": "patrick@element84.com"
-  },
   "maintainers": [
-    {
-      "name": "Patrick Quinn",
-      "email": "patrick@element84.com"
-    },
     {
       "name": "Ryan Abbott",
       "email": "ryan@element84.com"
@@ -38,48 +30,76 @@
   "bugs": {
     "url": "https://github.com/nasa/edsc-timeline/issues"
   },
-  "homepage": "https://github.com/nasa/edsc-timeline/",
+  "homepage": "http://nasa.github.io/edsc-timeline/",
   "keywords": [
     "Earthdata Search",
     "Timeline",
     "NASA"
   ],
   "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-react": "^7.12.10",
+    "@babel/register": "^7.12.10",
     "ajv": "^6.5.3",
+    "babel-eslint": "^10.1.0",
+    "babel-jest": "^26.6.3",
+    "babel-loader": "^8.2.2",
+    "babel-plugin-istanbul": "^6.0.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
+    "bootstrap": "^4.6.0",
     "coffee-loader": "^0.7.3",
     "coffee-script": "^1.12.7",
     "css-loader": "^0.17.0",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.6",
     "es5-shim": "^4.5.10",
+    "eslint": "^7.18.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-loader": "^4.0.2",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "expose-loader": "^0.7.5",
     "file-loader": "^0.8.5",
+    "gh-pages": "^3.1.0",
     "handlebars": "^4.7.6",
     "handlebars-loader": "^1.7.0",
-    "jasmine": "^3.2.0",
-    "jasmine-core": "^2.99.1",
-    "jasmine-jquery": "^2.1.1",
-    "jasmine-reporters": "^2.3.2",
-    "jquery": "^3.5.1",
-    "jstree": "^3.3.5",
-    "karma": "^5.2.3",
-    "karma-chrome-launcher": "^3.1.0",
-    "karma-cli": "^0.1.2",
-    "karma-jasmine": "^4.0.1",
-    "karma-junit-reporter": "^2.0.1",
-    "karma-webpack": "^4.0.2",
-    "less": "^3.9.0",
-    "less-loader": "^4.1.0",
+    "html-webpack-plugin": "^4.5.1",
+    "jest": "^26.6.3",
+    "node-sass": "^5.0.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-github-corner": "^2.5.0",
+    "sass": "^1.32.5",
+    "sass-loader": "^10.1.1",
+    "sass-resources-loader": "^2.1.1",
     "script-loader": "^0.6.1",
     "snyk": "^1.420.1",
     "style-loader": "^0.12.4",
+    "terser-webpack-plugin": "^4.2.3",
     "url-loader": "^1.1.1",
     "webpack": "^4.44.2",
-    "webpack-cli": "^4.1.0"
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.2"
   },
   "scripts": {
-    "prepare": "webpack --mode production",
-    "start": "webpack --mode development --watch",
-    "test": "karma start --single-run --browsers ChromeHeadlessNoSandbox",
-    "test:bamboo": "karma start --reporters junit,progress --single-run --browsers ChromeHeadlessNoSandbox"
+    "build": "webpack",
+    "start": "webpack-dev-server --config example/webpack.config.js --mode development",
+    "cypress:open": "NODE_ENV=test cypress open",
+    "cypress:run": "NODE_ENV=test cypress run -c video=false",
+    "test": "NODE_OPTIONS=--max_old_space_size=4096 jest",
+    "silent-test": "NODE_OPTIONS=--max_old_space_size=4096 jest --silent",
+    "test:watch": "NODE_OPTIONS=--max_old_space_size=4096 jest --watchAll",
+    "test:bamboo": "cypress run --reporter junit --reporter-options \"mochaFile=junit.xml\" -c video=false",
+    "prepare": "npm run build",
+    "predeploy": "webpack --config example/webpack.config.js",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {}
 }
