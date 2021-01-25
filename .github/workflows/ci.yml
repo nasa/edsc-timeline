@@ -35,6 +35,8 @@ jobs:
       run: npm ci
     - name: Run tests
       run: npm run test
+    - name: Upload coverage to codecov
+      uses: codecov/codecov-action@v1
   deploy:
     if: success() && github.ref == 'refs/heads/master' # only run on master success
     needs: [tests] # only run after tests job completes
