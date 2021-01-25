@@ -5,7 +5,11 @@ babel.config.js
 bin
 coverage
 example
+jest.config.js
 source.tgz
 src
 tmp
 webpack.config.js
+.codecov.yml
+.github/workflows/ci.yml
+.snyk
