@@ -40,8 +40,7 @@ jobs:
     - name: Upload coverage to codecov
       uses: codecov/codecov-action@v1
       with:
-        functionalities:
-        - fix
+        functionalities: fix
   deploy:
     if: success() && github.ref == 'refs/heads/master' # only run on master success
     needs: [tests] # only run after tests job completes
