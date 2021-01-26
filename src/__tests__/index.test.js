@@ -7,7 +7,13 @@ import EDSCTimeline from '../index'
 Enzyme.configure({ adapter: new Adapter() })
 
 function setup() {
-  const props = {}
+  const props = {
+    rows: [],
+    show: true,
+    onTemporalSet: jest.fn(),
+    onFocusedTemporalSet: jest.fn(),
+    onTimelineMove: jest.fn()
+  }
 
   const enzymeWrapper = shallow(<EDSCTimeline {...props} />)
 
@@ -22,9 +28,19 @@ beforeEach(() => {
 })
 
 describe('EDSCTimeline component', () => {
-  test('renders hello', () => {
+  test('renders test timeline', () => {
     const { enzymeWrapper } = setup()
 
-    expect(enzymeWrapper.find('h3').text()).toEqual('Coming Soon!')
+    expect(enzymeWrapper.find('div.timeline').text()).toEqual('Testing')
+  })
+
+  describe('Show prop', () => {
+    test('hides the timeline when false', () => {
+      const { enzymeWrapper } = setup()
+
+      enzymeWrapper.setProps({ show: false })
+
+      expect(enzymeWrapper.find('div.timeline').exists()).toBeFalsy()
+    })
   })
 })
