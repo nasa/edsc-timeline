@@ -33,10 +33,11 @@ const App = () => {
         </button>
       </form>
 
-      <div>
+      <div className="timeline-one">
         <EDSCTimeline
           rows={[]}
           show={showTimeline}
+          zoom={3}
         />
       </div>
 
