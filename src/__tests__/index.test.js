@@ -2,6 +2,8 @@ import React from 'react'
 import Enzyme, { shallow } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
 
+import AutoSizer from "react-virtualized-auto-sizer"
+
 import EDSCTimeline from '../index'
 
 Enzyme.configure({ adapter: new Adapter() })
@@ -31,7 +33,7 @@ describe('EDSCTimeline component', () => {
   test('renders test timeline', () => {
     const { enzymeWrapper } = setup()
 
-    expect(enzymeWrapper.find('div.timeline').text()).toEqual('Testing')
+    expect(enzymeWrapper.find(AutoSizer).length).toBe(1)
   })
 
   describe('Show prop', () => {
@@ -40,7 +42,7 @@ describe('EDSCTimeline component', () => {
 
       enzymeWrapper.setProps({ show: false })
 
-      expect(enzymeWrapper.find('div.timeline').exists()).toBeFalsy()
+      expect(enzymeWrapper.find('.timeline').length).toBe(0)
     })
   })
 })
