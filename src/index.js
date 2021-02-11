@@ -1,105 +1,137 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState
+} from 'react'
 import PropTypes from 'prop-types'
 
-import { FixedSizeList as List } from 'react-window'
 import { startCase } from 'lodash'
-import AutoSizer from 'react-virtualized-auto-sizer'
-import InfiniteLoader from 'react-window-infinite-loader'
 
 import { calculateTimeIntervals } from './utils/calculateTimeIntervals'
 import { determineIntervalLabel } from './utils/determineIntervalLabel'
 
-import { RESOLUTIONS } from './constants'
+import { RESOLUTIONS, INTERVAL_BUFFER, INTERVAL_THRESHOLD } from './constants';
 
 import './index.scss'
 
-export const TimelineList = ({
-  autoSizerRef,
-  height,
-  isItemLoaded,
-  onItemsRendered,
-  timeIntervals,
-  width,
-  zoomLevel
-}) => {
-  const listRef = useRef(null)
-
-  useEffect(() => {
-    console.log('listRef useEffect', listRef)
-    if (listRef.current) {
-      listRef.current.scrollToItem(20, 'center')
-    }
-  }, [listRef.current])
-
-  const TimeInterval = ({ index, style }) => {
-    let content
-    if (!isItemLoaded(index)) {
-      content = 'Loading...'
-    } else {
-      content = determineIntervalLabel(timeIntervals, index, zoomLevel)
-    }
-
-    return (
-      <div style={style}>
-        {content}
-      </div>
-    )
-  }
-
-  return (
-    <List
-      ref={(list) => {
-        autoSizerRef(list)
-        listRef.current = list
-      }}
-      className="timeline__list"
-      height={height}
-      itemCount={1000}
-      itemSize={100}
-      layout="horizontal"
-      width={width}
-    >
-      {TimeInterval}
-    </List>
-  )
-}
-
 export const EDSCTimeline = ({
   maxDate,
-  minDate,
   show,
   zoom
 }) => {
-  const infiniteLoaderRef = useRef(null)
+  const [scrollPosition, setScrollPosition] = useState(null)
+  const [scrollDirection, setScrollDirection] = useState(null)
 
   const [zoomLevel, setZoomLevel] = useState(zoom)
-  const [timeIntervals, setTimeIntervals] = useState(
-    calculateTimeIntervals(minDate, maxDate, zoomLevel)
-  )
+  const [timeIntervals, setTimeIntervals] = useState([
+    ...calculateTimeIntervals(maxDate, zoomLevel, INTERVAL_BUFFER, true),
+    ...calculateTimeIntervals(maxDate, zoomLevel, INTERVAL_BUFFER, false)
+  ])
 
   // Update the internal state when/if the prop changes
   useEffect(() => {
     setZoomLevel(zoom)
   }, [zoom])
 
+  useEffect(() => {
+    console.log('[DEBUG]: TIME_INTERVALS.LENGTH', timeIntervals.length)
+  }, [timeIntervals])
+
+  useEffect(() => {
+    console.log('[DEBUG]: SCROLL_POSTION ', scrollDirection)
+  }, [scrollDirection])
+
   const onChangeZoomLevel = (newZoomLevel) => {
     if (newZoomLevel > -1 && zoomLevel <= RESOLUTIONS.length - 1) {
       setZoomLevel(newZoomLevel)
-      setTimeIntervals(calculateTimeIntervals(minDate, maxDate, newZoomLevel))
+      setTimeIntervals(calculateTimeIntervals(maxDate, newZoomLevel, INTERVAL_BUFFER))
     }
   }
 
-  const hasNextPage = true
-  const isNextPageLoading = timeIntervals.length === 0
+  const intervalWidth = 100
+  const listWidth = (intervalWidth * timeIntervals.length)
+  const centerPx = listWidth / 2
 
-  const isItemLoaded = (index) => !hasNextPage || index < timeIntervals.length
+  const timelineWrapperRef = useRef(null)
 
-  const loadMoreItems = (startIndex, stopIndex) => {
-    console.log('startIndex', startIndex)
-    console.log('stopIndex', stopIndex)
+  const onWrapperScroll = useCallback((event) => {
+    const { target } = event
+    const { offsetWidth: containerWidth, scrollLeft: scrollLeftPos, scrollWidth } = target
 
-    return isNextPageLoading ? () => { } : loadNextPage
-  }
+    if ((scrollPosition !== scrollLeftPos) && (scrollPosition - scrollLeftPos < 0)) {
+      setScrollDirection('right')
+    } else {
+      setScrollDirection('left')
+    }
+
+    const loadMoreWindow = intervalWidth * INTERVAL_THRESHOLD
+
+    if (scrollDirection === 'left') {
+      if (scrollPosition > loadMoreWindow && scrollLeftPos <= loadMoreWindow) {
+        console.log('[LOAD] LEFT <---')
+
+        let currentTimeIntervals = timeIntervals
+        if (timeIntervals.length > (INTERVAL_BUFFER * 10)) {
+          currentTimeIntervals = currentTimeIntervals.slice(
+            0, (currentTimeIntervals.length - INTERVAL_BUFFER)
+          )
+        }
+
+        setTimeIntervals([
+          ...calculateTimeIntervals(timeIntervals[0], zoomLevel, INTERVAL_BUFFER, true),
+          ...currentTimeIntervals
+        ])
+
+        if (timelineWrapperRef.current) {
+          timelineWrapperRef.current.scrollTo(scrollPosition + (intervalWidth * INTERVAL_BUFFER), 0)
+        }
+      }
+    }
+
+    if (scrollDirection === 'right') {
+      const previousScrollRightPos = (scrollPosition + containerWidth + loadMoreWindow)
+      const scrollRightPos = (scrollLeftPos + containerWidth + loadMoreWindow)
+
+      if (previousScrollRightPos < scrollWidth && scrollRightPos >= scrollWidth) {
+        console.log('[LOAD] RIGHT --->')
+
+        let currentTimeIntervals = timeIntervals
+        if (timeIntervals.length > (INTERVAL_BUFFER * 10)) {
+          currentTimeIntervals = currentTimeIntervals.slice(
+            INTERVAL_BUFFER, (currentTimeIntervals.length - INTERVAL_BUFFER)
+          )
+        }
+
+        setTimeIntervals([
+          ...currentTimeIntervals,
+          ...calculateTimeIntervals(
+            timeIntervals[timeIntervals.length - 1], zoomLevel, INTERVAL_BUFFER, false
+          )
+        ])
+
+        if (timelineWrapperRef.current) {
+          timelineWrapperRef.current.scrollTo(
+            scrollPosition - (intervalWidth * INTERVAL_BUFFER) - loadMoreWindow, 0
+          )
+        }
+      }
+    }
+
+    setScrollPosition(scrollLeftPos)
+  }, [timeIntervals, scrollPosition, scrollDirection])
+
+  useLayoutEffect(() => {
+    // Center the timeline on load
+    timelineWrapperRef.current.scrollTo(centerPx, 0)
+
+    // timelineWrapperRef.current.addEventListener('scroll', onWrapperScroll)
+
+    // return (() => {
+    //   timelineWrapperRef.removeEventListener('scroll', onWrapperScroll)
+    // })
+  }, [timelineWrapperRef])
 
   return (
     <>
@@ -126,30 +158,33 @@ export const EDSCTimeline = ({
                 +
               </button>
             </section>
-            <AutoSizer className="timeline__wrapper">
-              {({ height, width }) => (
-                <InfiniteLoader
-                  ref={infiniteLoaderRef}
-                  itemCount={1000}
-                  isItemLoaded={isItemLoaded}
-                  loadMoreItems={loadMoreItems}
-                >
-                  {
-                    ({ onItemsRendered, ref }) => (
-                      <TimelineList 
-                        autoSizerRef={ref}
-                        height={height}
-                        isItemLoaded={isItemLoaded}
-                        onItemsRendered={onItemsRendered}
-                        timeIntervals={timeIntervals}
-                        width={width}
-                        zoomLevel={zoomLevel}
-                      />
+
+            <div
+              ref={timelineWrapperRef}
+              className="timeline__wrapper"
+              onScroll={onWrapperScroll}
+            >
+              <div
+                className="timeline__list"
+                style={{
+                  width: `${listWidth}px`
+                }}
+              >
+                {
+                  timeIntervals.map((interval) => {
+                    const [text, ...subText] = determineIntervalLabel(interval, zoomLevel)
+
+                    return (
+                      <div key={interval} className="timeline__interval">
+                        {text}
+                        <br />
+                        {subText}
+                      </div>
                     )
-                  }
-                </InfiniteLoader>
-              )}
-            </AutoSizer>
+                  })
+                }
+              </div>
+            </div>
           </div>
         )
       }

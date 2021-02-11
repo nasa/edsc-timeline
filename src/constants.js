@@ -9,6 +9,9 @@ const MS_PER_DECADE = MS_PER_YEAR * 10
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
+export const INTERVAL_BUFFER = 20
+export const INTERVAL_THRESHOLD = 5
+
 const formatTime = (date) => `${padStart(date.getUTCHours(), 2, '0')}:${padStart(date.getUTCMinutes(), 2, '0')}`
 const formatDay = (date) => padStart(date.getUTCDate(), 2, '0')
 const formatMonth = (date) => MONTHS[date.getUTCMonth()]

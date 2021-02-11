@@ -1,4 +1,9 @@
 .timeline {
+  &__wrapper {
+    overflow-y: scroll;
+    min-width: 100%;
+  }
+
   &__list {
     width: 100%;
     background-color: #1a1a1a;
@@ -8,5 +13,10 @@
     border-top: 1px solid #727272;
     box-shadow: 0 -10px 15px 0 rgba(0,0,0,.3);
     color: white;
+  }
+
+  &__interval {
+    display: inline-block;
+    width: 100px;
   }
 }
