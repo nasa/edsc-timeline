@@ -6,8 +6,7 @@ import { LABELS } from '../constants'
  * @param {Integer} index The index of the item being rendered in the react-window
  * @param {Integer} zoom The current zoom level of the timeline
  */
-export const determineIntervalLabel = (intervals, index, zoom) => {
-  const timeInterval = intervals[index]
+export const determineIntervalLabel = (timeInterval, zoom) => {
   const labels = LABELS[zoom](new Date(timeInterval))
 
   return labels
