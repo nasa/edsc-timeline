@@ -37,6 +37,7 @@ const App = () => {
         <EDSCTimeline
           rows={[]}
           show={showTimeline}
+          onTimelineMove={() => console.log('we movin!')}
           zoom={3}
         />
       </div>
