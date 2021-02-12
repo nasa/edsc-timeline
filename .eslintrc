@@ -2,7 +2,8 @@
   # Let eslint know were working as a browser to allow the standard globals (document, window, etc.)
   "env": {
     "browser": true,
-    "node": true
+    "node": true,
+    "jest": true
   },
   "parser": "babel-eslint",
   "parserOptions": {

@@ -9,9 +9,14 @@ import { ZOOM_LEVELS } from '../constants'
 export const roundTime = (time, zoom, increment = 0) => {
   // eslint-disable-next-line no-param-reassign
   time = Math.round(time / 1000) * 1000
+
   const date = new Date(time)
 
+  // Create an array that matches that accepted by Date.UTC that contains
+  // all the individual values of the timestamp
   let components = ['FullYear', 'Month', 'Date', 'Hours', 'Minutes'].map((c) => date[`getUTC${c}`]())
+
+  // Slice off only those that are more granular than the current zoom level
   components = components.slice(0, Math.max(components.length - zoom, 1))
 
   // Zoom to decade
@@ -28,5 +33,8 @@ export const roundTime = (time, zoom, increment = 0) => {
     components.push(0)
   }
 
+  // Create and return a new date where the elements that are beyond
+  // the scope of the current zoom level have been removed and will
+  // result in the defaul values
   return Date.UTC(...components)
 }
