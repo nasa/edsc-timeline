@@ -1,5 +1,4 @@
 import React, {
-  useCallback,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -12,28 +11,47 @@ import { startCase } from 'lodash'
 import { calculateTimeIntervals } from './utils/calculateTimeIntervals'
 import { determineIntervalLabel } from './utils/determineIntervalLabel'
 
-import { RESOLUTIONS, INTERVAL_BUFFER, INTERVAL_THRESHOLD } from './constants';
+import {
+  RESOLUTIONS,
+  INTERVAL_BUFFER,
+  INTERVAL_THRESHOLD
+} from './constants'
 
 import './index.scss'
 
 export const EDSCTimeline = ({
+  intervalWidth,
   maxDate,
   show,
   zoom
 }) => {
+  // Ref for the timeline to access the DOM element
+  const timelineWrapperRef = useRef(null)
+
+  // Store scroll position to help determine the direction a user is scrolling
   const [scrollPosition, setScrollPosition] = useState(null)
+
+  // Combine scroll positions state with scroll position from a scroll event to determine the scroll direction
   const [scrollDirection, setScrollDirection] = useState(null)
 
+  // Store the zoom level and allow for changing props to modify the state
   const [zoomLevel, setZoomLevel] = useState(zoom)
+
+  // Store the pixel width of the list of intervals
+  const [intervalListWidthInPixels, setIntervalListWidthInPixels] = useState(null)
+
+  // Store the pixel value of the center of the list of intervals
+  const [timelineCenterInPixels, setTimelineCenterInPixels] = useState(null)
+
+  // Store calculated time intervals that power the display of the timeline dates
   const [timeIntervals, setTimeIntervals] = useState([
     ...calculateTimeIntervals(maxDate, zoomLevel, INTERVAL_BUFFER, true),
     ...calculateTimeIntervals(maxDate, zoomLevel, INTERVAL_BUFFER, false)
   ])
 
-  // Update the internal state when/if the prop changes
-  useEffect(() => {
-    setZoomLevel(zoom)
-  }, [zoom])
+  /**
+   * DEBUG USEEFFECTS
+   */
 
   useEffect(() => {
     console.log('[DEBUG]: TIME_INTERVALS.LENGTH', timeIntervals.length)
@@ -43,94 +61,144 @@ export const EDSCTimeline = ({
     console.log('[DEBUG]: SCROLL_POSTION ', scrollDirection)
   }, [scrollDirection])
 
+  /**
+   * END DEBUG USEEFFECTS
+   */
+
+  // Update the internal state when/if the prop changes
+  useEffect(() => {
+    setZoomLevel(zoom)
+  }, [zoom])
+
+  // Update the internal state when/if the prop changes
+  useEffect(() => {
+    // Width (in px) of the DOM element containing the time intervals
+    setIntervalListWidthInPixels(intervalWidth * timeIntervals.length)
+
+    // Pixel value of the center of the timeline
+    setTimelineCenterInPixels(intervalListWidthInPixels / 2)
+  }, [timeIntervals])
+
+  /**
+   * Callback to change the current zoom level and recalculate timeIntervals
+   * @param {Integer} newZoomLevel New desired zoom level
+   */
   const onChangeZoomLevel = (newZoomLevel) => {
     if (newZoomLevel > -1 && zoomLevel <= RESOLUTIONS.length - 1) {
       setZoomLevel(newZoomLevel)
-      setTimeIntervals(calculateTimeIntervals(maxDate, newZoomLevel, INTERVAL_BUFFER))
+
+      setTimeIntervals([
+        ...calculateTimeIntervals(maxDate, newZoomLevel, INTERVAL_BUFFER, true),
+        ...calculateTimeIntervals(maxDate, newZoomLevel, INTERVAL_BUFFER, false)
+      ])
     }
   }
 
-  const intervalWidth = 100
-  const listWidth = (intervalWidth * timeIntervals.length)
-  const centerPx = listWidth / 2
+  /**
+   * Scroll the timeline backward (up, or to the left)
+   */
+  const scrollBackward = () => {
+    // If the underlying dataset has grown larger than desired, trim off 1 buffers
+    // worth of data from opposite of the array
+    let currentTimeIntervals = timeIntervals
+    if (timeIntervals.length > (INTERVAL_BUFFER * 10)) {
+      currentTimeIntervals = currentTimeIntervals.slice(
+        0, (currentTimeIntervals.length - INTERVAL_BUFFER)
+      )
+    }
 
-  const timelineWrapperRef = useRef(null)
+    setTimeIntervals([
+      ...calculateTimeIntervals(timeIntervals[0], zoomLevel, INTERVAL_BUFFER, true),
+      ...currentTimeIntervals
+    ])
 
-  const onWrapperScroll = useCallback((event) => {
+    if (timelineWrapperRef.current) {
+      // Appending data to the beginning of the underlying dataset requires us to scroll the user
+      // to back to the right, outside of the window that triggers another page to be loaded
+      timelineWrapperRef.current.scrollTo(
+        scrollPosition + (intervalWidth * INTERVAL_BUFFER), 0
+      )
+    }
+  }
+
+  /**
+   * Scroll the timeline forward (down, or to the right)
+   */
+  const scrollForward = (loadMoreWindow) => {
+    // If the underlying dataset has grown larger than desired, trim off 1 buffers
+    // worth of data from opposite of the array
+    let currentTimeIntervals = timeIntervals
+    if (timeIntervals.length > (INTERVAL_BUFFER * 10)) {
+      currentTimeIntervals = currentTimeIntervals.slice(
+        INTERVAL_BUFFER, (currentTimeIntervals.length - INTERVAL_BUFFER)
+      )
+    }
+
+    setTimeIntervals([
+      ...currentTimeIntervals,
+      ...calculateTimeIntervals(
+        timeIntervals[timeIntervals.length - 1], zoomLevel, INTERVAL_BUFFER, false
+      )
+    ])
+
+    if (timelineWrapperRef.current) {
+      // Appending data to the end of the underlying dataset requires us to scroll the user
+      // to back to the left, outside of the window that triggers another page to be loaded
+      timelineWrapperRef.current.scrollTo(
+        scrollPosition - (intervalWidth * INTERVAL_BUFFER) - loadMoreWindow, 0
+      )
+    }
+  }
+
+  /**
+   * Callback to update internal state when a scroll event is triggered
+   * @param {Object} event JavaScript event object associated with the scroll event
+   */
+  const onWrapperScroll = (event) => {
     const { target } = event
-    const { offsetWidth: containerWidth, scrollLeft: scrollLeftPos, scrollWidth } = target
+    const {
+      offsetWidth: containerWidth,
+      scrollLeft: scrollLeftPos,
+      scrollWidth
+    } = target
 
     if ((scrollPosition !== scrollLeftPos) && (scrollPosition - scrollLeftPos < 0)) {
-      setScrollDirection('right')
+      setScrollDirection('forward')
     } else {
-      setScrollDirection('left')
+      setScrollDirection('backward')
     }
 
     const loadMoreWindow = intervalWidth * INTERVAL_THRESHOLD
 
-    if (scrollDirection === 'left') {
+    if (scrollDirection === 'backward') {
+      // If the previous scroll position is outside of the window to trigger another page and
+      // the scroll position attached to the event is within the window
       if (scrollPosition > loadMoreWindow && scrollLeftPos <= loadMoreWindow) {
-        console.log('[LOAD] LEFT <---')
-
-        let currentTimeIntervals = timeIntervals
-        if (timeIntervals.length > (INTERVAL_BUFFER * 10)) {
-          currentTimeIntervals = currentTimeIntervals.slice(
-            0, (currentTimeIntervals.length - INTERVAL_BUFFER)
-          )
-        }
-
-        setTimeIntervals([
-          ...calculateTimeIntervals(timeIntervals[0], zoomLevel, INTERVAL_BUFFER, true),
-          ...currentTimeIntervals
-        ])
-
-        if (timelineWrapperRef.current) {
-          timelineWrapperRef.current.scrollTo(scrollPosition + (intervalWidth * INTERVAL_BUFFER), 0)
-        }
+        scrollBackward()
       }
     }
 
-    if (scrollDirection === 'right') {
+    if (scrollDirection === 'forward') {
+      // Determine the previous pixel position of the right edge of the timeline
       const previousScrollRightPos = (scrollPosition + containerWidth + loadMoreWindow)
+
+      // Determine the current pixel position of the right edge of the timeline
       const scrollRightPos = (scrollLeftPos + containerWidth + loadMoreWindow)
 
+      // If the previous scroll position is outside of the window to trigger another page and
+      // the scroll position attached to the event is within the window
       if (previousScrollRightPos < scrollWidth && scrollRightPos >= scrollWidth) {
-        console.log('[LOAD] RIGHT --->')
-
-        let currentTimeIntervals = timeIntervals
-        if (timeIntervals.length > (INTERVAL_BUFFER * 10)) {
-          currentTimeIntervals = currentTimeIntervals.slice(
-            INTERVAL_BUFFER, (currentTimeIntervals.length - INTERVAL_BUFFER)
-          )
-        }
-
-        setTimeIntervals([
-          ...currentTimeIntervals,
-          ...calculateTimeIntervals(
-            timeIntervals[timeIntervals.length - 1], zoomLevel, INTERVAL_BUFFER, false
-          )
-        ])
-
-        if (timelineWrapperRef.current) {
-          timelineWrapperRef.current.scrollTo(
-            scrollPosition - (intervalWidth * INTERVAL_BUFFER) - loadMoreWindow, 0
-          )
-        }
+        scrollForward(loadMoreWindow)
       }
     }
 
+    // Update the scroll position
     setScrollPosition(scrollLeftPos)
-  }, [timeIntervals, scrollPosition, scrollDirection])
+  }
 
   useLayoutEffect(() => {
     // Center the timeline on load
-    timelineWrapperRef.current.scrollTo(centerPx, 0)
-
-    // timelineWrapperRef.current.addEventListener('scroll', onWrapperScroll)
-
-    // return (() => {
-    //   timelineWrapperRef.removeEventListener('scroll', onWrapperScroll)
-    // })
+    timelineWrapperRef.current.scrollTo(timelineCenterInPixels, 0)
   }, [timelineWrapperRef])
 
   return (
@@ -167,11 +235,11 @@ export const EDSCTimeline = ({
               <div
                 className="timeline__list"
                 style={{
-                  width: `${listWidth}px`
+                  width: `${intervalListWidthInPixels}px`
                 }}
               >
                 {
-                  timeIntervals.map((interval) => {
+                  timeIntervals && timeIntervals.map((interval) => {
                     const [text, ...subText] = determineIntervalLabel(interval, zoomLevel)
 
                     return (
@@ -193,20 +261,24 @@ export const EDSCTimeline = ({
 }
 
 EDSCTimeline.defaultProps = {
-  show: true,
-  onTemporalSet: null,
-  onFocusedTemporalSet: null,
-  onTimelineMove: null,
-  minDate: 0,
+  intervalWidth: 100,
   maxDate: new Date().getTime(),
+  minDate: 0,
+  onFocusedTemporalSet: null,
+  onTemporalSet: null,
+  onTimelineMove: null,
+  show: true,
   zoom: 3
 }
 
 EDSCTimeline.propTypes = {
-  minDate: PropTypes.number, // minimum date timeline will allow scrolling
+  intervalWidth: PropTypes.number,
   maxDate: PropTypes.number, // maximum date timeline will allow scrolling
+  minDate: PropTypes.number, // minimum date timeline will allow scrolling
+  onFocusedTemporalSet: PropTypes.func,
+  onTemporalSet: PropTypes.func,
+  onTimelineMove: PropTypes.func,
   resolution: PropTypes.string, // resolution of timeline day/month/etc.
-  zoom: PropTypes.number,
   rows: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string, // ?
@@ -220,9 +292,7 @@ EDSCTimeline.propTypes = {
     })
   ).isRequired,
   show: PropTypes.bool,
-  onTemporalSet: PropTypes.func,
-  onFocusedTemporalSet: PropTypes.func,
-  onTimelineMove: PropTypes.func
+  zoom: PropTypes.number
 }
 
 export default EDSCTimeline

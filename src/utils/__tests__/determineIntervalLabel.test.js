@@ -1,58 +1,37 @@
-// import MockDate from 'mockdate'
+import MockDate from 'mockdate'
 
-// import { determineIntervalLabel } from '../determineIntervalLabel'
+import { determineIntervalLabel } from '../determineIntervalLabel'
 
-// beforeEach(() => {
-//   jest.clearAllMocks()
+beforeEach(() => {
+  jest.clearAllMocks()
 
-//   // MockDate is used here to overwrite the js Date object. This allows us to
-//   // mock changes needed to test the moment functions
-//   MockDate.set('2021-01-01T10:00:00.000Z')
-// })
+  // MockDate is used here to overwrite the js Date object. This allows us to
+  // mock changes needed to test the moment functions
+  MockDate.set('2021-02-15T10:35:00.000Z')
+})
 
-// afterEach(() => {
-//   MockDate.reset()
-// })
+afterEach(() => {
+  MockDate.reset()
+})
 
+describe('determineIntervalLabel', () => {
+  describe('when zoon level is 0', () => {
+    expect(determineIntervalLabel(new Date().getTime(), 0)).toEqual(['05:35'])
+  })
 
-// describe('calculateTimelineIntervals', () => {
-//   describe('when zoon level is 0', () => {
-//     test('renders test timeline', () => {
-//       const timeIntervals = determineIntervalLabel(0, new Date().getTime(), 0)
+  describe('when zoon level is 1', () => {
+    expect(determineIntervalLabel(new Date().getTime(), 1)).toEqual(['05:00'])
+  })
 
-//       expect(timeIntervals.length).toEqual(26824921)
-//     })
-//   })
+  describe('when zoon level is 2', () => {
+    expect(determineIntervalLabel(new Date().getTime(), 2)).toEqual(['12'])
+  })
 
-//   describe('when zoon level is 0', () => {
-//     test('renders test timeline', () => {
-//       const timeIntervals = determineIntervalLabel(0, new Date().getTime(), 1)
+  describe('when zoon level is 3', () => {
+    expect(determineIntervalLabel(new Date().getTime(), 3)).toEqual(['Feb'])
+  })
 
-//       expect(timeIntervals.length).toEqual(447083)
-//     })
-//   })
-
-//   describe('when zoon level is 0', () => {
-//     test('renders test timeline', () => {
-//       const timeIntervals = determineIntervalLabel(0, new Date().getTime(), 2)
-
-//       expect(timeIntervals.length).toEqual(18629)
-//     })
-//   })
-
-//   describe('when zoon level is 0', () => {
-//     test('renders test timeline', () => {
-//       const timeIntervals = determineIntervalLabel(0, new Date().getTime(), 3)
-
-//       expect(timeIntervals.length).toEqual(601)
-//     })
-//   })
-
-//   describe('when zoon level is 0', () => {
-//     test('renders test timeline', () => {
-//       const timeIntervals = determineIntervalLabel(0, new Date().getTime(), 4)
-
-//       expect(timeIntervals.length).toEqual(51)
-//     })
-//   })
-// })
+  describe('when zoon level is 4', () => {
+    expect(determineIntervalLabel(new Date().getTime(), 4)).toEqual([2021])
+  })
+})
