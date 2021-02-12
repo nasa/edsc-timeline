@@ -23,8 +23,14 @@ export const EDSCTimeline = ({
   intervalWidth,
   maxDate,
   show,
+  minZoom,
+  maxZoom,
+  onTimelineMove,
   zoom
 }) => {
+  // Ref for the timeline to access the DOM element
+  const timelineListRef = useRef(null)
+
   // Ref for the timeline to access the DOM element
   const timelineWrapperRef = useRef(null)
 
@@ -58,33 +64,46 @@ export const EDSCTimeline = ({
   }, [timeIntervals])
 
   useEffect(() => {
-    console.log('[DEBUG]: SCROLL_POSTION ', scrollDirection)
+    console.log('[DEBUG]: SCROLL_DIRECTION ', scrollDirection)
   }, [scrollDirection])
 
   /**
    * END DEBUG USEEFFECTS
    */
 
+  useLayoutEffect(() => {
+    if (timelineWrapperRef.current) {
+      // When the timeline wrapper DOM element is available determine
+      // the center value of the element in pixels
+      const timelineListWidth = timelineWrapperRef.current.getBoundingClientRect().width
+
+      setTimelineCenterInPixels((intervalListWidthInPixels / 2) - (timelineListWidth / 2))
+    }
+  }, [intervalListWidthInPixels, timelineWrapperRef])
+
+  useEffect(() => {
+    // Anytime new time intervals are calcualted update the pixel width of their container
+    setIntervalListWidthInPixels((intervalWidth * timeIntervals.length))
+  }, [timeIntervals])
+
+  useEffect(() => {
+    if (timelineWrapperRef.current) {
+      // Center the timeline on load
+      timelineWrapperRef.current.scrollTo(timelineCenterInPixels, 0)
+    }
+  }, [timelineCenterInPixels])
+
   // Update the internal state when/if the prop changes
   useEffect(() => {
     setZoomLevel(zoom)
   }, [zoom])
-
-  // Update the internal state when/if the prop changes
-  useEffect(() => {
-    // Width (in px) of the DOM element containing the time intervals
-    setIntervalListWidthInPixels(intervalWidth * timeIntervals.length)
-
-    // Pixel value of the center of the timeline
-    setTimelineCenterInPixels(intervalListWidthInPixels / 2)
-  }, [timeIntervals])
 
   /**
    * Callback to change the current zoom level and recalculate timeIntervals
    * @param {Integer} newZoomLevel New desired zoom level
    */
   const onChangeZoomLevel = (newZoomLevel) => {
-    if (newZoomLevel > -1 && zoomLevel <= RESOLUTIONS.length - 1) {
+    if (newZoomLevel >= minZoom && zoomLevel <= maxZoom) {
       setZoomLevel(newZoomLevel)
 
       setTimeIntervals([
@@ -192,14 +211,11 @@ export const EDSCTimeline = ({
       }
     }
 
+    if (onTimelineMove) onTimelineMove()
+
     // Update the scroll position
     setScrollPosition(scrollLeftPos)
   }
-
-  useLayoutEffect(() => {
-    // Center the timeline on load
-    timelineWrapperRef.current.scrollTo(timelineCenterInPixels, 0)
-  }, [timelineWrapperRef])
 
   return (
     <>
@@ -209,7 +225,7 @@ export const EDSCTimeline = ({
             <section>
               <button
                 type="button"
-                disabled={zoomLevel === RESOLUTIONS.length - 1}
+                disabled={zoomLevel === maxZoom}
                 onClick={() => onChangeZoomLevel(zoomLevel + 1)}
               >
                 -
@@ -220,7 +236,7 @@ export const EDSCTimeline = ({
               </span>
               <button
                 type="button"
-                disabled={zoomLevel === 0}
+                disabled={zoomLevel === minZoom}
                 onClick={() => onChangeZoomLevel(zoomLevel - 1)}
               >
                 +
@@ -233,6 +249,7 @@ export const EDSCTimeline = ({
               onScroll={onWrapperScroll}
             >
               <div
+                ref={timelineListRef}
                 className="timeline__list"
                 style={{
                   width: `${intervalListWidthInPixels}px`
@@ -268,6 +285,8 @@ EDSCTimeline.defaultProps = {
   onTemporalSet: null,
   onTimelineMove: null,
   show: true,
+  minZoom: 1,
+  maxZoom: 5,
   zoom: 3
 }
 
@@ -292,6 +311,8 @@ EDSCTimeline.propTypes = {
     })
   ).isRequired,
   show: PropTypes.bool,
+  minZoom: PropTypes.number,
+  maxZoom: PropTypes.number,
   zoom: PropTypes.number
 }
 
