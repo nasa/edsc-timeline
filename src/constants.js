@@ -7,13 +7,6 @@ import {
   formatYear
 } from './utils/formatters'
 
-const MS_PER_MINUTE = 60000
-const MS_PER_HOUR = MS_PER_MINUTE * 60
-const MS_PER_DAY = MS_PER_HOUR * 24
-const MS_PER_MONTH = MS_PER_DAY * 31
-const MS_PER_YEAR = MS_PER_DAY * 366
-const MS_PER_DECADE = MS_PER_YEAR * 10
-
 // Abbreviated values returned from JavaScripts `getUTCMonth` method
 // used for adding additional context
 export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -48,12 +41,11 @@ export const RESOLUTIONS = [
 ]
 
 // Integer values of the interval size in time for each supported zoom level
-export const ZOOM_LEVELS = [
-  MS_PER_MINUTE,
-  MS_PER_HOUR,
-  MS_PER_DAY,
-  MS_PER_MONTH,
-  MS_PER_YEAR,
-  MS_PER_DECADE,
-  MS_PER_DECADE * 5
-]
+export const ZOOM_LEVELS = {
+  minute: 0,
+  hour: 1,
+  day: 2,
+  month: 3,
+  year: 4,
+  decade: 5
+}

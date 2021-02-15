@@ -1,38 +1,52 @@
-import { roundTime } from './roundTime'
-
 import { ZOOM_LEVELS } from '../constants'
+import { getUTCComponents } from './getUTCComponents'
+import { roundTime } from './roundTime'
 
 /**
  * Calculate an array of dates between two given dates at a specific zoom level
  * @param {Integer} timeAnchor The date to end calculating at
  * @param {Integer} zoom The zoom level to use for calculating labels for the dates in the range
+ * @param {Integer} numIntervals The amount of intervals to create
+ * @param {Boolean} reverse Generate the intervals in reverse (before) to timeAnchor
  */
-export const calculateTimeIntervals = (timeAnchor, zoom, buffer, reverse) => {
+export const calculateTimeIntervals = (timeAnchor, zoom, numIntervals, reverse) => {
   const timeIntervals = []
 
-  const zoomLevel = ZOOM_LEVELS[zoom]
+  // Round the timeAnchor to ensure the intervals are at the correct rounded time
+  const anchorDate = new Date(roundTime(timeAnchor, zoom))
 
-  let windowStartTime
-  let windowEndTime
+  // Loop numIntervals times, creating a new interval each time
+  new Array(numIntervals).fill(null).forEach((_, index) => {
+    // Increment this interval by delta amount
+    let delta = index + 1
 
+    // If reverse is true, negate delta so we decrement the interval value
+    if (reverse) delta = -delta
+
+    // Get the UTC components of the anchorDate
+    // Reverse the components array so the indexes match zoom
+    let components = getUTCComponents(anchorDate).reverse()
+
+    if (zoom === ZOOM_LEVELS.decade) {
+      // If the zoom is decade, increment the year by delta * 10
+      components[zoom - 1] += (delta * 10)
+    } else {
+      // Increment the zoom level by delta
+      components[zoom] += delta
+    }
+
+    // Reverse the array back to the UTC order to create the interval date
+    components = components.reverse()
+    const date = new Date(Date.UTC(...components))
+
+    // Push the timestamp of the date onto the timeIntervals array
+    timeIntervals.push(date.getTime())
+  })
+
+  // If reverse is true the intervals need to be reversed in order to be in the correct order
   if (reverse) {
-    // Create time intervals beginning in the past up until the time anchor
-    windowStartTime = new Date(timeAnchor - (zoomLevel * buffer))
-    windowEndTime = new Date(timeAnchor - zoomLevel)
-    console.log('windowEndTime', new Date(windowEndTime))
-  } else {
-    // Create time intervals starting at the time anchor into the future
-    windowStartTime = new Date(timeAnchor + zoomLevel)
-    windowEndTime = new Date(timeAnchor + (zoomLevel * buffer))
+    return timeIntervals.reverse()
   }
-
-  // Create timestamps between the start and end time and push them to an array to return
-  for (let d = windowStartTime; d <= windowEndTime; d = new Date(d.getTime() + zoomLevel)) {
-    const timeInterval = new Date(roundTime(d, zoom))
-    timeIntervals.push(timeInterval.getTime())
-  }
-
-  console.log('timeIntervals', timeIntervals)
 
   return timeIntervals
 }
