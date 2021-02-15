@@ -16,8 +16,11 @@ export const roundTime = (time, zoom, increment = 0) => {
   // all the individual values of the timestamp
   let components = ['FullYear', 'Month', 'Date', 'Hours', 'Minutes'].map((c) => date[`getUTC${c}`]())
 
+  console.log('zoom', zoom)
   // Slice off only those that are more granular than the current zoom level
   components = components.slice(0, Math.max(components.length - zoom, 1))
+
+  console.log('components', components)
 
   // Zoom to decade
   if (zoom === ZOOM_LEVELS.length - 2) {

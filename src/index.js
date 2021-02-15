@@ -1,4 +1,5 @@
 import React, {
+  useCallback,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -10,6 +11,7 @@ import { startCase } from 'lodash'
 
 import { calculateTimeIntervals } from './utils/calculateTimeIntervals'
 import { determineIntervalLabel } from './utils/determineIntervalLabel'
+import { roundTime } from './utils/roundTime'
 
 import {
   RESOLUTIONS,
@@ -49,23 +51,35 @@ export const EDSCTimeline = ({
   // Store the pixel value of the center of the list of intervals
   const [timelineCenterInPixels, setTimelineCenterInPixels] = useState(null)
 
+  const [shouldUpdateScrollPosition, setShouldUpdateScrollPosition] = useState(false)
+
+  console.log('maxDate', roundTime(maxDate, zoomLevel))
+
   // Store calculated time intervals that power the display of the timeline dates
-  const [timeIntervals, setTimeIntervals] = useState([
+  const [timeIntervals, setTimeIntervals] = useState(() => [
     ...calculateTimeIntervals(maxDate, zoomLevel, INTERVAL_BUFFER, true),
+    roundTime(maxDate, zoomLevel),
     ...calculateTimeIntervals(maxDate, zoomLevel, INTERVAL_BUFFER, false)
   ])
+
+  console.log('timeIntervals', timeIntervals)
 
   /**
    * DEBUG USEEFFECTS
    */
 
-  useEffect(() => {
-    console.log('[DEBUG]: TIME_INTERVALS.LENGTH', timeIntervals.length)
-  }, [timeIntervals])
+  // useEffect(() => {
+  //   console.log('setting timeIntervals')
+  //   console.log('[DEBUG]: TIME_INTERVALS.LENGTH', timeIntervals.length)
+  // }, [timeIntervals])
 
-  useEffect(() => {
-    console.log('[DEBUG]: SCROLL_DIRECTION ', scrollDirection)
-  }, [scrollDirection])
+  // useEffect(() => {
+  //   console.log('[DEBUG]: SCROLL_DIRECTION ', scrollDirection)
+  // }, [scrollDirection])
+
+  // useEffect(() => {
+  //   console.log('[DEBUG]: SCROLL_POSITION ', scrollPosition)
+  // }, [scrollPosition])
 
   /**
    * END DEBUG USEEFFECTS
@@ -81,7 +95,7 @@ export const EDSCTimeline = ({
     }
   }, [intervalListWidthInPixels, timelineWrapperRef])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Anytime new time intervals are calcualted update the pixel width of their container
     setIntervalListWidthInPixels((intervalWidth * timeIntervals.length))
   }, [timeIntervals])
@@ -98,17 +112,50 @@ export const EDSCTimeline = ({
     setZoomLevel(zoom)
   }, [zoom])
 
+  const getTemporalByPosition = (position) => {
+    const startTime = timeIntervals[0]
+
+    const percentScrolled = (position / intervalListWidthInPixels) * 100
+
+    console.log('percentScrolled', percentScrolled)
+
+    const timestamp = startTime + (zoomLevel * percentScrolled)
+
+    console.log('startTime', startTime)
+    console.log('timestamp', new Date(timestamp).getTime())
+
+    console.log('timestamp.toFixed(0)', parseInt(timestamp.toFixed(0), 10))
+    console.log('date', parseInt(timestamp.toFixed(0), 10))
+
+    return parseInt(timestamp.toFixed(0), 10)
+  }
+
+  useLayoutEffect(() => {
+    if (shouldUpdateScrollPosition) {
+      setTimeout(() => {
+        timelineWrapperRef.current.scrollTo(
+          scrollPosition + (intervalWidth * INTERVAL_BUFFER), 0
+        )
+      }, 0)
+    }
+
+    setShouldUpdateScrollPosition(false)
+  }, [timeIntervals])
+
   /**
    * Callback to change the current zoom level and recalculate timeIntervals
    * @param {Integer} newZoomLevel New desired zoom level
    */
   const onChangeZoomLevel = (newZoomLevel) => {
     if (newZoomLevel >= minZoom && zoomLevel <= maxZoom) {
+      const centeredDate = getTemporalByPosition(intervalListWidthInPixels / 2)
+
       setZoomLevel(newZoomLevel)
 
       setTimeIntervals([
-        ...calculateTimeIntervals(maxDate, newZoomLevel, INTERVAL_BUFFER, true),
-        ...calculateTimeIntervals(maxDate, newZoomLevel, INTERVAL_BUFFER, false)
+        ...calculateTimeIntervals(centeredDate, newZoomLevel, INTERVAL_BUFFER, true),
+        roundTime(centeredDate, newZoomLevel),
+        ...calculateTimeIntervals(centeredDate, newZoomLevel, INTERVAL_BUFFER, false)
       ])
     }
   }
@@ -119,24 +166,28 @@ export const EDSCTimeline = ({
   const scrollBackward = () => {
     // If the underlying dataset has grown larger than desired, trim off 1 buffers
     // worth of data from opposite of the array
-    let currentTimeIntervals = timeIntervals
-    if (timeIntervals.length > (INTERVAL_BUFFER * 10)) {
-      currentTimeIntervals = currentTimeIntervals.slice(
-        0, (currentTimeIntervals.length - INTERVAL_BUFFER)
-      )
-    }
+    const currentTimeIntervals = timeIntervals
+    // if (timeIntervals.length > (INTERVAL_BUFFER * 10)) {
+    //   currentTimeIntervals = currentTimeIntervals.slice(
+    //     0, (currentTimeIntervals.length - INTERVAL_BUFFER)
+    //   )
+    // }
 
     setTimeIntervals([
       ...calculateTimeIntervals(timeIntervals[0], zoomLevel, INTERVAL_BUFFER, true),
       ...currentTimeIntervals
     ])
 
+    setShouldUpdateScrollPosition(true)
+
     if (timelineWrapperRef.current) {
       // Appending data to the beginning of the underlying dataset requires us to scroll the user
       // to back to the right, outside of the window that triggers another page to be loaded
-      timelineWrapperRef.current.scrollTo(
-        scrollPosition + (intervalWidth * INTERVAL_BUFFER), 0
-      )
+      console.log('scrollPosition', scrollPosition)
+      console.log('intervalWidth', intervalWidth)
+      console.log('INTERVAL_BUFFER', INTERVAL_BUFFER)
+      console.log('intervalWidth * INTERVAL_BUFFER', intervalWidth * INTERVAL_BUFFER)
+      console.log('scrollPosition + (intervalWidth * INTERVAL_BUFFER)', scrollPosition + (intervalWidth * INTERVAL_BUFFER))
     }
   }
 
@@ -146,12 +197,12 @@ export const EDSCTimeline = ({
   const scrollForward = (loadMoreWindow) => {
     // If the underlying dataset has grown larger than desired, trim off 1 buffers
     // worth of data from opposite of the array
-    let currentTimeIntervals = timeIntervals
-    if (timeIntervals.length > (INTERVAL_BUFFER * 10)) {
-      currentTimeIntervals = currentTimeIntervals.slice(
-        INTERVAL_BUFFER, (currentTimeIntervals.length - INTERVAL_BUFFER)
-      )
-    }
+    const currentTimeIntervals = timeIntervals
+    // if (timeIntervals.length > (INTERVAL_BUFFER * 10)) {
+    //   currentTimeIntervals = currentTimeIntervals.slice(
+    //     INTERVAL_BUFFER, (currentTimeIntervals.length - INTERVAL_BUFFER)
+    //   )
+    // }
 
     setTimeIntervals([
       ...currentTimeIntervals,
@@ -163,6 +214,11 @@ export const EDSCTimeline = ({
     if (timelineWrapperRef.current) {
       // Appending data to the end of the underlying dataset requires us to scroll the user
       // to back to the left, outside of the window that triggers another page to be loaded
+      console.log('scrollPosition', scrollPosition)
+      console.log('intervalWidth', intervalWidth)
+      console.log('INTERVAL_BUFFER', INTERVAL_BUFFER)
+      console.log('intervalWidth * INTERVAL_BUFFER', intervalWidth * INTERVAL_BUFFER)
+      console.log(scrollPosition - (intervalWidth * INTERVAL_BUFFER) - loadMoreWindow)
       timelineWrapperRef.current.scrollTo(
         scrollPosition - (intervalWidth * INTERVAL_BUFFER) - loadMoreWindow, 0
       )
@@ -217,6 +273,12 @@ export const EDSCTimeline = ({
     setScrollPosition(scrollLeftPos)
   }
 
+  // getTemporalByPosition(100)
+
+  // const getCenteredTemporalValue = () => {
+  //   const beginningTimestamp
+  // }
+
   return (
     <>
       {
@@ -256,8 +318,9 @@ export const EDSCTimeline = ({
                 }}
               >
                 {
-                  timeIntervals && timeIntervals.map((interval) => {
+                  timeIntervals && timeIntervals.map((interval, i) => {
                     const [text, ...subText] = determineIntervalLabel(interval, zoomLevel)
+                    console.log(`interval ${i}`, new Date(interval).toUTCString())
 
                     return (
                       <div key={interval} className="timeline__interval">

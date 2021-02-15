@@ -17,18 +17,22 @@ export const calculateTimeIntervals = (timeAnchor, zoom, buffer, reverse) => {
 
   if (reverse) {
     // Create time intervals beginning in the past up until the time anchor
-    windowStartTime = new Date(roundTime(timeAnchor, zoom) - (zoomLevel * buffer))
-    windowEndTime = new Date(roundTime(timeAnchor - zoomLevel, zoom))
+    windowStartTime = new Date(timeAnchor - (zoomLevel * buffer))
+    windowEndTime = new Date(timeAnchor - zoomLevel)
+    console.log('windowEndTime', new Date(windowEndTime))
   } else {
     // Create time intervals starting at the time anchor into the future
-    windowStartTime = new Date(roundTime(timeAnchor + zoomLevel, zoom))
-    windowEndTime = new Date(roundTime(timeAnchor, zoom) + (zoomLevel * buffer))
+    windowStartTime = new Date(timeAnchor + zoomLevel)
+    windowEndTime = new Date(timeAnchor + (zoomLevel * buffer))
   }
 
   // Create timestamps between the start and end time and push them to an array to return
   for (let d = windowStartTime; d <= windowEndTime; d = new Date(d.getTime() + zoomLevel)) {
-    timeIntervals.push(d.getTime())
+    const timeInterval = new Date(roundTime(d, zoom))
+    timeIntervals.push(timeInterval.getTime())
   }
+
+  console.log('timeIntervals', timeIntervals)
 
   return timeIntervals
 }
