@@ -1,4 +1,5 @@
 import { ZOOM_LEVELS } from '../constants'
+import { getUTCComponents } from './getUTCComponents'
 
 /**
  * Rounds the provided timestamp to the top of the hour, day, etc
@@ -14,16 +15,13 @@ export const roundTime = (time, zoom, increment = 0) => {
 
   // Create an array that matches that accepted by Date.UTC that contains
   // all the individual values of the timestamp
-  let components = ['FullYear', 'Month', 'Date', 'Hours', 'Minutes'].map((c) => date[`getUTC${c}`]())
+  let components = getUTCComponents(date)
 
-  console.log('zoom', zoom)
   // Slice off only those that are more granular than the current zoom level
   components = components.slice(0, Math.max(components.length - zoom, 1))
 
-  console.log('components', components)
-
   // Zoom to decade
-  if (zoom === ZOOM_LEVELS.length - 2) {
+  if (zoom === ZOOM_LEVELS.decade) {
     components[0] = Math.floor(components[0] / 10) * 10
 
     // eslint-disable-next-line no-param-reassign

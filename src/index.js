@@ -320,7 +320,7 @@ export const EDSCTimeline = ({
                 {
                   timeIntervals && timeIntervals.map((interval, i) => {
                     const [text, ...subText] = determineIntervalLabel(interval, zoomLevel)
-                    console.log(`interval ${i}`, new Date(interval).toUTCString())
+                    console.log(`interval ${i}`, new Date(interval).toISOString())
 
                     return (
                       <div key={interval} className="timeline__interval">
