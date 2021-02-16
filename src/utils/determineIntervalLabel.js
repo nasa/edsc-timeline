@@ -6,7 +6,6 @@ import { LABELS } from '../constants'
  * @param {Integer} zoom The current zoom level of the timeline
  */
 export const determineIntervalLabel = (timeInterval, zoom) => {
-  console.log('🚀 ~ file: determineIntervalLabel.js ~ line 9 ~ determineIntervalLabel ~ timeInterval', timeInterval)
   const labels = LABELS[zoom](new Date(timeInterval))
 
   return labels

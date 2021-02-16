@@ -14,6 +14,7 @@ export const calculateTimeIntervals = (timeAnchor, zoom, numIntervals, reverse) 
 
   // Round the timeAnchor to ensure the intervals are at the correct rounded time
   const anchorDate = new Date(roundTime(timeAnchor, zoom))
+  // const anchorDate = new Date(timeAnchor)
 
   // Loop numIntervals times, creating a new interval each time
   new Array(numIntervals).fill(null).forEach((_, index) => {
@@ -26,6 +27,7 @@ export const calculateTimeIntervals = (timeAnchor, zoom, numIntervals, reverse) 
     // Get the UTC components of the anchorDate
     // Reverse the components array so the indexes match zoom
     let components = getUTCComponents(anchorDate).reverse()
+    // console.log('🚀 ~ file: calculateTimeIntervals.js ~ line 29 ~ newArray ~ components', components)
 
     if (zoom === ZOOM_LEVELS.decade) {
       // If the zoom is decade, increment the year by delta * 10
@@ -37,6 +39,7 @@ export const calculateTimeIntervals = (timeAnchor, zoom, numIntervals, reverse) 
 
     // Reverse the array back to the UTC order to create the interval date
     components = components.reverse()
+    console.log('🚀 ~ file: calculateTimeIntervals.js ~ line 36 ~ newArray ~ components', components)
     const date = new Date(Date.UTC(...components))
 
     // Push the timestamp of the date onto the timeIntervals array
