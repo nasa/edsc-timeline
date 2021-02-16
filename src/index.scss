@@ -2,6 +2,27 @@
   &__wrapper {
     overflow-y: scroll;
     min-width: 100%;
+    // position: relative;
+  }
+
+  &__center {
+    height: 100px;
+    width: 1px;
+    background-color: red;
+    position: absolute;
+    left: 50%;
+    display: block;
+    z-index: 1;
+  }
+
+  &__marker {
+    height: 100px;
+    width: 1px;
+    background-color: green;
+    position: absolute;
+    // left: 50%;
+    display: block;
+    z-index: 1;
   }
 
   &__list {
@@ -16,7 +37,8 @@
   }
 
   &__interval {
+    border-left: 1px solid white;
     display: inline-block;
-    width: 100px;
+    // width: 200px;
   }
 }
