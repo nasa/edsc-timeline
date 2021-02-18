@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { render } from 'react-dom'
 import GithubCorner from 'react-github-corner'
 
@@ -9,8 +9,14 @@ import './styles.css'
 
 const App = () => {
   const [showTimeline, setShowTimeline] = useState(true)
-  const [center, setCenter] = useState(new Date('2021-01-05T11:12:00.000Z').getTime())
-  const [interval, setInterval] = useState('')
+  const [center] = useState((new Date(Date.UTC(2020, 0, 1, 13, 14, 14))).getTime())
+  // const [interval, setInterval] = useState('')
+  const [displayedCenter, setDisplayedCenter] = useState()
+  const [displayedInterval, setDisplayedInterval] = useState()
+
+  useEffect(() => {
+    console.log('center in app', new Date(center).toISOString())
+  }, [center])
 
   const handleShowHideButton = () => {
     setShowTimeline(!showTimeline)
@@ -18,9 +24,9 @@ const App = () => {
 
   const handleTimelineMove = (values) => {
     const { center, interval } = values
-    console.log('🚀 ~ file: index.js ~ line 21 ~ handleTimelineMove ~ center', center)
-    setCenter(center)
-    setInterval(interval)
+    // console.log('🚀 ~ file: index.js ~ line 21 ~ handleTimelineMove ~ center', center)
+    setDisplayedCenter(center)
+    setDisplayedInterval(interval)
   }
 
   const showHideButtonTitle = showTimeline ? 'Hide Timeline' : 'Show Timeline'
@@ -58,7 +64,7 @@ const App = () => {
         <span>
           Center:
           {' '}
-          {new Date(center).toISOString()}
+          {new Date(displayedCenter).toUTCString()}
         </span>
       </div>
 
@@ -66,7 +72,7 @@ const App = () => {
         <span>
           Interval:
           {' '}
-          {interval}
+          {displayedInterval}
         </span>
       </div>
 

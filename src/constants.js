@@ -12,7 +12,7 @@ import {
 export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 // How many time intervals to create when new data is inserted into the timeline
-export const INTERVAL_BUFFER = 50
+export const INTERVAL_BUFFER = 20
 
 // How many intervals should be beyond view before more are loaded
 export const INTERVAL_THRESHOLD = 5
@@ -49,3 +49,15 @@ export const ZOOM_LEVELS = {
   year: 4,
   decade: 5
 }
+
+export const MS_PER_MINUTE = 60000
+
+export const MS_PER_HOUR = MS_PER_MINUTE * 60
+
+export const MS_PER_DAY = MS_PER_HOUR * 24
+
+export const MS_PER_MONTH = MS_PER_DAY * 31
+
+export const MS_PER_YEAR = MS_PER_DAY * 366
+
+export const MS_PER_DECADE = MS_PER_YEAR * 10
