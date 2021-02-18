@@ -39,7 +39,6 @@ export const calculateTimeIntervals = (timeAnchor, zoom, numIntervals, reverse) 
 
     // Reverse the array back to the UTC order to create the interval date
     components = components.reverse()
-    console.log('🚀 ~ file: calculateTimeIntervals.js ~ line 36 ~ newArray ~ components', components)
     const date = new Date(Date.UTC(...components))
 
     // Push the timestamp of the date onto the timeIntervals array
