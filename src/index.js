@@ -32,7 +32,6 @@ import { getIntervalsDuration } from './utils/getIntervalsDuration'
 
 export const EDSCTimeline = ({
   center,
-  intervalWidth,
   show,
   minZoom,
   maxZoom,
@@ -44,9 +43,6 @@ export const EDSCTimeline = ({
 
   // Ref for the timeline to access the DOM element
   const timelineWrapperRef = useRef(null)
-
-  // Store scroll position to help determine the direction a user is scrolling
-  const [scrollPosition, setScrollPosition] = useState(null)
 
   // Combine scroll positions state with scroll position from a scroll event to determine the scroll direction
   const [scrollDirection, setScrollDirection] = useState(null)
@@ -74,7 +70,6 @@ export const EDSCTimeline = ({
   const [timeIntervals, setTimeIntervals] = useState(() => [
     ...calculateTimeIntervals(center, zoomLevel, INTERVAL_BUFFER, true),
     roundTime(center, zoomLevel),
-    // center,
     ...calculateTimeIntervals(center, zoomLevel, INTERVAL_BUFFER, false)
   ])
 
@@ -83,7 +78,6 @@ export const EDSCTimeline = ({
    */
 
   // useEffect(() => {
-  //   console.log('setting timeIntervals')
   //   console.log('[DEBUG]: TIME_INTERVALS.LENGTH', timeIntervals.length)
   // }, [timeIntervals])
 
@@ -112,7 +106,6 @@ export const EDSCTimeline = ({
   const handleMove = () => {
     if (onTimelineMove) {
       // const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
-      console.log('🚀 ~ file: index.js ~ line 138 ~ handleMove ~ handleMove')
 
       const centeredDate = getCenterTemporal({
         intervalListWidthInPixels,
@@ -121,7 +114,6 @@ export const EDSCTimeline = ({
         timelineWrapperRef,
         zoomLevel
       })
-      console.log('🚀 ~ file: index.js ~ line 149 ~ handleMove ~ centeredDate', centeredDate)
       onTimelineMove({ center: centeredDate, interval: zoomLevel })
     }
   }
@@ -130,11 +122,11 @@ export const EDSCTimeline = ({
     // Anytime new time intervals are calcualted update the pixel width of their container
     const duration = getIntervalsDuration(timeIntervals, zoomLevel)
 
-    const width = determineScaledSize(duration, zoomLevel)
+    const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+
+    const width = determineScaledSize(duration, zoomLevel, timelineWrapperWidth)
 
     setIntervalListWidthInPixels(width)
-
-    // handleMove()
   }, [timeIntervals])
 
   useEffect(() => {
@@ -142,7 +134,12 @@ export const EDSCTimeline = ({
       // Center the timeline on load
       const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
       const left = -(
-        getPositionByTimestamp(center, timeIntervals, zoomLevel) - (timelineWrapperWidth / 2)
+        getPositionByTimestamp(
+          center,
+          timeIntervals,
+          zoomLevel,
+          timelineWrapperWidth
+        ) - (timelineWrapperWidth / 2)
       )
       setTimelinePosition({
         ...timelinePosition,
@@ -157,35 +154,15 @@ export const EDSCTimeline = ({
         timelineWrapperRef,
         zoomLevel
       })
-      // console.log('🚀 ~ file: index.js ~ line 194 ~ useEffect ~ centeredDate', centeredDate)
-      // console.log('🚀 ~ file: index.js ~ line 194 ~ useEffect ~ centeredDate', new Date(centeredDate))
       onTimelineMove({ center: centeredDate, interval: zoomLevel })
       setIsLoaded(true)
     }
-
-    // setTimeout(() => {
-    //   console.log('timelineWrapperRef.current.scrollLeft', timelineWrapperRef.current.scrollLeft)
-    // })
   }, [intervalsCenterInPixels, center])
 
   // Update the internal state when/if the prop changes
   useEffect(() => {
     setZoomLevel(zoom)
   }, [zoom])
-
-  // useEffect(() => {
-  //   if (timelinePosition.left && onTimelineMove) {
-  //     const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
-
-  //     console.log('timelinePosition.left', timelinePosition.left)
-  //     console.log('(timelineWrapperWidth / 2)', (timelineWrapperWidth / 2))
-  //     console.log('getting the current center')
-  //     const center = getTemporalByPosition((timelinePosition.left * -1) + (timelineWrapperWidth / 2))
-
-  //     console.log('center', new Date(center))
-  //     onTimelineMove({ center, interval: zoomLevel })
-  //   }
-  // }, [timelinePosition, zoomLevel, center, zoomLevel])
 
   const onTimelineDragStart = (e) => {
     const { pageX: mouseX } = e
@@ -208,14 +185,19 @@ export const EDSCTimeline = ({
   const scrollBackward = () => {
     // If the underlying dataset has grown larger than desired, trim off 1 buffers
     // worth of data from opposite of the array
-    const currentTimeIntervals = timeIntervals
-    // if (timeIntervals.length > (INTERVAL_BUFFER * 10)) {
-    //   currentTimeIntervals = currentTimeIntervals.slice(
-    //     0, (currentTimeIntervals.length - INTERVAL_BUFFER)
-    //   )
-    // }
+    let currentTimeIntervals = timeIntervals
+    if (timeIntervals.length > (INTERVAL_BUFFER * 3)) {
+      currentTimeIntervals = currentTimeIntervals.slice(
+        0, (currentTimeIntervals.length - INTERVAL_BUFFER)
+      )
+    }
 
-    const nextIntervals = calculateTimeIntervals(timeIntervals[0], zoomLevel, INTERVAL_BUFFER, true)
+    const nextIntervals = calculateTimeIntervals(
+      timeIntervals[0],
+      zoomLevel,
+      INTERVAL_BUFFER,
+      true
+    )
 
     const allIntervals = [
       ...nextIntervals,
@@ -230,19 +212,18 @@ export const EDSCTimeline = ({
 
     const duration = endTime - startTime
 
-    const intervalsWidth = determineScaledSize(duration, zoomLevel)
+    const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
-    // setIsLoaded(true)
+    const intervalsWidth = determineScaledSize(duration, zoomLevel, timelineWrapperWidth)
 
     if (timelineWrapperRef.current) {
       // Appending data to the beginning of the underlying dataset requires us to scroll the user
       // to back to the right, outside of the window that triggers another page to be loaded
-      timelineListRef.current.style.transform = `translateX(${timelineStartPosition.left - intervalsWidth}px)`
+      // timelineListRef.current.style.transform = `translateX(${timelineStartPosition.left - intervalsWidth}px)`
       setTimelineStartPosition({
         ...timelineStartPosition,
         left: timelineStartPosition.left - intervalsWidth
       })
-      // setTimeIntervals(allIntervals)
     }
   }
 
@@ -250,14 +231,31 @@ export const EDSCTimeline = ({
    * Scroll the timeline forward (down, or to the right)
    */
   const scrollForward = () => {
+    let translationAdjustment = 0
+
     // If the underlying dataset has grown larger than desired, trim off 1 buffers
     // worth of data from opposite of the array
-    const currentTimeIntervals = timeIntervals
-    // if (timeIntervals.length > (INTERVAL_BUFFER * 10)) {
-    //   currentTimeIntervals = currentTimeIntervals.slice(
-    //     INTERVAL_BUFFER, (currentTimeIntervals.length - INTERVAL_BUFFER)
-    //   )
-    // }
+    let currentTimeIntervals = timeIntervals
+    if (timeIntervals.length > (INTERVAL_BUFFER * 3)) {
+      const startTime = currentTimeIntervals[0]
+      const lastInterval = currentTimeIntervals[INTERVAL_BUFFER - 1]
+      const [endTime] = calculateTimeIntervals(lastInterval, zoomLevel, 1, false)
+
+      const duration = endTime - startTime
+
+      currentTimeIntervals = currentTimeIntervals.slice(
+        INTERVAL_BUFFER, currentTimeIntervals.length
+      )
+
+      const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+
+      translationAdjustment = determineScaledSize(duration, zoomLevel, timelineWrapperWidth)
+
+      setTimelineStartPosition({
+        ...timelineStartPosition,
+        left: timelineStartPosition.left + translationAdjustment
+      })
+    }
 
     setTimeIntervals([
       ...currentTimeIntervals,
@@ -265,15 +263,6 @@ export const EDSCTimeline = ({
         timeIntervals[timeIntervals.length - 1], zoomLevel, INTERVAL_BUFFER, false
       )
     ])
-
-    if (timelineWrapperRef.current) {
-      // Appending data to the end of the underlying dataset requires us to scroll the user
-      // to back to the left, outside of the window that triggers another page to be loaded
-
-      // timelineWrapperRef.current.scrollTo(
-      //   scrollPosition - (intervalWidth * INTERVAL_BUFFER) - loadMoreWindow, 0
-      // )
-    }
   }
 
   const onTimelineDrag = (e) => {
@@ -288,11 +277,6 @@ export const EDSCTimeline = ({
         })
 
         const wrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
-
-        // // Update the scroll position
-        // setScrollPosition(timelinePosition.left)
-
-        console.log('timelineStartPosition.left + timelinePosition.left', timelineStartPosition.left - timelinePosition.left)
 
         const scrollDirectionIsForward = timelineStartPosition.left - timelinePosition.left > 0
 
@@ -313,15 +297,18 @@ export const EDSCTimeline = ({
           const distanceFromEdge = timelinePosition.left * -1
 
           if (originalDistanceFromEdge > loadMoreWindow && distanceFromEdge <= loadMoreWindow) {
-            console.log('scrolling backward')
             scrollBackward()
           }
         }
 
         if (scrollDirection === 'forward') {
+          const listWidth = timelineListRef.current.getBoundingClientRect().width
+
           // Determine the previous pixel position of the right edge of the timeline
-          const originalDistanceFromEdge = timelineStartPosition.left + wrapperWidth
-          const distanceFromEdge = timelinePosition.left + wrapperWidth
+          const originalDistanceFromEdge = -(
+            wrapperWidth - (timelineStartPosition.left + listWidth)
+          )
+          const distanceFromEdge = -(wrapperWidth - (timelinePosition.left + listWidth))
 
           // If the previous scroll position is outside of the window to trigger another page and
           // the scroll position attached to the event is within the window
@@ -372,15 +359,12 @@ export const EDSCTimeline = ({
         zoomLevel
       })
 
-      console.log('centeredDate', new Date(centeredDate).toUTCString())
-
       const newIntervals = [
         ...calculateTimeIntervals(centeredDate, newZoomLevel, INTERVAL_BUFFER, true),
         roundTime(centeredDate, newZoomLevel),
         ...calculateTimeIntervals(centeredDate, newZoomLevel, INTERVAL_BUFFER, false)
       ]
 
-      console.log('newIntervals', newIntervals.map((interval) => new Date(interval)))
       setTimeIntervals(newIntervals)
       setZoomLevel(newZoomLevel)
 
@@ -389,37 +373,19 @@ export const EDSCTimeline = ({
         getPositionByTimestamp(
           centeredDate,
           newIntervals,
-          newZoomLevel
+          newZoomLevel,
+          timelineWrapperWidth
         ) - (timelineWrapperWidth / 2)
       )
-      console.log('🚀 ~ file: index.js ~ line 424 ~ onChangeZoomLevel ~ left', left)
-      console.log('🚀 ~ file: index.js ~ line 426 ~ onChangeZoomLevel ~ getPositionByTimestamp(centeredDate)', getPositionByTimestamp(centeredDate, newIntervals, newZoomLevel))
+
       setTimelinePosition({
         ...timelinePosition,
         left
       })
+
       onTimelineMove({ center: centeredDate, interval: newZoomLevel })
     }
   }
-
-  // useEffect(() => {
-  //   console.log('firing ')
-  //   const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
-  //   const centeredDate = getCenterTemporal()
-  //   console.log('🚀 ~ file: index.js ~ line 433 ~ useEffect ~ centeredDate', centeredDate)
-
-  //   console.log('date', new Date(centeredDate).toUTCString())
-  //   console.log('newIntervals', timeIntervals.map((interval) => new Date(interval)))
-  //   console.log('getPositionByTimestamp(centeredDate)', getPositionByTimestamp(centeredDate))
-  //   const left = (getPositionByTimestamp(centeredDate) - (timelineWrapperWidth / 2)) * -1
-
-  //   console.log('left', left)
-  //   setTimelinePosition({
-  //     ...timelinePosition,
-  //     left
-  //   })
-  //   onTimelineMove({ center: centeredDate, interval: zoomLevel })
-  // }, [zoomLevel, timeIntervals])
 
   return (
     <>
@@ -472,25 +438,34 @@ export const EDSCTimeline = ({
                       const startTime = interval
                       let endTime
 
-                      if (timeIntervals[i + 1]) {
+                      if (timeIntervals[i + 1] !== null) {
                         endTime = timeIntervals[i + 1]
                       } else {
                         const lastInterval = timeIntervals[timeIntervals.length - 1]
-                        const [nextEndTime] = calculateTimeIntervals(lastInterval, zoomLevel, 1, false)
+                        const [nextEndTime] = calculateTimeIntervals(
+                          lastInterval,
+                          zoomLevel,
+                          1,
+                          false
+                        )
                         endTime = nextEndTime
                       }
 
                       const duration = endTime - startTime
 
-                      const width = determineScaledSize(duration, zoomLevel)
+                      if (timelineWrapperRef.current) {
+                        const timelineWrapperWidth = timelineWrapperRef.current
+                          .getBoundingClientRect().width
 
-                      return (
-                        <div key={interval} className="timeline__interval" style={{ width }}>
-                          <span className="timeline__interval-label">{text}</span>
-                          <span className="timeline__interval-section-label">{subText}</span>
-                          {/* {i * intervalWidth} */}
-                        </div>
-                      )
+                        const width = determineScaledSize(duration, zoomLevel, timelineWrapperWidth)
+
+                        return (
+                          <div key={interval} className="timeline__interval" style={{ width }}>
+                            <span className="timeline__interval-label">{text}</span>
+                            <span className="timeline__interval-section-label">{subText}</span>
+                          </div>
+                        )
+                      }
                     })
                   }
                 </div>
@@ -519,7 +494,6 @@ EDSCTimeline.defaultProps = {
 
 EDSCTimeline.propTypes = {
   center: PropTypes.number,
-  intervalWidth: PropTypes.number,
   maxDate: PropTypes.number, // maximum date timeline will allow scrolling
   minDate: PropTypes.number, // minimum date timeline will allow scrolling
   onFocusedTemporalSet: PropTypes.func,

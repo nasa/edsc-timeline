@@ -47,7 +47,8 @@ export const ZOOM_LEVELS = {
   day: 2,
   month: 3,
   year: 4,
-  decade: 5
+  decade: 5,
+  imfifety: 6
 }
 
 export const MS_PER_MINUTE = 60000
