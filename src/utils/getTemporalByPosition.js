@@ -12,7 +12,6 @@ export const getTemporalByPosition = ({
 
   const percentScrolled = ((position) / intervalListWidthInPixels)
   const timestamp = startTime + ((endTime - startTime) * percentScrolled)
-  console.log('🚀 ~ file: index.js ~ line 137 ~ getTemporalByPosition ~ timestamp', new Date(timestamp).toUTCString())
 
   return parseInt(timestamp.toFixed(0), 10)
 }

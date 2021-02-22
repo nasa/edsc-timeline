@@ -1,4 +1,5 @@
 import { ZOOM_LEVELS } from '../constants'
+
 import { getUTCComponents } from './getUTCComponents'
 import { roundTime } from './roundTime'
 
@@ -27,11 +28,13 @@ export const calculateTimeIntervals = (timeAnchor, zoom, numIntervals, reverse) 
     // Get the UTC components of the anchorDate
     // Reverse the components array so the indexes match zoom
     let components = getUTCComponents(anchorDate).reverse()
-    // console.log('🚀 ~ file: calculateTimeIntervals.js ~ line 29 ~ newArray ~ components', components)
 
     if (zoom === ZOOM_LEVELS.decade) {
       // If the zoom is decade, increment the year by delta * 10
-      components[zoom - 1] += (delta * 10)
+      components[ZOOM_LEVELS.year] += (delta * 10)
+    } else if (zoom === ZOOM_LEVELS.imfifety) {
+      // If the zoom is decade, increment the year by delta * 10
+      components[ZOOM_LEVELS.year] += (delta * 50)
     } else {
       // Increment the zoom level by delta
       components[zoom] += delta

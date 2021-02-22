@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { render } from 'react-dom'
 import GithubCorner from 'react-github-corner'
 
@@ -9,18 +9,10 @@ import './styles.css'
 
 const App = () => {
   const [showTimeline, setShowTimeline] = useState(true)
-  const [center] = useState(() => {
-    const date = (new Date(Date.UTC(2020, 0, 1, 3, 12, 58))).getTime()
-    console.log('date', date)
-    return date
-  })
+  const [center] = useState(() => (new Date(Date.UTC(2020, 0, 1, 3, 12, 58))).getTime())
 
   const [displayedCenter, setDisplayedCenter] = useState()
   const [displayedInterval, setDisplayedInterval] = useState()
-
-  useEffect(() => {
-    console.log('center in app', new Date(center).getTime())
-  }, [center])
 
   const handleShowHideButton = () => {
     setShowTimeline(!showTimeline)
@@ -28,7 +20,7 @@ const App = () => {
 
   const handleTimelineMove = (values) => {
     const { center, interval } = values
-    // console.log('🚀 ~ file: index.js ~ line 21 ~ handleTimelineMove ~ center', center)
+
     setDisplayedCenter(center)
     setDisplayedInterval(interval)
   }
@@ -57,7 +49,7 @@ const App = () => {
           rows={[]}
           center={center}
           show={showTimeline}
-          zoom={2}
+          zoom={5}
           minZoom={1}
           maxZoom={5}
           onTimelineMove={handleTimelineMove}
