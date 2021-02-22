@@ -10,6 +10,9 @@ import { startCase } from 'lodash'
 
 import { calculateTimeIntervals } from './utils/calculateTimeIntervals'
 import { determineIntervalLabel } from './utils/determineIntervalLabel'
+import { determineScaledSize } from './utils/determineScaledSize'
+import { getCenterTemporal } from './utils/getCenterTemporal'
+import { getPositionByTimestamp } from './utils/getPositionByTimestamp'
 import { roundTime } from './utils/roundTime'
 
 import {
@@ -24,29 +27,8 @@ import {
 } from './constants'
 
 import './index.scss'
+import { getIntervalsDuration } from './utils/getIntervalsDuration'
 
-// Detirmines an interval width given a duration and zoomLevel
-const determineScaledSize = (intervalDurationInMs, zoomLevel) => {
-  let intervalWidth = 1
-
-  // console.log('pxPerMs', pxPerMs)
-
-  if (zoomLevel === 1) {
-    intervalWidth = intervalDurationInMs / 10000
-  } else if (zoomLevel === 2) {
-    intervalWidth = intervalDurationInMs / (MS_PER_HOUR / 4)
-  } else if (zoomLevel === 3) {
-    intervalWidth = intervalDurationInMs / 10000000
-  } else if (zoomLevel === 4) {
-    intervalWidth = intervalDurationInMs / 1000000
-  } else if (zoomLevel === 5) {
-    intervalWidth = intervalDurationInMs / 100000
-  } else if (zoomLevel === 6) {
-    intervalWidth = intervalDurationInMs / 10000
-  }
-
-  return intervalWidth
-}
 
 export const EDSCTimeline = ({
   center,
@@ -127,42 +109,57 @@ export const EDSCTimeline = ({
     }
   }, [intervalListWidthInPixels, timelineWrapperRef])
 
+  const handleMove = () => {
+    if (onTimelineMove) {
+      // const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+      console.log('🚀 ~ file: index.js ~ line 138 ~ handleMove ~ handleMove')
+
+      const centeredDate = getCenterTemporal({
+        intervalListWidthInPixels,
+        timeIntervals,
+        timelinePosition,
+        timelineWrapperRef,
+        zoomLevel
+      })
+      console.log('🚀 ~ file: index.js ~ line 149 ~ handleMove ~ centeredDate', centeredDate)
+      onTimelineMove({ center: centeredDate, interval: zoomLevel })
+    }
+  }
+
   useLayoutEffect(() => {
     // Anytime new time intervals are calcualted update the pixel width of their container
-    const startTime = timeIntervals[0]
-    const lastInterval = timeIntervals[timeIntervals.length - 1]
-    const [endTime] = calculateTimeIntervals(lastInterval, zoomLevel, 1, false)
-
-    const duration = endTime - startTime
+    const duration = getIntervalsDuration(timeIntervals, zoomLevel)
 
     const width = determineScaledSize(duration, zoomLevel)
 
     setIntervalListWidthInPixels(width)
+
+    // handleMove()
   }, [timeIntervals])
-
-  const getPositionByTimestamp = (timestamp) => {
-    console.log('intervals in getPositionByTimestamp', timeIntervals.map((interval) => new Date(interval)))
-    const startTime = timeIntervals[0]
-    const lastInterval = timeIntervals[timeIntervals.length - 1]
-    const [endTime] = calculateTimeIntervals(lastInterval, zoomLevel, 1, false)
-    const totalDuration = endTime - startTime
-    const timestampDuration = timestamp - startTime
-    const timestampPercentage = timestampDuration / totalDuration
-    const result = intervalListWidthInPixels * timestampPercentage
-
-    return result
-  }
 
   useEffect(() => {
     if (timelineWrapperRef.current && !isLoaded && intervalsCenterInPixels) {
       // Center the timeline on load
       const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
-      const left = (getPositionByTimestamp(center) - (timelineWrapperWidth / 2)) * -1
+      const left = -(
+        getPositionByTimestamp(center, timeIntervals, zoomLevel) - (timelineWrapperWidth / 2)
+      )
       setTimelinePosition({
         ...timelinePosition,
         left
       })
-      onTimelineMove({ center, interval: zoomLevel })
+      const centeredDate = getCenterTemporal({
+        intervalListWidthInPixels,
+        timeIntervals,
+        timelinePosition: {
+          left
+        },
+        timelineWrapperRef,
+        zoomLevel
+      })
+      // console.log('🚀 ~ file: index.js ~ line 194 ~ useEffect ~ centeredDate', centeredDate)
+      // console.log('🚀 ~ file: index.js ~ line 194 ~ useEffect ~ centeredDate', new Date(centeredDate))
+      onTimelineMove({ center: centeredDate, interval: zoomLevel })
       setIsLoaded(true)
     }
 
@@ -175,17 +172,6 @@ export const EDSCTimeline = ({
   useEffect(() => {
     setZoomLevel(zoom)
   }, [zoom])
-
-  const getTemporalByPosition = (position) => {
-    const startTime = timeIntervals[0]
-    const lastInterval = timeIntervals[timeIntervals.length - 1]
-    const [endTime] = calculateTimeIntervals(lastInterval, zoomLevel, 1, false)
-
-    const percentScrolled = ((position) / intervalListWidthInPixels)
-    const timestamp = startTime + ((endTime - startTime) * percentScrolled)
-
-    return parseInt(timestamp.toFixed(0), 10)
-  }
 
   // useEffect(() => {
   //   if (timelinePosition.left && onTimelineMove) {
@@ -200,15 +186,6 @@ export const EDSCTimeline = ({
   //     onTimelineMove({ center, interval: zoomLevel })
   //   }
   // }, [timelinePosition, zoomLevel, center, zoomLevel])
-
-  const handleMove = () => {
-    if (onTimelineMove) {
-      const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
-
-      const center = getTemporalByPosition((timelinePosition.left * -1) + (timelineWrapperWidth / 2))
-      onTimelineMove({ center, interval: zoomLevel })
-    }
-  }
 
   const onTimelineDragStart = (e) => {
     const { pageX: mouseX } = e
@@ -265,7 +242,7 @@ export const EDSCTimeline = ({
         ...timelineStartPosition,
         left: timelineStartPosition.left - intervalsWidth
       })
-      setTimeIntervals(allIntervals)
+      // setTimeIntervals(allIntervals)
     }
   }
 
@@ -312,8 +289,8 @@ export const EDSCTimeline = ({
 
         const wrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
-        // Update the scroll position
-        setScrollPosition(timelinePosition.left)
+        // // Update the scroll position
+        // setScrollPosition(timelinePosition.left)
 
         console.log('timelineStartPosition.left + timelinePosition.left', timelineStartPosition.left - timelinePosition.left)
 
@@ -386,8 +363,14 @@ export const EDSCTimeline = ({
    */
   const onChangeZoomLevel = (newZoomLevel) => {
     if (newZoomLevel >= minZoom && zoomLevel <= maxZoom) {
-      const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
-      const centeredDate = getTemporalByPosition(timelinePosition.left * -1 + (timelineWrapperWidth / 2))
+      // const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+      const centeredDate = getCenterTemporal({
+        intervalListWidthInPixels,
+        timeIntervals,
+        timelinePosition,
+        timelineWrapperRef,
+        zoomLevel
+      })
 
       console.log('centeredDate', new Date(centeredDate).toUTCString())
 
@@ -399,28 +382,44 @@ export const EDSCTimeline = ({
 
       console.log('newIntervals', newIntervals.map((interval) => new Date(interval)))
       setTimeIntervals(newIntervals)
-
       setZoomLevel(newZoomLevel)
+
+      const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+      const left = -(
+        getPositionByTimestamp(
+          centeredDate,
+          newIntervals,
+          newZoomLevel
+        ) - (timelineWrapperWidth / 2)
+      )
+      console.log('🚀 ~ file: index.js ~ line 424 ~ onChangeZoomLevel ~ left', left)
+      console.log('🚀 ~ file: index.js ~ line 426 ~ onChangeZoomLevel ~ getPositionByTimestamp(centeredDate)', getPositionByTimestamp(centeredDate, newIntervals, newZoomLevel))
+      setTimelinePosition({
+        ...timelinePosition,
+        left
+      })
+      onTimelineMove({ center: centeredDate, interval: newZoomLevel })
     }
   }
 
-  useEffect(() => {
-    console.log('firing ')
-    const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
-    const centeredDate = getTemporalByPosition(timelinePosition.left * -1 + (timelineWrapperWidth / 2))
+  // useEffect(() => {
+  //   console.log('firing ')
+  //   const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+  //   const centeredDate = getCenterTemporal()
+  //   console.log('🚀 ~ file: index.js ~ line 433 ~ useEffect ~ centeredDate', centeredDate)
 
-    console.log('date', new Date(centeredDate).toUTCString())
-    console.log('newIntervals', timeIntervals.map((interval) => new Date(interval)))
-    console.log('getPositionByTimestamp(centeredDate)', getPositionByTimestamp(centeredDate))
-    const left = (getPositionByTimestamp(centeredDate) - (timelineWrapperWidth / 2)) * -1
+  //   console.log('date', new Date(centeredDate).toUTCString())
+  //   console.log('newIntervals', timeIntervals.map((interval) => new Date(interval)))
+  //   console.log('getPositionByTimestamp(centeredDate)', getPositionByTimestamp(centeredDate))
+  //   const left = (getPositionByTimestamp(centeredDate) - (timelineWrapperWidth / 2)) * -1
 
-    console.log('left', left)
-    setTimelinePosition({
-      ...timelinePosition,
-      left
-    })
-    onTimelineMove({ center, interval: zoomLevel })
-  }, [zoomLevel, timeIntervals])
+  //   console.log('left', left)
+  //   setTimelinePosition({
+  //     ...timelinePosition,
+  //     left
+  //   })
+  //   onTimelineMove({ center: centeredDate, interval: zoomLevel })
+  // }, [zoomLevel, timeIntervals])
 
   return (
     <>
