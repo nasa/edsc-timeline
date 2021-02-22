@@ -1,24 +1,15 @@
-import { MS_PER_HOUR } from '../constants'
+import { calculateTimeIntervals } from './calculateTimeIntervals'
+import { roundTime } from './roundTime'
 
-// Detirmines an interval width given a duration and zoomLevel
-export const determineScaledSize = (intervalDurationInMs, zoomLevel) => {
-  let intervalWidth = 1
+// Determines an interval width given a duration and zoomLevel
+export const determineScaledSize = (intervalDurationInMs, zoomLevel, wrapperWidth) => {
+  const today = roundTime(new Date().getTime(), zoomLevel + 1)
 
-  // console.log('pxPerMs', pxPerMs)
+  const [endDate] = calculateTimeIntervals(today, zoomLevel + 1, 2, false)
 
-  if (zoomLevel === 1) {
-    intervalWidth = intervalDurationInMs / 10000
-  } else if (zoomLevel === 2) {
-    intervalWidth = intervalDurationInMs / (MS_PER_HOUR / 4)
-  } else if (zoomLevel === 3) {
-    intervalWidth = intervalDurationInMs / 10000000
-  } else if (zoomLevel === 4) {
-    intervalWidth = intervalDurationInMs / 1000000
-  } else if (zoomLevel === 5) {
-    intervalWidth = intervalDurationInMs / 100000
-  } else if (zoomLevel === 6) {
-    intervalWidth = intervalDurationInMs / 10000
-  }
+  const duration = endDate - today
 
-  return intervalWidth
+  const scale = duration / wrapperWidth
+
+  return intervalDurationInMs / scale
 }
