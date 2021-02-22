@@ -9,13 +9,17 @@ import './styles.css'
 
 const App = () => {
   const [showTimeline, setShowTimeline] = useState(true)
-  const [center] = useState((new Date(Date.UTC(2020, 0, 1, 13, 14, 14))).getTime())
-  // const [interval, setInterval] = useState('')
+  const [center] = useState(() => {
+    const date = (new Date(Date.UTC(2020, 0, 1, 3, 12, 58))).getTime()
+    console.log('date', date)
+    return date
+  })
+
   const [displayedCenter, setDisplayedCenter] = useState()
   const [displayedInterval, setDisplayedInterval] = useState()
 
   useEffect(() => {
-    console.log('center in app', new Date(center).toISOString())
+    console.log('center in app', new Date(center).getTime())
   }, [center])
 
   const handleShowHideButton = () => {
@@ -53,7 +57,7 @@ const App = () => {
           rows={[]}
           center={center}
           show={showTimeline}
-          zoom={3}
+          zoom={2}
           minZoom={1}
           maxZoom={5}
           onTimelineMove={handleTimelineMove}
