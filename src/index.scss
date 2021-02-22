@@ -9,9 +9,9 @@
 
   &__wrapper {
     z-index: 0;
-    overflow-y: scroll;
+    overflow: hidden;
     min-width: 100%;
-    // position: relative;
+    position: relative;
   }
 
   &__timeline {
