@@ -24,8 +24,9 @@ describe('determineIntervalLabel', () => {
 
   describe('when zoom level is hour', () => {
     test('returns the correct label', () => {
-      // TODO, we don't have a formatter for hours, only times (hour::minute), so this is returning 10:35. Other places round the time before it hits the formatters so the value looks right
-      expect(determineIntervalLabel(new Date().getTime(), ZOOM_LEVELS.hour)).toEqual(['10:00'])
+      // We don't have a formatter for hours, only times (hour::minute), so this is returning 10:35.
+      // Other places round the time before it hits the formatters so the value looks right
+      expect(determineIntervalLabel(new Date().getTime(), ZOOM_LEVELS.hour)).toEqual(['10:35'])
     })
   })
 
@@ -43,7 +44,7 @@ describe('determineIntervalLabel', () => {
 
   describe('when zoom level is year', () => {
     test('returns the correct label', () => {
-      expect(determineIntervalLabel(new Date().getTime(), ZOOM_LEVELS.year)).toEqual([2021])
+      expect(determineIntervalLabel(new Date().getTime(), ZOOM_LEVELS.year)).toEqual(['2021'])
     })
   })
 })

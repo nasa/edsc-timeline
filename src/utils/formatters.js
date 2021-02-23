@@ -6,4 +6,4 @@ export const formatTime = (date) => `${padStart(date.getUTCHours(), 2, '0')}:${p
 export const formatDay = (date) => padStart(date.getUTCDate(), 2, '0')
 export const formatMonth = (date) => MONTHS[date.getUTCMonth()]
 export const formatDate = (date) => `${formatMonth(date)} ${formatDay(date)}`
-export const formatYear = (date) => date.getUTCFullYear()
+export const formatYear = (date) => `${date.getUTCFullYear()}`

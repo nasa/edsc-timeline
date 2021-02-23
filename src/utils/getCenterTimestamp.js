@@ -1,4 +1,4 @@
-import { getTemporalByPosition } from './getTemporalByPosition'
+import { getTimestampByPosition } from './getTimestampByPosition'
 
 /**
  * Get the temporal value representing the center of the timeline
@@ -9,7 +9,7 @@ import { getTemporalByPosition } from './getTemporalByPosition'
  * @param {Object} param0.timelineWrapperRef Ref to the DOM element representing the timeline wrapper
  * @param {Object} param0.zoomLevel Current zoom level of the timeline
  */
-export const getCenterTemporal = ({
+export const getCenterTimestamp = ({
   intervalListWidthInPixels,
   timeIntervals,
   timelinePosition,
@@ -19,7 +19,7 @@ export const getCenterTemporal = ({
   const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
   // Get the temporal value at the center of the timeline
-  return getTemporalByPosition({
+  return getTimestampByPosition({
     position: -timelinePosition.left + (timelineWrapperWidth / 2),
     timeIntervals,
     zoomLevel,

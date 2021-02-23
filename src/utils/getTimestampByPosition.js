@@ -3,16 +3,17 @@ import { calculateTimeIntervals } from './calculateTimeIntervals'
 /**
  * Determine the temporal value at an exact pixel location
  * @param {Object} param0
+ * @param {Object} param0.intervalListWidthInPixels Width (in pixels) of the DOM element that holds the timeline intervals
  * @param {Object} param0.position Position of the left side of the timeline DOM element in pixels
  * @param {Object} param0.timeIntervals Array of dates representing intervals at the provided zoom level
  * @param {Object} param0.zoomLevel Current zoom level of the timeline
- * @param {Object} param0.intervalListWidthInPixels Width (in pixels) of the DOM element that holds the timeline intervals
  */
-export const getTemporalByPosition = ({
+// TODO getTimestampByPosition
+export const getTimestampByPosition = ({
+  intervalListWidthInPixels,
   position,
   timeIntervals,
-  zoomLevel,
-  intervalListWidthInPixels
+  zoomLevel
 }) => {
   const startTime = timeIntervals[0]
   const lastInterval = timeIntervals[timeIntervals.length - 1]

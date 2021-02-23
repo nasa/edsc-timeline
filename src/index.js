@@ -10,8 +10,8 @@ import { startCase } from 'lodash'
 
 import { calculateTimeIntervals } from './utils/calculateTimeIntervals'
 import { determineIntervalLabel } from './utils/determineIntervalLabel'
-import { determineScaledSize } from './utils/determineScaledSize'
-import { getCenterTemporal } from './utils/getCenterTemporal'
+import { determineScaledWidth } from './utils/determineScaledWidth'
+import { getCenterTimestamp } from './utils/getCenterTimestamp'
 import { getIntervalsDuration } from './utils/getIntervalsDuration'
 import { getPositionByTimestamp } from './utils/getPositionByTimestamp'
 import { roundTime } from './utils/roundTime'
@@ -107,7 +107,7 @@ export const EDSCTimeline = ({
 
   const handleMove = () => {
     if (onTimelineMove) {
-      const centeredDate = getCenterTemporal({
+      const centeredDate = getCenterTimestamp({
         intervalListWidthInPixels,
         timeIntervals,
         timelinePosition,
@@ -125,7 +125,7 @@ export const EDSCTimeline = ({
 
     const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
-    const width = determineScaledSize(duration, zoomLevel, timelineWrapperWidth)
+    const width = determineScaledWidth(duration, zoomLevel, timelineWrapperWidth)
 
     setIntervalListWidthInPixels(width)
   }, [timeIntervals])
@@ -149,7 +149,7 @@ export const EDSCTimeline = ({
         left
       })
 
-      const centeredDate = getCenterTemporal({
+      const centeredDate = getCenterTimestamp({
         intervalListWidthInPixels,
         timeIntervals,
         timelinePosition: {
@@ -225,7 +225,7 @@ export const EDSCTimeline = ({
 
     const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
-    const intervalsWidth = determineScaledSize(duration, zoomLevel, timelineWrapperWidth)
+    const intervalsWidth = determineScaledWidth(duration, zoomLevel, timelineWrapperWidth)
 
     if (timelineWrapperRef.current) {
       // Appending data to the beginning of the underlying dataset requires us to scroll the user
@@ -265,7 +265,7 @@ export const EDSCTimeline = ({
 
       const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
-      translationAdjustment = determineScaledSize(duration, zoomLevel, timelineWrapperWidth)
+      translationAdjustment = determineScaledWidth(duration, zoomLevel, timelineWrapperWidth)
 
       setTimelineStartPosition({
         ...timelineStartPosition,
@@ -369,7 +369,7 @@ export const EDSCTimeline = ({
    */
   const onChangeZoomLevel = (newZoomLevel) => {
     if (newZoomLevel >= minZoom && zoomLevel <= maxZoom) {
-      const centeredDate = getCenterTemporal({
+      const centeredDate = getCenterTimestamp({
         intervalListWidthInPixels,
         timeIntervals,
         timelinePosition,
@@ -486,7 +486,7 @@ export const EDSCTimeline = ({
                         const timelineWrapperWidth = timelineWrapperRef.current
                           .getBoundingClientRect().width
 
-                        const width = determineScaledSize(duration, zoomLevel, timelineWrapperWidth)
+                        const width = determineScaledWidth(duration, zoomLevel, timelineWrapperWidth)
 
                         return (
                           <div key={interval} className="timeline__interval" style={{ width }}>
