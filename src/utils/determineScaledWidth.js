@@ -7,7 +7,8 @@ import { roundTime } from './roundTime'
  * @param {Integer} zoomLevel Zoom level to determine the scale at
  * @param {Integer} wrapperWidth Viewable area on the page to scale within
  */
-export const determineScaledSize = (intervalDurationInMs, zoomLevel, wrapperWidth) => {
+// TODO rename determineScaledWidth
+export const determineScaledWidth = (intervalDurationInMs, zoomLevel, wrapperWidth) => {
   const today = roundTime(new Date().getTime(), zoomLevel + 1)
 
   const [endDate] = calculateTimeIntervals({

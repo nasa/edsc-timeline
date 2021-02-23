@@ -1,4 +1,4 @@
-import { determineScaledSize } from './determineScaledSize'
+import { determineScaledWidth } from './determineScaledWidth'
 import { getIntervalsDuration } from './getIntervalsDuration'
 
 /**
@@ -21,7 +21,7 @@ export const getPositionByTimestamp = ({
 
   const timestampPercentage = timestampDuration / totalDuration
 
-  const width = determineScaledSize(totalDuration, zoomLevel, wrapperWidth)
+  const width = determineScaledWidth(totalDuration, zoomLevel, wrapperWidth)
 
   return width * timestampPercentage
 }

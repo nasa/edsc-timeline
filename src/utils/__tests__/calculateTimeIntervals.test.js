@@ -377,4 +377,64 @@ describe('calculateTimelineIntervals', () => {
       expect(result).toEqual(expectedResult)
     })
   })
+
+  describe('when zoom level is 5 decades', () => {
+    test('returns the correct intervals', () => {
+      const result = calculateTimeIntervals({
+        timeAnchor: new Date().getTime(),
+        zoomLevel: ZOOM_LEVELS.imfifety,
+        numIntervals: BUFFER,
+        reverse: false
+      })
+
+      const expectedResult = [
+        new Date('2071-01-01T00:00:00.000Z').getTime(),
+        new Date('2121-01-01T00:00:00.000Z').getTime(),
+        new Date('2171-01-01T00:00:00.000Z').getTime(),
+        new Date('2221-01-01T00:00:00.000Z').getTime(),
+        new Date('2271-01-01T00:00:00.000Z').getTime(),
+        new Date('2321-01-01T00:00:00.000Z').getTime(),
+        new Date('2371-01-01T00:00:00.000Z').getTime(),
+        new Date('2421-01-01T00:00:00.000Z').getTime(),
+        new Date('2471-01-01T00:00:00.000Z').getTime(),
+        new Date('2521-01-01T00:00:00.000Z').getTime(),
+        new Date('2571-01-01T00:00:00.000Z').getTime(),
+        new Date('2621-01-01T00:00:00.000Z').getTime(),
+        new Date('2671-01-01T00:00:00.000Z').getTime(),
+        new Date('2721-01-01T00:00:00.000Z').getTime(),
+        new Date('2771-01-01T00:00:00.000Z').getTime()
+      ]
+
+      expect(result).toEqual(expectedResult)
+    })
+
+    test('returns the correct reversed intervals', () => {
+      const result = calculateTimeIntervals({
+        timeAnchor: new Date().getTime(),
+        zoomLevel: ZOOM_LEVELS.imfifety,
+        numIntervals: BUFFER,
+        reverse: true
+      })
+
+      const expectedResult = [
+        new Date('1271-01-01T00:00:00.000Z').getTime(),
+        new Date('1321-01-01T00:00:00.000Z').getTime(),
+        new Date('1371-01-01T00:00:00.000Z').getTime(),
+        new Date('1421-01-01T00:00:00.000Z').getTime(),
+        new Date('1471-01-01T00:00:00.000Z').getTime(),
+        new Date('1521-01-01T00:00:00.000Z').getTime(),
+        new Date('1571-01-01T00:00:00.000Z').getTime(),
+        new Date('1621-01-01T00:00:00.000Z').getTime(),
+        new Date('1671-01-01T00:00:00.000Z').getTime(),
+        new Date('1721-01-01T00:00:00.000Z').getTime(),
+        new Date('1771-01-01T00:00:00.000Z').getTime(),
+        new Date('1821-01-01T00:00:00.000Z').getTime(),
+        new Date('1871-01-01T00:00:00.000Z').getTime(),
+        new Date('1921-01-01T00:00:00.000Z').getTime(),
+        new Date('1971-01-01T00:00:00.000Z').getTime(),
+      ]
+
+      expect(result).toEqual(expectedResult)
+    })
+  })
 })
