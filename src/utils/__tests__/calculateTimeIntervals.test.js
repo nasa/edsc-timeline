@@ -20,7 +20,12 @@ const BUFFER = 15
 describe('calculateTimelineIntervals', () => {
   describe('when zoom level is minute', () => {
     test('returns the correct intervals', () => {
-      const result = calculateTimeIntervals(new Date().getTime(), ZOOM_LEVELS.minute, BUFFER, false)
+      const result = calculateTimeIntervals({
+        timeAnchor: new Date().getTime(),
+        zoomLevel: ZOOM_LEVELS.minute,
+        numIntervals: BUFFER,
+        reverse: false
+      })
 
       const expectedResult = [
         new Date('2021-01-01T10:01:00.000Z').getTime(),
@@ -44,7 +49,12 @@ describe('calculateTimelineIntervals', () => {
     })
 
     test('returns the correct reversed intervals', () => {
-      const result = calculateTimeIntervals(new Date().getTime(), ZOOM_LEVELS.minute, BUFFER, true)
+      const result = calculateTimeIntervals({
+        timeAnchor: new Date().getTime(),
+        zoomLevel: ZOOM_LEVELS.minute,
+        numIntervals: BUFFER,
+        reverse: true
+      })
 
       const expectedResult = [
         new Date('2021-01-01T09:45:00.000Z').getTime(),
@@ -70,7 +80,12 @@ describe('calculateTimelineIntervals', () => {
 
   describe('when zoom level is hour', () => {
     test('returns the correct intervals', () => {
-      const result = calculateTimeIntervals(new Date().getTime(), ZOOM_LEVELS.hour, BUFFER, false)
+      const result = calculateTimeIntervals({
+        timeAnchor: new Date().getTime(),
+        zoomLevel: ZOOM_LEVELS.hour,
+        numIntervals: BUFFER,
+        reverse: false
+      })
 
       const expectedResult = [
         new Date('2021-01-01T11:00:00.000Z').getTime(),
@@ -94,7 +109,12 @@ describe('calculateTimelineIntervals', () => {
     })
 
     test('returns the correct reversed intervals', () => {
-      const result = calculateTimeIntervals(new Date().getTime(), ZOOM_LEVELS.hour, BUFFER, true)
+      const result = calculateTimeIntervals({
+        timeAnchor: new Date().getTime(),
+        zoomLevel: ZOOM_LEVELS.hour,
+        numIntervals: BUFFER,
+        reverse: true
+      })
 
       const expectedResult = [
         new Date('2020-12-31T19:00:00.000Z').getTime(),
@@ -120,7 +140,12 @@ describe('calculateTimelineIntervals', () => {
 
   describe('when zoom level is day', () => {
     test('returns the correct intervals', () => {
-      const result = calculateTimeIntervals(new Date().getTime(), ZOOM_LEVELS.day, BUFFER, false)
+      const result = calculateTimeIntervals({
+        timeAnchor: new Date().getTime(),
+        zoomLevel: ZOOM_LEVELS.day,
+        numIntervals: BUFFER,
+        reverse: false
+      })
 
       const expectedResult = [
         new Date('2021-01-02T00:00:00.000Z').getTime(),
@@ -144,7 +169,12 @@ describe('calculateTimelineIntervals', () => {
     })
 
     test('returns the correct reversed intervals', () => {
-      const result = calculateTimeIntervals(new Date().getTime(), ZOOM_LEVELS.day, BUFFER, true)
+      const result = calculateTimeIntervals({
+        timeAnchor: new Date().getTime(),
+        zoomLevel: ZOOM_LEVELS.day,
+        numIntervals: BUFFER,
+        reverse: true
+      })
 
       const expectedResult = [
         new Date('2020-12-17T00:00:00.000Z').getTime(),
@@ -170,7 +200,12 @@ describe('calculateTimelineIntervals', () => {
 
   describe('when zoom level is month', () => {
     test('returns the correct intervals', () => {
-      const result = calculateTimeIntervals(new Date().getTime(), ZOOM_LEVELS.month, BUFFER, false)
+      const result = calculateTimeIntervals({
+        timeAnchor: new Date().getTime(),
+        zoomLevel: ZOOM_LEVELS.month,
+        numIntervals: BUFFER,
+        reverse: false
+      })
 
       const expectedResult = [
         new Date('2021-02-01T00:00:00.000Z').getTime(),
@@ -194,7 +229,12 @@ describe('calculateTimelineIntervals', () => {
     })
 
     test('returns the correct reversed intervals', () => {
-      const result = calculateTimeIntervals(new Date().getTime(), ZOOM_LEVELS.month, BUFFER, true)
+      const result = calculateTimeIntervals({
+        timeAnchor: new Date().getTime(),
+        zoomLevel: ZOOM_LEVELS.month,
+        numIntervals: BUFFER,
+        reverse: true
+      })
 
       const expectedResult = [
         new Date('2019-10-01T00:00:00.000Z').getTime(),
@@ -220,7 +260,12 @@ describe('calculateTimelineIntervals', () => {
 
   describe('when zoom level is year', () => {
     test('returns the correct intervals', () => {
-      const result = calculateTimeIntervals(new Date().getTime(), ZOOM_LEVELS.year, BUFFER, false)
+      const result = calculateTimeIntervals({
+        timeAnchor: new Date().getTime(),
+        zoomLevel: ZOOM_LEVELS.year,
+        numIntervals: BUFFER,
+        reverse: false
+      })
 
       const expectedResult = [
         new Date('2022-01-01T00:00:00.000Z').getTime(),
@@ -244,7 +289,12 @@ describe('calculateTimelineIntervals', () => {
     })
 
     test('returns the correct reversed intervals', () => {
-      const result = calculateTimeIntervals(new Date().getTime(), ZOOM_LEVELS.year, BUFFER, true)
+      const result = calculateTimeIntervals({
+        timeAnchor: new Date().getTime(),
+        zoomLevel: ZOOM_LEVELS.year,
+        numIntervals: BUFFER,
+        reverse: true
+      })
 
       const expectedResult = [
         new Date('2006-01-01T00:00:00.000Z').getTime(),
@@ -270,7 +320,12 @@ describe('calculateTimelineIntervals', () => {
 
   describe('when zoom level is decade', () => {
     test('returns the correct intervals', () => {
-      const result = calculateTimeIntervals(new Date().getTime(), ZOOM_LEVELS.decade, BUFFER, false)
+      const result = calculateTimeIntervals({
+        timeAnchor: new Date().getTime(),
+        zoomLevel: ZOOM_LEVELS.decade,
+        numIntervals: BUFFER,
+        reverse: false
+      })
 
       const expectedResult = [
         new Date('2030-01-01T00:00:00.000Z').getTime(),
@@ -294,7 +349,12 @@ describe('calculateTimelineIntervals', () => {
     })
 
     test('returns the correct reversed intervals', () => {
-      const result = calculateTimeIntervals(new Date().getTime(), ZOOM_LEVELS.decade, BUFFER, true)
+      const result = calculateTimeIntervals({
+        timeAnchor: new Date().getTime(),
+        zoomLevel: ZOOM_LEVELS.decade,
+        numIntervals: BUFFER,
+        reverse: true
+      })
 
       const expectedResult = [
         new Date('1870-01-01T00:00:00.000Z').getTime(),

@@ -12,23 +12,16 @@ import { calculateTimeIntervals } from './utils/calculateTimeIntervals'
 import { determineIntervalLabel } from './utils/determineIntervalLabel'
 import { determineScaledSize } from './utils/determineScaledSize'
 import { getCenterTemporal } from './utils/getCenterTemporal'
+import { getIntervalsDuration } from './utils/getIntervalsDuration'
 import { getPositionByTimestamp } from './utils/getPositionByTimestamp'
 import { roundTime } from './utils/roundTime'
 
 import {
   RESOLUTIONS,
-  INTERVAL_BUFFER,
-  INTERVAL_THRESHOLD,
-  // MS_PER_DAY,
-  // MS_PER_HOUR,
-  MS_PER_MINUTE,
-  MS_PER_MONTH,
-  MS_PER_HOUR
+  INTERVAL_BUFFER
 } from './constants'
 
 import './index.scss'
-import { getIntervalsDuration } from './utils/getIntervalsDuration'
-
 
 export const EDSCTimeline = ({
   center,
@@ -68,9 +61,19 @@ export const EDSCTimeline = ({
 
   // Store calculated time intervals that power the display of the timeline dates
   const [timeIntervals, setTimeIntervals] = useState(() => [
-    ...calculateTimeIntervals(center, zoomLevel, INTERVAL_BUFFER, true),
+    ...calculateTimeIntervals({
+      timeAnchor: center,
+      zoomLevel,
+      numIntervals: INTERVAL_BUFFER,
+      reverse: true
+    }),
     roundTime(center, zoomLevel),
-    ...calculateTimeIntervals(center, zoomLevel, INTERVAL_BUFFER, false)
+    ...calculateTimeIntervals({
+      timeAnchor: center,
+      zoomLevel,
+      numIntervals: INTERVAL_BUFFER,
+      reverse: false
+    })
   ])
 
   /**
@@ -98,15 +101,12 @@ export const EDSCTimeline = ({
     if (timelineWrapperRef.current && intervalsCenterInPixels !== newWidth) {
       // When the timeline wrapper DOM element is available determine
       // the center value of the element in pixels
-
       setIntervalsCenterInPixels(intervalListWidthInPixels / 2)
     }
   }, [intervalListWidthInPixels, timelineWrapperRef])
 
   const handleMove = () => {
     if (onTimelineMove) {
-      // const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
-
       const centeredDate = getCenterTemporal({
         intervalListWidthInPixels,
         timeIntervals,
@@ -114,6 +114,7 @@ export const EDSCTimeline = ({
         timelineWrapperRef,
         zoomLevel
       })
+
       onTimelineMove({ center: centeredDate, interval: zoomLevel })
     }
   }
@@ -133,18 +134,21 @@ export const EDSCTimeline = ({
     if (timelineWrapperRef.current && !isLoaded && intervalsCenterInPixels) {
       // Center the timeline on load
       const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+
       const left = -(
-        getPositionByTimestamp(
-          center,
+        getPositionByTimestamp({
+          timestamp: center,
           timeIntervals,
           zoomLevel,
-          timelineWrapperWidth
-        ) - (timelineWrapperWidth / 2)
+          wrapperWidth: timelineWrapperWidth
+        }) - (timelineWrapperWidth / 2)
       )
+
       setTimelinePosition({
         ...timelinePosition,
         left
       })
+
       const centeredDate = getCenterTemporal({
         intervalListWidthInPixels,
         timeIntervals,
@@ -154,7 +158,9 @@ export const EDSCTimeline = ({
         timelineWrapperRef,
         zoomLevel
       })
+
       onTimelineMove({ center: centeredDate, interval: zoomLevel })
+
       setIsLoaded(true)
     }
   }, [intervalsCenterInPixels, center])
@@ -192,12 +198,12 @@ export const EDSCTimeline = ({
       )
     }
 
-    const nextIntervals = calculateTimeIntervals(
-      timeIntervals[0],
+    const nextIntervals = calculateTimeIntervals({
+      timeAnchor: timeIntervals[0],
       zoomLevel,
-      INTERVAL_BUFFER,
-      true
-    )
+      numIntervals: INTERVAL_BUFFER,
+      reverse: true
+    })
 
     const allIntervals = [
       ...nextIntervals,
@@ -208,7 +214,12 @@ export const EDSCTimeline = ({
 
     const startTime = nextIntervals[0]
     const lastInterval = nextIntervals[nextIntervals.length - 1]
-    const [endTime] = calculateTimeIntervals(lastInterval, zoomLevel, 1, false)
+    const [endTime] = calculateTimeIntervals({
+      timeAnchor: lastInterval,
+      zoomLevel,
+      numIntervals: 1,
+      reverse: false
+    })
 
     const duration = endTime - startTime
 
@@ -239,7 +250,12 @@ export const EDSCTimeline = ({
     if (timeIntervals.length > (INTERVAL_BUFFER * 3)) {
       const startTime = currentTimeIntervals[0]
       const lastInterval = currentTimeIntervals[INTERVAL_BUFFER - 1]
-      const [endTime] = calculateTimeIntervals(lastInterval, zoomLevel, 1, false)
+      const [endTime] = calculateTimeIntervals({
+        timeAnchor: lastInterval,
+        zoomLevel,
+        numIntervals: 1,
+        reverse: false
+      })
 
       const duration = endTime - startTime
 
@@ -259,9 +275,12 @@ export const EDSCTimeline = ({
 
     setTimeIntervals([
       ...currentTimeIntervals,
-      ...calculateTimeIntervals(
-        timeIntervals[timeIntervals.length - 1], zoomLevel, INTERVAL_BUFFER, false
-      )
+      ...calculateTimeIntervals({
+        timeAnchor: timeIntervals[timeIntervals.length - 1],
+        zoomLevel,
+        numIntervals: INTERVAL_BUFFER,
+        reverse: false
+      })
     ])
   }
 
@@ -350,7 +369,6 @@ export const EDSCTimeline = ({
    */
   const onChangeZoomLevel = (newZoomLevel) => {
     if (newZoomLevel >= minZoom && zoomLevel <= maxZoom) {
-      // const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
       const centeredDate = getCenterTemporal({
         intervalListWidthInPixels,
         timeIntervals,
@@ -360,9 +378,19 @@ export const EDSCTimeline = ({
       })
 
       const newIntervals = [
-        ...calculateTimeIntervals(centeredDate, newZoomLevel, INTERVAL_BUFFER, true),
+        ...calculateTimeIntervals({
+          timeAnchor: centeredDate,
+          zoomLevel: newZoomLevel,
+          numIntervals: INTERVAL_BUFFER,
+          reverse: true
+        }),
         roundTime(centeredDate, newZoomLevel),
-        ...calculateTimeIntervals(centeredDate, newZoomLevel, INTERVAL_BUFFER, false)
+        ...calculateTimeIntervals({
+          timeAnchor: centeredDate,
+          zoomLevel: newZoomLevel,
+          numIntervals: INTERVAL_BUFFER,
+          reverse: false
+        })
       ]
 
       setTimeIntervals(newIntervals)
@@ -370,12 +398,12 @@ export const EDSCTimeline = ({
 
       const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
       const left = -(
-        getPositionByTimestamp(
-          centeredDate,
-          newIntervals,
-          newZoomLevel,
-          timelineWrapperWidth
-        ) - (timelineWrapperWidth / 2)
+        getPositionByTimestamp({
+          timestamp: centeredDate,
+          timeIntervals: newIntervals,
+          zoomLevel: newZoomLevel,
+          wrapperWidth: timelineWrapperWidth
+        }) - (timelineWrapperWidth / 2)
       )
 
       setTimelinePosition({
@@ -442,12 +470,13 @@ export const EDSCTimeline = ({
                         endTime = timeIntervals[i + 1]
                       } else {
                         const lastInterval = timeIntervals[timeIntervals.length - 1]
-                        const [nextEndTime] = calculateTimeIntervals(
-                          lastInterval,
+                        const [nextEndTime] = calculateTimeIntervals({
+                          timeAnchor: lastInterval,
                           zoomLevel,
-                          1,
-                          false
-                        )
+                          numIntervals: 1,
+                          reverse: false
+                        })
+
                         endTime = nextEndTime
                       }
 
@@ -466,6 +495,8 @@ export const EDSCTimeline = ({
                           </div>
                         )
                       }
+
+                      return null
                     })
                   }
                 </div>
@@ -479,7 +510,6 @@ export const EDSCTimeline = ({
 }
 
 EDSCTimeline.defaultProps = {
-  intervalWidth: 200,
   center: new Date().getTime(),
   maxDate: new Date().getTime(),
   minDate: 0,
@@ -509,7 +539,7 @@ EDSCTimeline.propTypes = {
         PropTypes.arrayOf(
           PropTypes.number
         ) // [start, end, number of items in interval]
-      ).isRequired,
+      ).isRequired
     })
   ).isRequired,
   show: PropTypes.bool,
