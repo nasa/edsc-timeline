@@ -6,15 +6,20 @@ import { roundTime } from './roundTime'
 /**
  * Calculate an array of dates between two given dates at a specific zoom level
  * @param {Integer} timeAnchor The date to end calculating at
- * @param {Integer} zoom The zoom level to use for calculating labels for the dates in the range
+ * @param {Integer} zoomLevel The zoom level to use for calculating labels for the dates in the range
  * @param {Integer} numIntervals The amount of intervals to create
  * @param {Boolean} reverse Generate the intervals in reverse (before) to timeAnchor
  */
-export const calculateTimeIntervals = (timeAnchor, zoom, numIntervals, reverse) => {
+export const calculateTimeIntervals = ({
+  timeAnchor,
+  zoomLevel,
+  numIntervals,
+  reverse
+}) => {
   const timeIntervals = []
 
   // Round the timeAnchor to ensure the intervals are at the correct rounded time
-  const anchorDate = new Date(roundTime(timeAnchor, zoom))
+  const anchorDate = new Date(roundTime(timeAnchor, zoomLevel))
   // const anchorDate = new Date(timeAnchor)
 
   // Loop numIntervals times, creating a new interval each time
@@ -25,19 +30,19 @@ export const calculateTimeIntervals = (timeAnchor, zoom, numIntervals, reverse) 
     // If reverse is true, negate delta so we decrement the interval value
     if (reverse) delta = -delta
 
-    // Get the UTC components of the anchorDate
-    // Reverse the components array so the indexes match zoom
+    // Get the UTC components of the anchorDate and reverse the
+    // the array so the indexes match the zoomLevel
     let components = getUTCComponents(anchorDate).reverse()
 
-    if (zoom === ZOOM_LEVELS.decade) {
-      // If the zoom is decade, increment the year by delta * 10
+    if (zoomLevel === ZOOM_LEVELS.decade) {
+      // If the zoomLevel is decade, increment the year by delta * 10
       components[ZOOM_LEVELS.year] += (delta * 10)
-    } else if (zoom === ZOOM_LEVELS.imfifety) {
-      // If the zoom is decade, increment the year by delta * 10
+    } else if (zoomLevel === ZOOM_LEVELS.imfifety) {
+      // If the zoomLevel is decade, increment the year by delta * 10
       components[ZOOM_LEVELS.year] += (delta * 50)
     } else {
-      // Increment the zoom level by delta
-      components[zoom] += delta
+      // Increment the zoomLevel level by delta
+      components[zoomLevel] += delta
     }
 
     // Reverse the array back to the UTC order to create the interval date
