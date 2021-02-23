@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
 import { render } from 'react-dom'
 import GithubCorner from 'react-github-corner'
+import { startCase } from 'lodash'
 
 import EDSCTimeline from '../../src'
+
+import { RESOLUTIONS } from '../../src/constants'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './styles.css'
@@ -29,47 +32,52 @@ const App = () => {
 
   return (
     <>
-      <h1>
-        EDSC Timeline React Plugin Demo
-      </h1>
+      <section className="container">
+        <h1>
+          EDSC Timeline React Plugin Demo
+        </h1>
 
-      <form className="mb-4">
-        <button
-          className="btn btn-primary"
-          type="button"
-          title={showHideButtonTitle}
-          onClick={handleShowHideButton}
-        >
-          {showHideButtonTitle}
-        </button>
-      </form>
+        <form className="mb-4">
+          <button
+            className="btn btn-primary"
+            type="button"
+            title={showHideButtonTitle}
+            onClick={handleShowHideButton}
+          >
+            {showHideButtonTitle}
+          </button>
+        </form>
+
+        <section className="demo__metadata">
+          <div>
+            <span>
+              Center:
+              {' '}
+              {new Date(displayedCenter).toUTCString()}
+            </span>
+          </div>
+
+          <div>
+            <span>
+              Interval:
+              {' '}
+              {startCase(RESOLUTIONS[displayedInterval])}
+              {` (${displayedInterval})`}
+            </span>
+          </div>
+        </section>
+      </section>
 
       <div className="timeline-one">
         <EDSCTimeline
           rows={[]}
           center={center}
           show={showTimeline}
-          zoom={5}
+          zoom={3}
           minZoom={1}
           maxZoom={5}
           onTimelineMove={handleTimelineMove}
         />
-      </div>
-
-      <div>
-        <span>
-          Center:
-          {' '}
-          {new Date(displayedCenter).toUTCString()}
-        </span>
-      </div>
-
-      <div>
-        <span>
-          Interval:
-          {' '}
-          {displayedInterval}
-        </span>
       </div>
 
       <GithubCorner href="https://github.com/nasa/edsc-timeline" />

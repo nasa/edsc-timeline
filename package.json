@@ -106,6 +106,7 @@
   "dependencies": {
     "lodash": "^4.17.20",
     "prop-types": "^15.7.2",
+    "react-icons": "^4.2.0",
     "react-virtualized-auto-sizer": "^1.0.4",
     "react-window": "^1.8.6",
     "react-window-infinite-loader": "^1.0.7"
