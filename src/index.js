@@ -5,6 +5,7 @@ import React, {
   useState
 } from 'react'
 import PropTypes from 'prop-types'
+import { FaChevronUp, FaChevronDown } from 'react-icons/fa'
 
 import { startCase } from 'lodash'
 
@@ -420,25 +421,32 @@ export const EDSCTimeline = ({
       {
         show && (
           <div className="timeline">
-            <section>
-              <button
-                type="button"
-                disabled={zoomLevel === maxZoom}
-                onClick={() => onChangeZoomLevel(zoomLevel + 1)}
-              >
-                -
-              </button>
-              <span>
-                {startCase(RESOLUTIONS[zoomLevel])}
-                {zoomLevel}
-              </span>
-              <button
-                type="button"
-                disabled={zoomLevel === minZoom}
-                onClick={() => onChangeZoomLevel(zoomLevel - 1)}
-              >
-                +
-              </button>
+            <section className="timeline__tools">
+              <section className="timeline__tool-section">
+                <button
+                  className="timeline__tool-action"
+                  type="button"
+                  disabled={zoomLevel === maxZoom}
+                  onClick={() => onChangeZoomLevel(zoomLevel + 1)}
+                  title="Increase zoom level"
+                  label="Increase zoom level"
+                >
+                  <FaChevronUp />
+                </button>
+                <span className="timeline__tool-label">
+                  {startCase(RESOLUTIONS[zoomLevel])}
+                </span>
+                <button
+                  className="timeline__tool-action"
+                  type="button"
+                  disabled={zoomLevel === minZoom}
+                  onClick={() => onChangeZoomLevel(zoomLevel - 1)}
+                  title="Decrease zoom level"
+                  label="Decrease zoom level"
+                >
+                  <FaChevronDown />
+                </button>
+              </section>
             </section>
             <div className="timeline__outer-wrapper">
               <span className="timeline__timeline" />
