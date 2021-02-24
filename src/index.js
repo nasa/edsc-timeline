@@ -494,12 +494,33 @@ export const EDSCTimeline = ({
                         const timelineWrapperWidth = timelineWrapperRef.current
                           .getBoundingClientRect().width
 
-                        const width = determineScaledWidth(duration, zoomLevel, timelineWrapperWidth)
+                        const width = determineScaledWidth(
+                          duration,
+                          zoomLevel,
+                          timelineWrapperWidth
+                        )
 
                         return (
-                          <div key={interval} className="timeline__interval" style={{ width }}>
-                            <span className="timeline__interval-label">{text}</span>
-                            <span className="timeline__interval-section-label">{subText}</span>
+                          <div
+                            key={interval}
+                            className="timeline__interval"
+                            style={{
+                              width,
+                              zIndex: timeIntervals.length - i
+                            }}
+                          >
+                            <div className="timeline__interval-top">
+                              {text && (
+                                <span className="timeline__interval-label">{text}</span>
+                              )}
+                            </div>
+                            <div className="timeline__interval-bottom">
+                              {
+                                subText && (
+                                  <span className="timeline__interval-section-label">{subText}</span>
+                                )
+                              }
+                            </div>
                           </div>
                         )
                       }

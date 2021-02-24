@@ -12,7 +12,7 @@ import {
 export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 // How many time intervals to create when new data is inserted into the timeline
-export const INTERVAL_BUFFER = 20
+export const INTERVAL_BUFFER = 30
 
 // How many intervals should be beyond view before more are loaded
 export const INTERVAL_THRESHOLD = 5
