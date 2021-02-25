@@ -1,0 +1,20 @@
+.timeline {
+  &__marker {
+    display: none;
+    height: 100%;
+    width: 1px;
+    background-color: green;
+    position: absolute;
+    // left: 50%;
+    z-index: 1;
+  }
+
+  &__list {
+    width: 100%;
+    background-color: $color__black--050;
+    position: relative;
+    border-top: 1px solid #727272;
+    box-shadow: 0 -10px 15px 0 rgba(0,0,0,.3);
+    color: white;
+  }
+}

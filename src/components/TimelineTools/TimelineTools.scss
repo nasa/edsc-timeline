@@ -1,0 +1,56 @@
+.timeline {
+  &__tools {
+    flex-grow: 0;
+    background-color: $color__black--050;
+    color: $color__black--900;
+  }
+
+  &__tool-action {
+    outline: 0;
+    border: 0;
+    background: transparent;
+    color: $color__black--700;
+    transition: all 0.2s ease;
+
+    svg {
+      height: 0.925rem;
+      width: 0.925rem;
+    }
+
+    &:hover {
+      color: $color__black--900;
+    }
+
+    &:active {
+      color: $color__black--750;
+    }
+
+    &:disabled {
+      color: $color__black--400;
+      cursor: not-allowed;
+    }
+  }
+
+  &__tool-label {
+    padding: 0.025rem 0;
+    text-transform: uppercase;
+    font-size: 0.725rem;
+    color: $color__black--900;
+    letter-spacing: 0.02rem;
+  }
+
+  &__tool-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 0.5rem 0.75rem;
+    border-right: 1px solid $color__black--250;
+
+    .timeline__tool-label {
+      text-align: center;
+      width: 3.25rem;
+    }
+  }
+}
