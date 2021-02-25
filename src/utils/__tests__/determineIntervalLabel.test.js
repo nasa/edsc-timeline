@@ -20,6 +20,10 @@ describe('determineIntervalLabel', () => {
     test('returns the correct label', () => {
       expect(determineIntervalLabel(new Date().getTime(), ZOOM_LEVELS.minute)).toEqual(['10:35'])
     })
+
+    test('returns the correct label with subtext', () => {
+      expect(determineIntervalLabel(new Date('2021').getTime(), ZOOM_LEVELS.minute)).toEqual(['00:00', 'Jan 01'])
+    })
   })
 
   describe('when zoom level is hour', () => {
@@ -28,11 +32,19 @@ describe('determineIntervalLabel', () => {
       // Other places round the time before it hits the formatters so the value looks right
       expect(determineIntervalLabel(new Date().getTime(), ZOOM_LEVELS.hour)).toEqual(['10:35'])
     })
+
+    test('returns the correct label with subtext', () => {
+      expect(determineIntervalLabel(new Date('2021').getTime(), ZOOM_LEVELS.hour)).toEqual(['00:00', '01 Jan 2021'])
+    })
   })
 
   describe('when zoom level is day', () => {
     test('returns the correct label', () => {
       expect(determineIntervalLabel(new Date().getTime(), ZOOM_LEVELS.day)).toEqual(['15'])
+    })
+
+    test('returns the correct label with subtext', () => {
+      expect(determineIntervalLabel(new Date('2021').getTime(), ZOOM_LEVELS.day)).toEqual(['01', 'Jan 2021'])
     })
   })
 
@@ -40,11 +52,27 @@ describe('determineIntervalLabel', () => {
     test('returns the correct label', () => {
       expect(determineIntervalLabel(new Date().getTime(), ZOOM_LEVELS.month)).toEqual(['Feb'])
     })
+
+    test('returns the correct label with subtext', () => {
+      expect(determineIntervalLabel(new Date('2021').getTime(), ZOOM_LEVELS.month)).toEqual(['Jan', '2021'])
+    })
   })
 
   describe('when zoom level is year', () => {
     test('returns the correct label', () => {
       expect(determineIntervalLabel(new Date().getTime(), ZOOM_LEVELS.year)).toEqual(['2021'])
+    })
+  })
+
+  describe('when zoom level is decade', () => {
+    test('returns the correct label', () => {
+      expect(determineIntervalLabel(new Date().getTime(), ZOOM_LEVELS.decade)).toEqual(['2021'])
+    })
+  })
+
+  describe('when zoom level is 5 decades', () => {
+    test('returns the correct label', () => {
+      expect(determineIntervalLabel(new Date().getTime(), ZOOM_LEVELS.fiftyYears)).toEqual(['2021'])
     })
   })
 })

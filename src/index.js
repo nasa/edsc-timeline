@@ -5,12 +5,11 @@ import React, {
   useState
 } from 'react'
 import PropTypes from 'prop-types'
-import { FaChevronUp, FaChevronDown } from 'react-icons/fa'
 
-import { startCase } from 'lodash'
+import { TimelineList } from './components/TimelineList/TimelineList'
+import { TimelineTools } from './components/TimelineTools/TimelineTools'
 
 import { calculateTimeIntervals } from './utils/calculateTimeIntervals'
-import { determineIntervalLabel } from './utils/determineIntervalLabel'
 import { determineScaledWidth } from './utils/determineScaledWidth'
 import { getCenterTimestamp } from './utils/getCenterTimestamp'
 import { getIntervalsDuration } from './utils/getIntervalsDuration'
@@ -18,7 +17,6 @@ import { getPositionByTimestamp } from './utils/getPositionByTimestamp'
 import { roundTime } from './utils/roundTime'
 
 import {
-  RESOLUTIONS,
   INTERVAL_BUFFER
 } from './constants'
 
@@ -421,33 +419,12 @@ export const EDSCTimeline = ({
       {
         show && (
           <div className="timeline">
-            <section className="timeline__tools">
-              <section className="timeline__tool-section">
-                <button
-                  className="timeline__tool-action"
-                  type="button"
-                  disabled={zoomLevel === maxZoom}
-                  onClick={() => onChangeZoomLevel(zoomLevel + 1)}
-                  title="Increase zoom level"
-                  label="Increase zoom level"
-                >
-                  <FaChevronUp />
-                </button>
-                <span className="timeline__tool-label">
-                  {startCase(RESOLUTIONS[zoomLevel])}
-                </span>
-                <button
-                  className="timeline__tool-action"
-                  type="button"
-                  disabled={zoomLevel === minZoom}
-                  onClick={() => onChangeZoomLevel(zoomLevel - 1)}
-                  title="Decrease zoom level"
-                  label="Decrease zoom level"
-                >
-                  <FaChevronDown />
-                </button>
-              </section>
-            </section>
+            <TimelineTools
+              minZoom={minZoom}
+              maxZoom={maxZoom}
+              zoomLevel={zoomLevel}
+              onChangeZoomLevel={onChangeZoomLevel}
+            />
             <div className="timeline__outer-wrapper">
               <span className="timeline__timeline" />
               <div
@@ -455,80 +432,20 @@ export const EDSCTimeline = ({
                 className="timeline__wrapper"
               >
                 <span className="timeline__center" />
-                <div
-                  ref={timelineListRef}
-                  className="timeline__list"
-                  style={{
-                    width: `${intervalListWidthInPixels}px`,
-                    transform: `translateX(${timelinePosition.left}px)`
-                  }}
-                  onMouseDown={onTimelineMouseDown}
-                  role="button"
-                  tabIndex="0"
-                >
-                  <span className="timeline__marker" style={{ left: intervalsCenterInPixels }} />
-                  {
-                    timeIntervals && timeIntervals.map((interval, i) => {
-                      const [text, ...subText] = determineIntervalLabel(interval, zoomLevel)
-
-                      const startTime = interval
-                      let endTime
-
-                      if (timeIntervals[i + 1] !== null) {
-                        endTime = timeIntervals[i + 1]
-                      } else {
-                        const lastInterval = timeIntervals[timeIntervals.length - 1]
-                        const [nextEndTime] = calculateTimeIntervals({
-                          timeAnchor: lastInterval,
-                          zoomLevel,
-                          numIntervals: 1,
-                          reverse: false
-                        })
-
-                        endTime = nextEndTime
-                      }
-
-                      const duration = endTime - startTime
-
-                      if (timelineWrapperRef.current) {
-                        const timelineWrapperWidth = timelineWrapperRef.current
-                          .getBoundingClientRect().width
-
-                        const width = determineScaledWidth(
-                          duration,
-                          zoomLevel,
-                          timelineWrapperWidth
-                        )
-
-                        return (
-                          <div
-                            key={interval}
-                            className="timeline__interval"
-                            style={{
-                              width,
-                              zIndex: timeIntervals.length - i
-                            }}
-                          >
-                            <div className="timeline__interval-top">
-                              {text && (
-                                <span className="timeline__interval-label">{text}</span>
-                              )}
-                            </div>
-                            <div className="timeline__interval-bottom">
-                              {
-                                subText && (
-                                  <span className="timeline__interval-section-label">{subText}</span>
-                                )
-                              }
-                            </div>
-                          </div>
-                        )
-                      }
-
-                      return null
-                    })
-                  }
-                </div>
+                {
+                  timeIntervals.length > 0 && (
+                    <TimelineList
+                      intervalListWidthInPixels={intervalListWidthInPixels}
+                      intervalsCenterInPixels={intervalsCenterInPixels}
+                      timeIntervals={timeIntervals}
+                      timelineListRef={timelineListRef}
+                      timelinePosition={timelinePosition}
+                      timelineWrapperRef={timelineWrapperRef}
+                      zoomLevel={zoomLevel}
+                      onTimelineMouseDown={onTimelineMouseDown}
+                    />
+                  )
+                }
               </div>
             </div>
           </div>

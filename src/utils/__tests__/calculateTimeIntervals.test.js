@@ -382,7 +382,7 @@ describe('calculateTimelineIntervals', () => {
     test('returns the correct intervals', () => {
       const result = calculateTimeIntervals({
         timeAnchor: new Date().getTime(),
-        zoomLevel: ZOOM_LEVELS.imfifety,
+        zoomLevel: ZOOM_LEVELS.fiftyYears,
         numIntervals: BUFFER,
         reverse: false
       })
@@ -411,7 +411,7 @@ describe('calculateTimelineIntervals', () => {
     test('returns the correct reversed intervals', () => {
       const result = calculateTimeIntervals({
         timeAnchor: new Date().getTime(),
-        zoomLevel: ZOOM_LEVELS.imfifety,
+        zoomLevel: ZOOM_LEVELS.fiftyYears,
         numIntervals: BUFFER,
         reverse: true
       })
