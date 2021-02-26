@@ -8,7 +8,7 @@ import EDSCTimeline from '../../src'
 import { RESOLUTIONS } from '../../src/constants'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
-import './styles.css'
+import './styles.scss'
 
 const App = () => {
   const [showTimeline, setShowTimeline] = useState(true)
@@ -48,7 +48,7 @@ const App = () => {
           </button>
         </form>
 
-        <section className="demo__metadata">
+        <section className="demo__metadata mb-4">
           <div>
             <span>
               Center:
@@ -66,19 +66,19 @@ const App = () => {
             </span>
           </div>
         </section>
-      </section>
 
-      <div className="timeline-one">
-        <EDSCTimeline
-          rows={[]}
-          center={center}
-          show={showTimeline}
-          zoom={3}
-          minZoom={1}
-          maxZoom={5}
-          onTimelineMove={handleTimelineMove}
-        />
-      </div>
+        <div className="timeline-one">
+          <EDSCTimeline
+            rows={[]}
+            center={center}
+            show={showTimeline}
+            zoom={3}
+            minZoom={1}
+            maxZoom={5}
+            onTimelineMove={handleTimelineMove}
+          />
+        </div>
+      </section>
 
       <GithubCorner href="https://github.com/nasa/edsc-timeline" />
     </>
