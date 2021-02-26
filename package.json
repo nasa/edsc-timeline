@@ -75,6 +75,7 @@
     "jest": "^26.6.3",
     "mockdate": "^3.0.2",
     "node-sass": "^5.0.0",
+    "prop-types": "^15.7.2",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-github-corner": "^2.5.0",
@@ -104,11 +105,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "lodash": "^4.17.20",
-    "prop-types": "^15.7.2",
-    "react-icons": "^4.2.0",
-    "react-virtualized-auto-sizer": "^1.0.4",
-    "react-window": "^1.8.6",
-    "react-window-infinite-loader": "^1.0.7"
+    "lodash": "^4.17.21",
+    "react-icons": "^4.2.0"
   }
 }
