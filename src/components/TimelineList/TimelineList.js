@@ -47,7 +47,6 @@ export const TimelineList = ({
             endTime = nextEndTime
           }
 
-          // TODO is this zIndex needed on the interval?
           const zIndex = timeIntervals.length - intervalIndex
 
           return (
@@ -55,8 +54,6 @@ export const TimelineList = ({
               key={interval}
               startTime={startTime}
               endTime={endTime}
-              intervalIndex={intervalIndex}
-              timeIntervals={timeIntervals}
               timelineWrapperRef={timelineWrapperRef}
               zIndex={zIndex}
               zoomLevel={zoomLevel}
@@ -69,7 +66,7 @@ export const TimelineList = ({
 }
 
 TimelineList.defaultProps = {
-  intervalListWidthInPixels: 0,
+  intervalListWidthInPixels: 0
 }
 
 TimelineList.propTypes = {

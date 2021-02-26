@@ -15,7 +15,9 @@ body {
 }
 
 .timeline-one {
-  width: 100%;
-  position: absolute;
-  bottom: 0;
+  &--fixed {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+  }
 }

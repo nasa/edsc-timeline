@@ -17,7 +17,8 @@ import { getPositionByTimestamp } from './utils/getPositionByTimestamp'
 import { roundTime } from './utils/roundTime'
 
 import {
-  INTERVAL_BUFFER
+  INTERVAL_BUFFER,
+  MAX_INTERVAL_BUFFER
 } from './constants'
 
 import './index.scss'
@@ -35,9 +36,6 @@ export const EDSCTimeline = ({
 
   // Ref for the timeline to access the DOM element
   const timelineWrapperRef = useRef(null)
-
-  // Combine scroll positions state with scroll position from a scroll event to determine the scroll direction
-  const [scrollDirection, setScrollDirection] = useState(null)
 
   // Store the zoom level and allow for changing props to modify the state
   const [zoomLevel, setZoomLevel] = useState(zoom)
@@ -191,7 +189,7 @@ export const EDSCTimeline = ({
     // If the underlying dataset has grown larger than desired, trim off 1 buffers
     // worth of data from opposite of the array
     let currentTimeIntervals = timeIntervals
-    if (timeIntervals.length > (INTERVAL_BUFFER * 3)) {
+    if (timeIntervals.length > MAX_INTERVAL_BUFFER) {
       currentTimeIntervals = currentTimeIntervals.slice(
         0, (currentTimeIntervals.length - INTERVAL_BUFFER)
       )
@@ -246,7 +244,7 @@ export const EDSCTimeline = ({
     // If the underlying dataset has grown larger than desired, trim off 1 buffers
     // worth of data from opposite of the array
     let currentTimeIntervals = timeIntervals
-    if (timeIntervals.length > (INTERVAL_BUFFER * 3)) {
+    if (timeIntervals.length > MAX_INTERVAL_BUFFER) {
       const startTime = currentTimeIntervals[0]
       const lastInterval = currentTimeIntervals[INTERVAL_BUFFER - 1]
       const [endTime] = calculateTimeIntervals({
@@ -298,12 +296,13 @@ export const EDSCTimeline = ({
 
         const scrollDirectionIsForward = timelineStartPosition.left - timelinePosition.left > 0
 
+        let scrollDirection
         if (scrollDirectionIsForward && scrollDirection !== 'forward') {
-          setScrollDirection('forward')
+          scrollDirection = 'forward'
         }
 
         if (!scrollDirectionIsForward && scrollDirection !== 'backward') {
-          setScrollDirection('backward')
+          scrollDirection = 'backward'
         }
 
         const loadMoreWindow = 500
@@ -311,8 +310,8 @@ export const EDSCTimeline = ({
         if (scrollDirection === 'backward') {
           // If the previous scroll position is outside of the window to trigger another page and
           // the scroll position attached to the event is within the window
-          const originalDistanceFromEdge = timelineStartPosition.left * -1
-          const distanceFromEdge = timelinePosition.left * -1
+          const originalDistanceFromEdge = -timelineStartPosition.left
+          const distanceFromEdge = -timelinePosition.left
 
           if (originalDistanceFromEdge > loadMoreWindow && distanceFromEdge <= loadMoreWindow) {
             scrollBackward()
@@ -360,14 +359,15 @@ export const EDSCTimeline = ({
       window.removeEventListener('mouseup', onWindowMouseUp)
       window.removeEventListener('mousemove', onWindowMouseMove)
     }
-  }, [dragging, timelinePosition, timelineDragStartPosition, scrollDirection])
+  }, [dragging, timelinePosition, timelineDragStartPosition])
 
   /**
    * Callback to change the current zoom level and recalculate timeIntervals
    * @param {Integer} newZoomLevel New desired zoom level
    */
   const onChangeZoomLevel = (newZoomLevel) => {
-    if (newZoomLevel >= minZoom && zoomLevel <= maxZoom) {
+    if (newZoomLevel >= minZoom && newZoomLevel <= maxZoom) {
+      // Get the current (zoomLevel) centeredDate to use as the new center with the newZoomLevel
       const centeredDate = getCenterTimestamp({
         intervalListWidthInPixels,
         timeIntervals,
@@ -436,7 +436,6 @@ export const EDSCTimeline = ({
                   timeIntervals.length > 0 && (
                     <TimelineList
                       intervalListWidthInPixels={intervalListWidthInPixels}
-                      intervalsCenterInPixels={intervalsCenterInPixels}
                       timeIntervals={timeIntervals}
                       timelineListRef={timelineListRef}
                       timelinePosition={timelinePosition}
