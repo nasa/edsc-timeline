@@ -20,7 +20,6 @@ function setup() {
     maxZoom: 5,
     zoom: 3,
     rows: [],
-    show: true,
     onTemporalSet: jest.fn(),
     onFocusedTemporalSet: jest.fn(),
     onTimelineMove: jest.fn()
@@ -84,16 +83,6 @@ describe('EDSCTimeline component', () => {
       1677628800000, 1680307200000, 1682899200000, 1685577600000,
       1688169600000
     ])
-  })
-
-  describe('Show prop', () => {
-    test('hides the timeline when false', () => {
-      const { enzymeWrapper } = setup()
-
-      enzymeWrapper.setProps({ show: false })
-
-      expect(enzymeWrapper.find('.timeline').length).toBe(0)
-    })
   })
 
   describe('onChangeZoomLevel', () => {

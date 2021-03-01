@@ -38,7 +38,7 @@ export const calculateTimeIntervals = ({
       // If the zoomLevel is decade, increment the year by delta * 10
       components[ZOOM_LEVELS.year] += (delta * 10)
     } else if (zoomLevel === ZOOM_LEVELS.fiftyYears) {
-      // If the zoomLevel is decade, increment the year by delta * 10
+      // If the zoomLevel is 5 decades, increment the year by delta * 50
       components[ZOOM_LEVELS.year] += (delta * 50)
     } else {
       // Increment the zoomLevel level by delta
