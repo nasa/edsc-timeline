@@ -8,7 +8,6 @@ import { calculateTimeIntervals } from './calculateTimeIntervals'
  * @param {Object} param0.timeIntervals Array of dates representing intervals at the provided zoom level
  * @param {Object} param0.zoomLevel Current zoom level of the timeline
  */
-// TODO getTimestampByPosition
 export const getTimestampByPosition = ({
   intervalListWidthInPixels,
   position,
