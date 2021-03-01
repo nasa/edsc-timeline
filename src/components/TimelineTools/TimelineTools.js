@@ -7,6 +7,14 @@ import { RESOLUTIONS } from '../../constants'
 
 import './TimelineTools.scss'
 
+/**
+ * Renders the zoom buttons for the timeline
+ * @param {Object} param0
+ * @param {Integer} param0.maxZoom Max zoom level to allow
+ * @param {Integer} param0.minZoom Min zoom level to allow
+ * @param {Integer} param0.zoomLevel Current zoom level of the timeline
+ * @param {Function} param0.onChangeZoomLevel Callback function for changing the zoom level
+ */
 export const TimelineTools = ({
   maxZoom,
   minZoom,
