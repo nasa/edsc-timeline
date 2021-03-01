@@ -11,15 +11,10 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './styles.scss'
 
 const App = () => {
-  const [showTimeline, setShowTimeline] = useState(true)
   const [center] = useState(() => (new Date(Date.UTC(2020, 0, 1, 3, 12, 58))).getTime())
 
   const [displayedCenter, setDisplayedCenter] = useState()
   const [displayedInterval, setDisplayedInterval] = useState()
-
-  const handleShowHideButton = () => {
-    setShowTimeline(!showTimeline)
-  }
 
   const handleTimelineMove = (values) => {
     const { center, interval } = values
@@ -28,25 +23,12 @@ const App = () => {
     setDisplayedInterval(interval)
   }
 
-  const showHideButtonTitle = showTimeline ? 'Hide Timeline' : 'Show Timeline'
-
   return (
     <>
       <section className="container">
         <h1>
           EDSC Timeline React Plugin Demo
         </h1>
-
-        <form className="mb-4">
-          <button
-            className="btn btn-primary"
-            type="button"
-            title={showHideButtonTitle}
-            onClick={handleShowHideButton}
-          >
-            {showHideButtonTitle}
-          </button>
-        </form>
 
         <section className="demo__metadata mb-4">
           <div>
@@ -71,7 +53,6 @@ const App = () => {
           <EDSCTimeline
             rows={[]}
             center={center}
-            show={showTimeline}
             zoom={3}
             minZoom={1}
             maxZoom={5}

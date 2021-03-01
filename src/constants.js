@@ -32,15 +32,3 @@ export const ZOOM_LEVELS = {
   decade: 5,
   fiftyYears: 6
 }
-
-export const MS_PER_MINUTE = 60000
-
-export const MS_PER_HOUR = MS_PER_MINUTE * 60
-
-export const MS_PER_DAY = MS_PER_HOUR * 24
-
-export const MS_PER_MONTH = MS_PER_DAY * 31
-
-export const MS_PER_YEAR = MS_PER_DAY * 366
-
-export const MS_PER_DECADE = MS_PER_YEAR * 10

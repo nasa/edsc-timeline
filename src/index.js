@@ -11,6 +11,7 @@ import { TimelineTools } from './components/TimelineTools/TimelineTools'
 
 import { calculateTimeIntervals } from './utils/calculateTimeIntervals'
 import { determineScaledWidth } from './utils/determineScaledWidth'
+import { generateEndTime } from './utils/generateEndTime'
 import { getCenterTimestamp } from './utils/getCenterTimestamp'
 import { getIntervalsDuration } from './utils/getIntervalsDuration'
 import { getPositionByTimestamp } from './utils/getPositionByTimestamp'
@@ -23,18 +24,26 @@ import {
 
 import './index.scss'
 
+/**
+ * Renders the EDSC Timeline
+ * @param {Object} param0
+ * @param {Integer} param0.center Center timestamp of the timeline
+ * @param {Integer} param0.minZoom Min zoom allowed
+ * @param {Integer} param0.maxZoom Max zoom allowed
+ * @param {Function} param0.onTimelineMove Callback that returns timeline center and interval values
+ * @param {Integer} param0.zoom Current zoom level of the timeline
+ */
 export const EDSCTimeline = ({
   center,
-  show,
   minZoom,
   maxZoom,
   onTimelineMove,
   zoom
 }) => {
-  // Ref for the timeline to access the DOM element
+  // Ref for the timeline to access the list DOM element
   const timelineListRef = useRef(null)
 
-  // Ref for the timeline to access the DOM element
+  // Ref for the timeline to access the wrapper DOM element
   const timelineWrapperRef = useRef(null)
 
   // Store the zoom level and allow for changing props to modify the state
@@ -46,14 +55,19 @@ export const EDSCTimeline = ({
   // Store the pixel value of the center of the list of intervals
   const [intervalsCenterInPixels, setIntervalsCenterInPixels] = useState(null)
 
+  // Flag for the initial loading state of the timeline
   const [isLoaded, setIsLoaded] = useState(false)
 
+  // Flag for if the timeline is currently in a dragging state
   const [dragging, setDragging] = useState(false)
 
+  // Track the position of the timeline at the start of a drag event
   const [timelineStartPosition, setTimelineStartPosition] = useState(null)
 
+  // The position of the cursor at the start of a drag event
   const [timelineDragStartPosition, setTimelineDragStartPosition] = useState(null)
 
+  // The current position of the timeline
   const [timelinePosition, setTimelinePosition] = useState({ top: 0, left: 0 })
 
   // Store calculated time intervals that power the display of the timeline dates
@@ -210,13 +224,7 @@ export const EDSCTimeline = ({
     setTimeIntervals(allIntervals)
 
     const startTime = nextIntervals[0]
-    const lastInterval = nextIntervals[nextIntervals.length - 1]
-    const [endTime] = calculateTimeIntervals({
-      timeAnchor: lastInterval,
-      zoomLevel,
-      numIntervals: 1,
-      reverse: false
-    })
+    const endTime = generateEndTime(timeIntervals, zoomLevel)
 
     const duration = endTime - startTime
 
@@ -246,13 +254,7 @@ export const EDSCTimeline = ({
     let currentTimeIntervals = timeIntervals
     if (timeIntervals.length > MAX_INTERVAL_BUFFER) {
       const startTime = currentTimeIntervals[0]
-      const lastInterval = currentTimeIntervals[INTERVAL_BUFFER - 1]
-      const [endTime] = calculateTimeIntervals({
-        timeAnchor: lastInterval,
-        zoomLevel,
-        numIntervals: 1,
-        reverse: false
-      })
+      const endTime = generateEndTime(timeIntervals, zoomLevel)
 
       const duration = endTime - startTime
 
@@ -415,42 +417,36 @@ export const EDSCTimeline = ({
   }
 
   return (
-    <>
-      {
-        show && (
-          <div className="timeline">
-            <TimelineTools
-              minZoom={minZoom}
-              maxZoom={maxZoom}
-              zoomLevel={zoomLevel}
-              onChangeZoomLevel={onChangeZoomLevel}
-            />
-            <div className="timeline__outer-wrapper">
-              <span className="timeline__timeline" />
-              <div
-                ref={timelineWrapperRef}
-                className="timeline__wrapper"
-              >
-                <span className="timeline__center" />
-                {
-                  timeIntervals.length > 0 && (
-                    <TimelineList
-                      intervalListWidthInPixels={intervalListWidthInPixels}
-                      timeIntervals={timeIntervals}
-                      timelineListRef={timelineListRef}
-                      timelinePosition={timelinePosition}
-                      timelineWrapperRef={timelineWrapperRef}
-                      zoomLevel={zoomLevel}
-                      onTimelineMouseDown={onTimelineMouseDown}
-                    />
-                  )
-                }
-              </div>
-            </div>
-          </div>
-        )
-      }
-    </>
+    <div className="timeline">
+      <TimelineTools
+        minZoom={minZoom}
+        maxZoom={maxZoom}
+        zoomLevel={zoomLevel}
+        onChangeZoomLevel={onChangeZoomLevel}
+      />
+      <div className="timeline__outer-wrapper">
+        <span className="timeline__timeline" />
+        <div
+          ref={timelineWrapperRef}
+          className="timeline__wrapper"
+        >
+          <span className="timeline__center" />
+          {
+            timeIntervals.length > 0 && (
+              <TimelineList
+                intervalListWidthInPixels={intervalListWidthInPixels}
+                timeIntervals={timeIntervals}
+                timelineListRef={timelineListRef}
+                timelinePosition={timelinePosition}
+                timelineWrapperRef={timelineWrapperRef}
+                zoomLevel={zoomLevel}
+                onTimelineMouseDown={onTimelineMouseDown}
+              />
+            )
+          }
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -461,7 +457,6 @@ EDSCTimeline.defaultProps = {
   onFocusedTemporalSet: null,
   onTemporalSet: null,
   onTimelineMove: null,
-  show: true,
   minZoom: 1,
   maxZoom: 5,
   zoom: 3
@@ -487,7 +482,6 @@ EDSCTimeline.propTypes = {
       ).isRequired
     })
   ).isRequired,
-  show: PropTypes.bool,
   minZoom: PropTypes.number,
   maxZoom: PropTypes.number,
   zoom: PropTypes.number
