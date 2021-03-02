@@ -15,6 +15,7 @@ import { generateEndTime } from './utils/generateEndTime'
 import { getCenterTimestamp } from './utils/getCenterTimestamp'
 import { getIntervalsDuration } from './utils/getIntervalsDuration'
 import { getPositionByTimestamp } from './utils/getPositionByTimestamp'
+import { getTimestampByPosition } from './utils/getTimestampByPosition'
 import { roundTime } from './utils/roundTime'
 
 import {
@@ -30,15 +31,19 @@ import './index.scss'
  * @param {Integer} param0.center Center timestamp of the timeline
  * @param {Integer} param0.minZoom Min zoom allowed
  * @param {Integer} param0.maxZoom Max zoom allowed
- * @param {Function} param0.onTimelineMove Callback that returns timeline center and interval values
+ * @param {Object} param0.temporalRange Temporal range to display on the timeline
  * @param {Integer} param0.zoom Current zoom level of the timeline
+ * @param {Function} param0.onTimelineMove Callback that returns timeline center and interval values
+ * @param {Function} param0.onTemporalSet Callback that returns temporal start and end values
  */
 export const EDSCTimeline = ({
   center,
   minZoom,
   maxZoom,
+  temporalRange: propsTemporalRange,
+  zoom,
   onTimelineMove,
-  zoom
+  onTemporalSet
 }) => {
   // Ref for the timeline to access the list DOM element
   const timelineListRef = useRef(null)
@@ -60,6 +65,7 @@ export const EDSCTimeline = ({
 
   // Flag for if the timeline is currently in a dragging state
   const [dragging, setDragging] = useState(false)
+  const [draggingTemporal, setDraggingTemporal] = useState(false)
 
   // Track the position of the timeline at the start of a drag event
   const [timelineStartPosition, setTimelineStartPosition] = useState(null)
@@ -69,6 +75,12 @@ export const EDSCTimeline = ({
 
   // The current position of the timeline
   const [timelinePosition, setTimelinePosition] = useState({ top: 0, left: 0 })
+
+  // The position of the beginning of the temporal drag within the timeline list
+  const [temporalStartPosition, setTemporalStartPosition] = useState(null)
+
+  // The temporal range (fenceposts) displayed on the timeline
+  const [temporalRange, setTemporalRange] = useState(propsTemporalRange)
 
   // Store calculated time intervals that power the display of the timeline dates
   const [timeIntervals, setTimeIntervals] = useState(() => [
@@ -181,6 +193,9 @@ export const EDSCTimeline = ({
     setZoomLevel(zoom)
   }, [zoom])
 
+  /**
+   * Set the start position for timeline dragging
+   */
   const onTimelineDragStart = (e) => {
     const { pageX: mouseX } = e
     setDragging(true)
@@ -188,12 +203,53 @@ export const EDSCTimeline = ({
     setTimelineDragStartPosition(mouseX)
   }
 
-  const onTimelineDragEnd = () => {
-    if (dragging) {
-      setDragging(false)
-      setTimelineStartPosition(null)
-      setTimelineDragStartPosition(null)
+  /**
+   * Set the start position for temporal dragging
+   */
+  const onTimelineTemporalDragStart = (e) => {
+    const { pageX: mouseX } = e
+
+    setDraggingTemporal(true)
+    setTimelineStartPosition(timelinePosition)
+    setTimelineDragStartPosition(mouseX)
+
+    const { x: listX } = timelineListRef.current.getBoundingClientRect()
+    const startPosition = mouseX - listX
+    setTemporalStartPosition(startPosition)
+  }
+
+  /**
+   * Sort the start and end of the temporal range.
+   * Report the temporal range with onTemporalSet or clear the values
+   */
+  const onTimelineTemporalDragEnd = (e) => {
+    const { pageX: mouseX } = e
+    const amountDragged = mouseX - timelineDragStartPosition
+
+    const { end, start } = temporalRange
+
+    if (start && end && start !== end && amountDragged !== 0) {
+      // Reverse start and end if needed
+      const { start } = temporalRange
+      let range = {
+        end,
+        start
+      }
+
+      if (start > end) {
+        range = {
+          start: end,
+          end: start
+        }
+      }
+
+      if (onTemporalSet) onTemporalSet(range)
+      setTemporalRange(range)
+      return
     }
+
+    if (onTemporalSet) onTemporalSet({})
+    setTemporalRange({})
   }
 
   /**
@@ -283,6 +339,39 @@ export const EDSCTimeline = ({
     ])
   }
 
+  /**
+   * Calculate the start and end temporal of the current temporal drag
+   */
+  const onTimelineTemporalDrag = (e) => {
+    requestAnimationFrame(() => {
+      const { pageX: mouseX } = e
+      const amountDragged = mouseX - timelineDragStartPosition
+      const endPosition = temporalStartPosition + amountDragged
+
+      const start = getTimestampByPosition({
+        intervalListWidthInPixels,
+        position: temporalStartPosition,
+        timeIntervals,
+        zoomLevel
+      })
+
+      const end = getTimestampByPosition({
+        intervalListWidthInPixels,
+        position: endPosition,
+        timeIntervals,
+        zoomLevel
+      })
+
+      setTemporalRange({
+        start,
+        end
+      })
+    })
+  }
+
+  /**
+   * Determine if the timeline was being dragged forward or backwards and scroll that direction if needed
+   */
   const onTimelineDrag = (e) => {
     requestAnimationFrame(() => {
       if (dragging) {
@@ -341,16 +430,44 @@ export const EDSCTimeline = ({
     })
   }
 
+  /**
+   * Mouse down event handler for the TimelineList. Depending on where the mouse down happened, different handlers are executed
+   */
   const onTimelineMouseDown = (e) => {
-    onTimelineDragStart(e)
+    const {
+      pageY: mouseY
+    } = e
+    const { top } = timelineWrapperRef.current.getBoundingClientRect()
+
+    const clickHeight = mouseY - top
+
+    // If the user clicks on the top 20 pixels of the timeline, start a temporal drag
+    // else start a timeline drag
+    // TODO: EDSC-3028: Focused dates look for clicking on the bottom of the timeline
+    if (clickHeight <= 20) {
+      onTimelineTemporalDragStart(e)
+    } else {
+      onTimelineDragStart(e)
+    }
   }
 
-  const onWindowMouseUp = () => {
-    onTimelineDragEnd()
+  /**
+   * Mouse up event handler for the whole window. If any dragging was happening, call cleanup and/or additional handlers
+   */
+  const onWindowMouseUp = (e) => {
+    if (draggingTemporal) onTimelineTemporalDragEnd(e)
+
+    if (dragging || draggingTemporal) {
+      setDragging(false)
+      setDraggingTemporal(false)
+      setTimelineStartPosition(null)
+      setTimelineDragStartPosition(null)
+    }
   }
 
   const onWindowMouseMove = (e) => {
-    onTimelineDrag(e)
+    if (dragging) onTimelineDrag(e)
+    if (draggingTemporal) onTimelineTemporalDrag(e)
   }
 
   useEffect(() => {
@@ -361,7 +478,12 @@ export const EDSCTimeline = ({
       window.removeEventListener('mouseup', onWindowMouseUp)
       window.removeEventListener('mousemove', onWindowMouseMove)
     }
-  }, [dragging, timelinePosition, timelineDragStartPosition])
+  }, [
+    dragging,
+    timelinePosition,
+    timelineDragStartPosition,
+    temporalRange
+  ])
 
   /**
    * Callback to change the current zoom level and recalculate timeIntervals
@@ -430,11 +552,11 @@ export const EDSCTimeline = ({
           ref={timelineWrapperRef}
           className="timeline__wrapper"
         >
-          <span className="timeline__center" />
           {
             timeIntervals.length > 0 && (
               <TimelineList
                 intervalListWidthInPixels={intervalListWidthInPixels}
+                temporalRange={temporalRange}
                 timeIntervals={timeIntervals}
                 timelineListRef={timelineListRef}
                 timelinePosition={timelinePosition}
@@ -459,6 +581,7 @@ EDSCTimeline.defaultProps = {
   onTimelineMove: null,
   minZoom: 1,
   maxZoom: 5,
+  temporalRange: {},
   zoom: 3
 }
 
@@ -484,6 +607,10 @@ EDSCTimeline.propTypes = {
   ).isRequired,
   minZoom: PropTypes.number,
   maxZoom: PropTypes.number,
+  temporalRange: PropTypes.shape({
+    end: PropTypes.number,
+    start: PropTypes.number
+  }),
   zoom: PropTypes.number
 }
 

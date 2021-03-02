@@ -10,6 +10,7 @@ Enzyme.configure({ adapter: new Adapter() })
 function setup(overrideProps) {
   const props = {
     intervalListWidthInPixels: 3,
+    temporalRange: {},
     timeIntervals: [
       new Date('2021-01-01').getTime(),
       new Date('2021-02-01').getTime(),
@@ -20,7 +21,9 @@ function setup(overrideProps) {
     timelineListRef: {},
     timelinePosition: {},
     timelineWrapperRef: {
-      current: {}
+      current: {
+        getBoundingClientRect: jest.fn(() => ({ width: 1240 }))
+      }
     },
     zoomLevel: 3,
     onTimelineMouseDown: jest.fn(),
@@ -48,5 +51,37 @@ describe('TimelineList component', () => {
     })
 
     expect(enzymeWrapper.isEmptyRender()).toBeTruthy()
+  })
+
+  describe('Temporal fenceposts', () => {
+    test('renders fenceposts if temporal range has start and end', () => {
+      const { enzymeWrapper } = setup({
+        temporalRange: {
+          start: new Date('2021-03').getTime(),
+          end: new Date('2021-04').getTime()
+        }
+      })
+
+      expect(enzymeWrapper.find('.timeline__temporal-start').exists()).toBeTruthy()
+      expect(enzymeWrapper.find('.timeline__temporal-end').exists()).toBeTruthy()
+
+      expect(enzymeWrapper.find('.timeline__temporal-start').props().style).toEqual({
+        left: 200.43835616438355
+      })
+      expect(enzymeWrapper.find('.timeline__temporal-end').props().style).toEqual({
+        left: 305.75342465753425
+      })
+    })
+
+    test('does not render fenceposts if temporal range does not have an end', () => {
+      const { enzymeWrapper } = setup({
+        temporalRange: {
+          start: new Date('2021-03').getTime()
+        }
+      })
+
+      expect(enzymeWrapper.find('.timeline__temporal-start').exists()).toBeFalsy()
+      expect(enzymeWrapper.find('.timeline__temporal-end').exists()).toBeFalsy()
+    })
   })
 })
