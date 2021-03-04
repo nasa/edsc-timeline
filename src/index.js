@@ -123,6 +123,11 @@ export const EDSCTimeline = ({
    * END DEBUG USEEFFECTS
    */
 
+  // If the propsTemporalRange changes, use those values as the temporalRange
+  useEffect(() => {
+    setTemporalRange(propsTemporalRange)
+  }, [propsTemporalRange])
+
   useLayoutEffect(() => {
     const newWidth = intervalListWidthInPixels / 2
     if (timelineWrapperRef.current && intervalsCenterInPixels !== newWidth) {
@@ -233,6 +238,7 @@ export const EDSCTimeline = ({
 
     const { end, start } = temporalRange
 
+    // Only report the temporal values if start and end exist, and are different
     if (start && end && start !== end && amountDragged !== 0) {
       // Reverse start and end if needed
       const { start } = temporalRange
@@ -253,6 +259,7 @@ export const EDSCTimeline = ({
       return
     }
 
+    // If start and end are equal or no dragging has happened, clear the temporal values
     if (onTemporalSet) onTemporalSet({})
     setTemporalRange({})
   }
