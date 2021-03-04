@@ -29,6 +29,7 @@ function setup(overrideProps) {
     zoomLevel: 3,
     onTimelineMouseDown: jest.fn(),
     onTimelineMouseMove: jest.fn(),
+    onTemporalMarkerMouseDown: jest.fn(),
     ...overrideProps
   }
 
@@ -55,8 +56,8 @@ describe('TimelineList component', () => {
     expect(enzymeWrapper.isEmptyRender()).toBeTruthy()
   })
 
-  describe('Temporal fenceposts', () => {
-    test('renders fenceposts if temporal range has start and end', () => {
+  describe('Temporal markers', () => {
+    test('renders markers if temporal range has start and end', () => {
       const { enzymeWrapper } = setup({
         temporalRange: {
           start: new Date('2021-03').getTime(),
@@ -75,7 +76,7 @@ describe('TimelineList component', () => {
       })
     })
 
-    test('does not render fenceposts if temporal range does not have an end', () => {
+    test('does not render markers if temporal range does not have an end', () => {
       const { enzymeWrapper } = setup({
         temporalRange: {
           start: new Date('2021-03').getTime()
@@ -84,6 +85,36 @@ describe('TimelineList component', () => {
 
       expect(enzymeWrapper.find('.timeline-list__temporal-start').exists()).toBeFalsy()
       expect(enzymeWrapper.find('.timeline-list__temporal-end').exists()).toBeFalsy()
+    })
+
+    test('clicking on the start marker calls onTemporalStartMouseDown', () => {
+      const { enzymeWrapper, props } = setup({
+        temporalRange: {
+          start: new Date('2021-03').getTime(),
+          end: new Date('2021-04').getTime()
+        }
+      })
+
+      const marker = enzymeWrapper.find('.timeline-list__temporal-start')
+
+      marker.props().onMouseDown()
+
+      expect(props.onTemporalMarkerMouseDown).toHaveBeenCalledTimes(1)
+    })
+
+    test('clicking on the end marker calls onTemporalStartMouseDown', () => {
+      const { enzymeWrapper, props } = setup({
+        temporalRange: {
+          start: new Date('2021-03').getTime(),
+          end: new Date('2021-04').getTime()
+        }
+      })
+
+      const marker = enzymeWrapper.find('.timeline-list__temporal-end')
+
+      marker.props().onMouseDown()
+
+      expect(props.onTemporalMarkerMouseDown).toHaveBeenCalledTimes(1)
     })
   })
 })
