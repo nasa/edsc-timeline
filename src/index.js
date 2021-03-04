@@ -285,7 +285,7 @@ export const EDSCTimeline = ({
     setTimeIntervals(allIntervals)
 
     const startTime = nextIntervals[0]
-    const endTime = generateEndTime(timeIntervals, zoomLevel)
+    const endTime = generateEndTime(nextIntervals, zoomLevel)
 
     const duration = endTime - startTime
 
@@ -315,7 +315,11 @@ export const EDSCTimeline = ({
     let currentTimeIntervals = timeIntervals
     if (timeIntervals.length > MAX_INTERVAL_BUFFER) {
       const startTime = currentTimeIntervals[0]
-      const endTime = generateEndTime(timeIntervals, zoomLevel)
+      const endTime = generateEndTime(
+        currentTimeIntervals,
+        zoomLevel,
+        currentTimeIntervals[INTERVAL_BUFFER - 1]
+      )
 
       const duration = endTime - startTime
 
@@ -401,7 +405,7 @@ export const EDSCTimeline = ({
           scrollDirection = 'backward'
         }
 
-        const loadMoreWindow = 500
+        const loadMoreWindow = wrapperWidth / 3
 
         if (scrollDirection === 'backward') {
           // If the previous scroll position is outside of the window to trigger another page and
