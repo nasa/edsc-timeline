@@ -506,7 +506,7 @@ describe('EDSCTimeline component', () => {
     })
   })
 
-  describe('onTimelineTemporalDrag', () => {
+  describe('Temporal Range', () => {
     test('loading with temporalRange set renders fenceposts on the list', () => {
       jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
       jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
@@ -532,6 +532,43 @@ describe('EDSCTimeline component', () => {
       expect(enzymeWrapper.find(TimelineList).props().temporalRange).toEqual({
         end: 1630681200000,
         start: 1626670080000
+      })
+    })
+
+    test('changing the temporalRange props renders the new range on the list', () => {
+      jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
+      jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
+      const getBoundingClientRectMock = jest.fn(() => ({
+        top: 56,
+        width: 1200
+      }))
+      const getListBoundingClientRectMock = jest.fn(() => ({
+        width: 4000,
+        x: -2000
+      }))
+
+      const { enzymeWrapper } = setup({
+        temporalRange: {
+          end: 1630681200000,
+          start: 1626670080000
+        }
+      })
+
+      enzymeWrapper.setProps({
+        temporalRange: {
+          end: 2630681200000,
+          start: 2626670080000
+        }
+      })
+
+      enzymeWrapper.update()
+
+      enzymeWrapper.find('.timeline__wrapper').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+      enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
+
+      expect(enzymeWrapper.find(TimelineList).props().temporalRange).toEqual({
+        end: 2630681200000,
+        start: 2626670080000
       })
     })
 

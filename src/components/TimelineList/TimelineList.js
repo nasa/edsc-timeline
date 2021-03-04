@@ -14,11 +14,13 @@ import './TimelineList.scss'
  * @param {Integer} param0.intervalListWidthInPixels Width (in pixels) of the DOM element that holds the timeline intervals
  * @param {Object} param0.temporalRange Temporal range set on the timeline
  * @param {Array} param0.timeIntervals Array of dates representing intervals at the provided zoom level
+ * @param {Number} param0.temporalRangeMouseOverPosition Position of the temporal selection mouse over indicator
  * @param {Object} param0.timelineListRef Ref to the DOM element representing the timeline list
  * @param {Object} param0.timelinePosition Position of the left side of the timeline DOM element in pixels
  * @param {Object} param0.timelineWrapperRef Ref to the DOM element representing the timeline wrapper
  * @param {Integer} param0.zoomLevel Current zoom level of the timeline
  * @param {Function} param0.onTimelineMouseDown Callback function for onMouseDown
+ * @param {Function} param0.onTimelineMouseMove Callback function for onMouseMove
  */
 export const TimelineList = ({
   intervalListWidthInPixels,
