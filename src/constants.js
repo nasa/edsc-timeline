@@ -32,3 +32,6 @@ export const ZOOM_LEVELS = {
   decade: 5,
   fiftyYears: 6
 }
+
+// The height in px of the area that will trigger a temporal selection
+export const TEMPORAL_SELECTION_HEIGHT = 20
