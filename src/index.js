@@ -273,7 +273,6 @@ export const EDSCTimeline = ({
     // worth of data from opposite of the array
     let currentTimeIntervals = timeIntervals
     if (timeIntervals.length > MAX_INTERVAL_BUFFER) {
-      console.log('🚀 ~ file: index.js ~ line 268 ~ scrollBackward ~ currentTimeIntervals', currentTimeIntervals)
       currentTimeIntervals = currentTimeIntervals.slice(
         0, (currentTimeIntervals.length - INTERVAL_BUFFER)
       )
@@ -442,7 +441,6 @@ export const EDSCTimeline = ({
         const { pageX: mouseX } = e
         const amountDragged = mouseX - timelineDragStartPosition
         const left = timelineStartPosition.left + amountDragged
-        console.log('🚀 ~ file: index.js ~ line 430 ~ requestAnimationFrame ~ left', left)
         setTimelinePosition({
           ...timelinePosition,
           left
@@ -467,9 +465,7 @@ export const EDSCTimeline = ({
           // If the previous scroll position is outside of the window to trigger another page and
           // the scroll position attached to the event is within the window
           const originalDistanceFromEdge = -timelineStartPosition.left
-          console.log('🚀 ~ file: index.js ~ line 454 ~ requestAnimationFrame ~ originalDistanceFromEdge', originalDistanceFromEdge)
           const distanceFromEdge = -timelinePosition.left
-          console.log('🚀 ~ file: index.js ~ line 456 ~ requestAnimationFrame ~ distanceFromEdge', distanceFromEdge)
 
           if (originalDistanceFromEdge > loadMoreWindow && distanceFromEdge <= loadMoreWindow) {
             scrollBackward()
