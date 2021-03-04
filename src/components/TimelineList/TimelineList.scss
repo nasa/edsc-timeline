@@ -33,6 +33,10 @@
     left: 50%;
     z-index: 1;
     user-select: none;
+    padding: 0;
+    outline: none;
+    border: 0;
+
 
     &:after {
       content: '';

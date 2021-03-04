@@ -67,6 +67,8 @@ export const EDSCTimeline = ({
   // Flag for if the timeline is currently in a dragging state
   const [dragging, setDragging] = useState(false)
   const [draggingTemporal, setDraggingTemporal] = useState(false)
+  const [draggingTemporalStart, setDraggingTemporalStart] = useState(false)
+  const [draggingTemporalEnd, setDraggingTemporalEnd] = useState(false)
 
   // Track the position of the timeline at the start of a drag event
   const [timelineStartPosition, setTimelineStartPosition] = useState(null)
@@ -83,7 +85,7 @@ export const EDSCTimeline = ({
   // The current position of the mouse when mouseover is triggered on the temporal selection area
   const [temporalRangeMouseOverPosition, setTemporalRangeMouseOverPosition] = useState(null)
 
-  // The temporal range (fenceposts) displayed on the timeline
+  // The temporal range (markers) displayed on the timeline
   const [temporalRange, setTemporalRange] = useState(propsTemporalRange)
 
   // Store calculated time intervals that power the display of the timeline dates
@@ -215,10 +217,9 @@ export const EDSCTimeline = ({
   /**
    * Set the start position for temporal dragging
    */
-  const onTimelineTemporalDragStart = (e) => {
+  const onTemporalDragStart = (e) => {
     const { pageX: mouseX } = e
 
-    setDraggingTemporal(true)
     setTimelineStartPosition(timelinePosition)
     setTimelineDragStartPosition(mouseX)
     setTemporalRangeMouseOverPosition(null)
@@ -272,6 +273,7 @@ export const EDSCTimeline = ({
     // worth of data from opposite of the array
     let currentTimeIntervals = timeIntervals
     if (timeIntervals.length > MAX_INTERVAL_BUFFER) {
+      console.log('🚀 ~ file: index.js ~ line 268 ~ scrollBackward ~ currentTimeIntervals', currentTimeIntervals)
       currentTimeIntervals = currentTimeIntervals.slice(
         0, (currentTimeIntervals.length - INTERVAL_BUFFER)
       )
@@ -386,6 +388,52 @@ export const EDSCTimeline = ({
   }
 
   /**
+   * Calculate the temporal start position during the marker drag
+   */
+  const onTemporalMarkerStartDrag = (e) => {
+    requestAnimationFrame(() => {
+      const { pageX: mouseX } = e
+      const amountDragged = mouseX - timelineDragStartPosition
+      const newPosition = temporalStartPosition + amountDragged
+
+      const start = getTimestampByPosition({
+        intervalListWidthInPixels,
+        position: newPosition,
+        timeIntervals,
+        zoomLevel
+      })
+
+      setTemporalRange({
+        ...temporalRange,
+        start
+      })
+    })
+  }
+
+  /**
+   * Calculate the temporal end position during the marker drag
+   */
+  const onTemporalMarkerEndDrag = (e) => {
+    requestAnimationFrame(() => {
+      const { pageX: mouseX } = e
+      const amountDragged = mouseX - timelineDragStartPosition
+      const newPosition = temporalStartPosition + amountDragged
+
+      const end = getTimestampByPosition({
+        intervalListWidthInPixels,
+        position: newPosition,
+        timeIntervals,
+        zoomLevel
+      })
+
+      setTemporalRange({
+        ...temporalRange,
+        end
+      })
+    })
+  }
+
+  /**
    * Determine if the timeline was being dragged forward or backwards and scroll that direction if needed
    */
   const onTimelineDrag = (e) => {
@@ -394,6 +442,7 @@ export const EDSCTimeline = ({
         const { pageX: mouseX } = e
         const amountDragged = mouseX - timelineDragStartPosition
         const left = timelineStartPosition.left + amountDragged
+        console.log('🚀 ~ file: index.js ~ line 430 ~ requestAnimationFrame ~ left', left)
         setTimelinePosition({
           ...timelinePosition,
           left
@@ -418,7 +467,9 @@ export const EDSCTimeline = ({
           // If the previous scroll position is outside of the window to trigger another page and
           // the scroll position attached to the event is within the window
           const originalDistanceFromEdge = -timelineStartPosition.left
+          console.log('🚀 ~ file: index.js ~ line 454 ~ requestAnimationFrame ~ originalDistanceFromEdge', originalDistanceFromEdge)
           const distanceFromEdge = -timelinePosition.left
+          console.log('🚀 ~ file: index.js ~ line 456 ~ requestAnimationFrame ~ distanceFromEdge', distanceFromEdge)
 
           if (originalDistanceFromEdge > loadMoreWindow && distanceFromEdge <= loadMoreWindow) {
             scrollBackward()
@@ -479,20 +530,42 @@ export const EDSCTimeline = ({
    * Mouse down event handler for the TimelineList. Depending on where the mouse down happened, different handlers are executed
    */
   const onTimelineMouseDown = (e) => {
-    const {
-      pageY: mouseY
-    } = e
+    const { pageY: mouseY } = e
     const { top } = timelineWrapperRef.current.getBoundingClientRect()
 
     const clickHeight = mouseY - top
 
-    // If the user clicks on the top 20 pixels of the timeline, start a temporal drag
+    // If the user clicks on the top TEMPORAL_SELECTION_HEIGHT pixels of the timeline, start a temporal drag
     // else start a timeline drag
     // TODO: EDSC-3028: Focused dates look for clicking on the bottom of the timeline
     if (clickHeight <= TEMPORAL_SELECTION_HEIGHT) {
-      onTimelineTemporalDragStart(e)
+      onTemporalDragStart(e)
+      setDraggingTemporal(true)
     } else {
       onTimelineDragStart(e)
+    }
+  }
+
+  /**
+   * Mouse down event handler for the temporal markers in TimelineList
+   */
+  const onTemporalMarkerMouseDown = (e, type) => {
+    const { pageY: mouseY } = e
+    const { top } = timelineWrapperRef.current.getBoundingClientRect()
+
+    const clickHeight = mouseY - top
+
+    // If the user clicks on the top TEMPORAL_SELECTION_HEIGHT pixels of the timeline, start a temporal drag
+    // else start a timeline drag
+    if (clickHeight <= TEMPORAL_SELECTION_HEIGHT) {
+      if (type === 'start') {
+        setDraggingTemporalStart(true)
+      } else if (type === 'end') {
+        setDraggingTemporalEnd(true)
+      }
+      onTemporalDragStart(e)
+
+      e.stopPropagation()
     }
   }
 
@@ -500,11 +573,20 @@ export const EDSCTimeline = ({
    * Mouse up event handler for the whole window. If any dragging was happening, call cleanup and/or additional handlers
    */
   const onWindowMouseUp = (e) => {
-    if (draggingTemporal) onTimelineTemporalDragEnd(e)
+    if (draggingTemporal
+      || draggingTemporalEnd
+      || draggingTemporalStart
+    ) onTimelineTemporalDragEnd(e)
 
-    if (dragging || draggingTemporal) {
+    if (dragging
+      || draggingTemporal
+      || draggingTemporalEnd
+      || draggingTemporalStart
+    ) {
       setDragging(false)
       setDraggingTemporal(false)
+      setDraggingTemporalEnd(false)
+      setDraggingTemporalStart(false)
       setTimelineStartPosition(null)
       setTimelineDragStartPosition(null)
     }
@@ -513,6 +595,8 @@ export const EDSCTimeline = ({
   const onWindowMouseMove = (e) => {
     if (dragging) onTimelineDrag(e)
     if (draggingTemporal) onTimelineTemporalDrag(e)
+    if (draggingTemporalStart) onTemporalMarkerStartDrag(e)
+    if (draggingTemporalEnd) onTemporalMarkerEndDrag(e)
 
     // If the mousemove happens outside of the timeline wrapper, clear the temporal selection mouseover indicator
     if (!timelineWrapperRef.current.contains(e.target)) {
@@ -616,6 +700,7 @@ export const EDSCTimeline = ({
                 zoomLevel={zoomLevel}
                 onTimelineMouseDown={onTimelineMouseDown}
                 onTimelineMouseMove={onTimelineMouseMove}
+                onTemporalMarkerMouseDown={onTemporalMarkerMouseDown}
               />
             )
           }

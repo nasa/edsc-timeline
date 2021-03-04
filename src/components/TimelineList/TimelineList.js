@@ -31,6 +31,7 @@ export const TimelineList = ({
   timelinePosition,
   timelineWrapperRef,
   zoomLevel,
+  onTemporalMarkerMouseDown,
   onTimelineMouseDown,
   onTimelineMouseMove
 }) => {
@@ -99,13 +100,21 @@ export const TimelineList = ({
         {
           start && end && (
             <>
-              <div
+              <button
                 className="timeline-list__temporal-marker timeline-list__temporal-start"
                 style={temporalStartStyle}
+                onMouseDown={(e) => onTemporalMarkerMouseDown(e, 'start')}
+                label="start"
+                aria-label="start"
+                type="button"
               />
-              <div
+              <button
                 className="timeline-list__temporal-marker timeline-list__temporal-end"
                 style={temporalEndStyle}
+                onMouseDown={(e) => onTemporalMarkerMouseDown(e, 'end')}
+                label="start"
+                aria-label="start"
+                type="button"
               />
             </>
           )
@@ -150,6 +159,7 @@ TimelineList.defaultProps = {
 
 TimelineList.propTypes = {
   intervalListWidthInPixels: PropTypes.number,
+  onTemporalMarkerMouseDown: PropTypes.func.isRequired,
   onTimelineMouseDown: PropTypes.func.isRequired,
   onTimelineMouseMove: PropTypes.func.isRequired,
   temporalRangeMouseOverPosition: PropTypes.number,
