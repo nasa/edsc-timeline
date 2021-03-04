@@ -816,7 +816,7 @@ describe('EDSCTimeline component', () => {
       const list = enzymeWrapper.find(TimelineList)
 
       // Clicks on the timeline
-      list.invoke('onTemporalmarkerMouseDown')({
+      list.invoke('onTemporalMarkerMouseDown')({
         pageX: 500,
         pageY: 63,
         stopPropagation: jest.fn()
@@ -874,7 +874,7 @@ describe('EDSCTimeline component', () => {
       const list = enzymeWrapper.find(TimelineList)
 
       // Clicks on the timeline
-      list.invoke('onTemporalmarkerMouseDown')({
+      list.invoke('onTemporalMarkerMouseDown')({
         pageX: 600,
         pageY: 63,
         stopPropagation: jest.fn()
