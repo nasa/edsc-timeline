@@ -23,29 +23,19 @@ import './TimelineList.scss'
 export const TimelineList = ({
   intervalListWidthInPixels,
   temporalRange,
-  temporalRangeMouseOverPosition,
   timeIntervals,
   timelineListRef,
   timelinePosition,
   timelineWrapperRef,
   zoomLevel,
-  onTimelineMouseDown,
-  onTimelineMouseMove
+  onTimelineMouseDown
 }) => {
   if (!timelineWrapperRef.current) return null
 
   const temporalStartStyle = {}
   const temporalEndStyle = {}
-  const temporalRangeMouseOverStyle = {}
-
-  // If a position is set for the temporal selection mouseover indicator, set the left property to that value
-  if (temporalRangeMouseOverPosition) {
-    temporalRangeMouseOverStyle.left = temporalRangeMouseOverPosition
-  }
 
   const { end, start } = temporalRange
-
-  // If a time is set for the start and end, set the left property to that temporal position
   if (start && end) {
     const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
     temporalStartStyle.left = (
@@ -70,45 +60,29 @@ export const TimelineList = ({
   return (
     <div
       ref={timelineListRef}
-      className="timeline-list"
+      className="timeline__list"
       style={{
         width: `${intervalListWidthInPixels}px`,
         transform: `translateX(${timelinePosition.left}px)`
       }}
       onMouseDown={onTimelineMouseDown}
-      onMouseMove={onTimelineMouseMove}
       role="button"
       tabIndex="0"
     >
-      <section
-        className="timeline-list__markers"
-        style={{
-          zIndex: timeIntervals.length + 1
-        }}
-      >
-        {
-          temporalRangeMouseOverPosition && (
+      {
+        start && end && (
+          <>
             <div
-              className="timeline-list__temporal-mouseover-marker"
-              style={temporalRangeMouseOverStyle}
+              className="timeline__temporal-start"
+              style={temporalStartStyle}
             />
-          )
-        }
-        {
-          start && end && (
-            <>
-              <div
-                className="timeline-list__temporal-marker timeline-list__temporal-start"
-                style={temporalStartStyle}
-              />
-              <div
-                className="timeline-list__temporal-marker timeline-list__temporal-end"
-                style={temporalEndStyle}
-              />
-            </>
-          )
-        }
-      </section>
+            <div
+              className="timeline__temporal-end"
+              style={temporalEndStyle}
+            />
+          </>
+        )
+      }
       {
         timeIntervals && timeIntervals.map((startTime, intervalIndex) => {
           let endTime
@@ -142,15 +116,12 @@ export const TimelineList = ({
 }
 
 TimelineList.defaultProps = {
-  temporalRangeMouseOverPosition: null,
   intervalListWidthInPixels: 0
 }
 
 TimelineList.propTypes = {
   intervalListWidthInPixels: PropTypes.number,
   onTimelineMouseDown: PropTypes.func.isRequired,
-  onTimelineMouseMove: PropTypes.func.isRequired,
-  temporalRangeMouseOverPosition: PropTypes.number,
   temporalRange: PropTypes.shape({
     end: PropTypes.number,
     start: PropTypes.number

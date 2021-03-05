@@ -20,8 +20,7 @@ import { roundTime } from './utils/roundTime'
 
 import {
   INTERVAL_BUFFER,
-  MAX_INTERVAL_BUFFER,
-  TEMPORAL_SELECTION_HEIGHT
+  MAX_INTERVAL_BUFFER
 } from './constants'
 
 import './index.scss'
@@ -79,9 +78,6 @@ export const EDSCTimeline = ({
 
   // The position of the beginning of the temporal drag within the timeline list
   const [temporalStartPosition, setTemporalStartPosition] = useState(null)
-
-  // The current position of the mouse when mouseover is triggered on the temporal selection area
-  const [temporalRangeMouseOverPosition, setTemporalRangeMouseOverPosition] = useState(null)
 
   // The temporal range (fenceposts) displayed on the timeline
   const [temporalRange, setTemporalRange] = useState(propsTemporalRange)
@@ -216,7 +212,6 @@ export const EDSCTimeline = ({
     setDraggingTemporal(true)
     setTimelineStartPosition(timelinePosition)
     setTimelineDragStartPosition(mouseX)
-    setTemporalRangeMouseOverPosition(null)
 
     const { x: listX } = timelineListRef.current.getBoundingClientRect()
     const startPosition = mouseX - listX
@@ -436,35 +431,6 @@ export const EDSCTimeline = ({
   }
 
   /**
-   * Mouse move event handler for the TimelineList.
-   */
-  const onTimelineMouseMove = (e) => {
-    const {
-      end,
-      start
-    } = temporalRange
-
-    const {
-      pageY: mouseY,
-      pageX: mouseX
-    } = e
-
-    const { top } = timelineWrapperRef.current.getBoundingClientRect()
-
-    const mouseOverHeight = mouseY - top
-
-    // If the user hovers on the top 20 pixels of the timeline, show the hover state
-    if (mouseOverHeight <= TEMPORAL_SELECTION_HEIGHT && !start && !end) {
-      const { x: listX } = timelineListRef.current.getBoundingClientRect()
-      const startPosition = mouseX - listX
-
-      setTemporalRangeMouseOverPosition(startPosition)
-    } else {
-      setTemporalRangeMouseOverPosition(null)
-    }
-  }
-
-  /**
    * Mouse down event handler for the TimelineList. Depending on where the mouse down happened, different handlers are executed
    */
   const onTimelineMouseDown = (e) => {
@@ -478,7 +444,7 @@ export const EDSCTimeline = ({
     // If the user clicks on the top 20 pixels of the timeline, start a temporal drag
     // else start a timeline drag
     // TODO: EDSC-3028: Focused dates look for clicking on the bottom of the timeline
-    if (clickHeight <= TEMPORAL_SELECTION_HEIGHT) {
+    if (clickHeight <= 20) {
       onTimelineTemporalDragStart(e)
     } else {
       onTimelineDragStart(e)
@@ -502,11 +468,6 @@ export const EDSCTimeline = ({
   const onWindowMouseMove = (e) => {
     if (dragging) onTimelineDrag(e)
     if (draggingTemporal) onTimelineTemporalDrag(e)
-
-    // If the mousemove happens outside of the timeline wrapper, clear the temporal selection mouseover indicator
-    if (!timelineWrapperRef.current.contains(e.target)) {
-      setTemporalRangeMouseOverPosition(null)
-    }
   }
 
   useEffect(() => {
@@ -521,8 +482,7 @@ export const EDSCTimeline = ({
     dragging,
     timelinePosition,
     timelineDragStartPosition,
-    temporalRange,
-    temporalRangeMouseOverPosition
+    temporalRange
   ])
 
   /**
@@ -597,14 +557,12 @@ export const EDSCTimeline = ({
               <TimelineList
                 intervalListWidthInPixels={intervalListWidthInPixels}
                 temporalRange={temporalRange}
-                temporalRangeMouseOverPosition={temporalRangeMouseOverPosition}
                 timeIntervals={timeIntervals}
                 timelineListRef={timelineListRef}
                 timelinePosition={timelinePosition}
                 timelineWrapperRef={timelineWrapperRef}
                 zoomLevel={zoomLevel}
                 onTimelineMouseDown={onTimelineMouseDown}
-                onTimelineMouseMove={onTimelineMouseMove}
               />
             )
           }

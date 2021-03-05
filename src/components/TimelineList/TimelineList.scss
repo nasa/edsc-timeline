@@ -1,49 +1,29 @@
-.timeline-list {
-  width: 100%;
-  background-color: $color__black--050;
-  position: relative;
-  border-top: 1px solid #727272;
-  box-shadow: 0 -10px 15px 0 rgba(0,0,0,.3);
-  color: white;
-
-  &__markers {
+.timeline {
+  &__marker {
+    display: none;
+    height: 100%;
+    width: 1px;
+    background-color: green;
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
     z-index: 1;
   }
 
-  &__temporal-mouseover-marker {
-    position: absolute;
-    height: 10px;
-    width: 10px;
-    background-color: rgba($color__red-orange, 0.75);
-    transform: rotate(45deg) translate(-5px, -5px);
-    transform-origin: top left;
+  &__list {
+    width: 100%;
+    background-color: $color__black--050;
+    position: relative;
+    border-top: 1px solid #727272;
+    box-shadow: 0 -10px 15px 0 rgba(0,0,0,.3);
+    color: white;
   }
 
-  &__temporal-marker {
+  &__temporal-start, &__temporal-end {
     display: block;
     height: 100%;
     width: 1px;
-    background-color: $color__red-orange;
+    background-color: orange;
     position: absolute;
     left: 50%;
     z-index: 1;
-    user-select: none;
-
-    &:after {
-      content: '';
-      display: block;
-      position: absolute;
-      height: 10px;
-      width: 10px;
-      left: -5px;
-      top: -5px;
-      background-color: $color__red-orange;
-      transform: translateX(0.5px) rotate(45deg);
-    }
   }
 }

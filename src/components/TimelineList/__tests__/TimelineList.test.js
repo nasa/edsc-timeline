@@ -11,7 +11,6 @@ function setup(overrideProps) {
   const props = {
     intervalListWidthInPixels: 3,
     temporalRange: {},
-    temporalRangeMouseOverPosition: null,
     timeIntervals: [
       new Date('2021-01-01').getTime(),
       new Date('2021-02-01').getTime(),
@@ -28,7 +27,6 @@ function setup(overrideProps) {
     },
     zoomLevel: 3,
     onTimelineMouseDown: jest.fn(),
-    onTimelineMouseMove: jest.fn(),
     ...overrideProps
   }
 
@@ -64,13 +62,13 @@ describe('TimelineList component', () => {
         }
       })
 
-      expect(enzymeWrapper.find('.timeline-list__temporal-start').exists()).toBeTruthy()
-      expect(enzymeWrapper.find('.timeline-list__temporal-end').exists()).toBeTruthy()
+      expect(enzymeWrapper.find('.timeline__temporal-start').exists()).toBeTruthy()
+      expect(enzymeWrapper.find('.timeline__temporal-end').exists()).toBeTruthy()
 
-      expect(enzymeWrapper.find('.timeline-list__temporal-start').props().style).toEqual({
+      expect(enzymeWrapper.find('.timeline__temporal-start').props().style).toEqual({
         left: 200.43835616438355
       })
-      expect(enzymeWrapper.find('.timeline-list__temporal-end').props().style).toEqual({
+      expect(enzymeWrapper.find('.timeline__temporal-end').props().style).toEqual({
         left: 305.75342465753425
       })
     })
@@ -82,8 +80,8 @@ describe('TimelineList component', () => {
         }
       })
 
-      expect(enzymeWrapper.find('.timeline-list__temporal-start').exists()).toBeFalsy()
-      expect(enzymeWrapper.find('.timeline-list__temporal-end').exists()).toBeFalsy()
+      expect(enzymeWrapper.find('.timeline__temporal-start').exists()).toBeFalsy()
+      expect(enzymeWrapper.find('.timeline__temporal-end').exists()).toBeFalsy()
     })
   })
 })
