@@ -2,9 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import { TimelineInterval } from '../TimelineInterval/TimelineInterval'
-
 import { generateEndTime } from '../../utils/generateEndTime'
-import { getPositionByTimestamp } from '../../utils/getPositionByTimestamp'
 
 import './TimelineList.scss'
 
@@ -12,7 +10,6 @@ import './TimelineList.scss'
  * Renders a list of TimelineIntervals
  * @param {Object} param0
  * @param {Integer} param0.intervalListWidthInPixels Width (in pixels) of the DOM element that holds the timeline intervals
- * @param {Object} param0.temporalRange Temporal range set on the timeline
  * @param {Array} param0.timeIntervals Array of dates representing intervals at the provided zoom level
  * @param {Object} param0.timelineListRef Ref to the DOM element representing the timeline list
  * @param {Object} param0.timelinePosition Position of the left side of the timeline DOM element in pixels
@@ -22,7 +19,6 @@ import './TimelineList.scss'
  */
 export const TimelineList = ({
   intervalListWidthInPixels,
-  temporalRange,
   timeIntervals,
   timelineListRef,
   timelinePosition,
@@ -31,31 +27,6 @@ export const TimelineList = ({
   onTimelineMouseDown
 }) => {
   if (!timelineWrapperRef.current) return null
-
-  const temporalStartStyle = {}
-  const temporalEndStyle = {}
-
-  const { end, start } = temporalRange
-  if (start && end) {
-    const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
-    temporalStartStyle.left = (
-      getPositionByTimestamp({
-        timestamp: start,
-        timeIntervals,
-        zoomLevel,
-        wrapperWidth: timelineWrapperWidth
-      })
-    )
-
-    temporalEndStyle.left = (
-      getPositionByTimestamp({
-        timestamp: end,
-        timeIntervals,
-        zoomLevel,
-        wrapperWidth: timelineWrapperWidth
-      })
-    )
-  }
 
   return (
     <div
@@ -69,20 +40,6 @@ export const TimelineList = ({
       role="button"
       tabIndex="0"
     >
-      {
-        start && end && (
-          <>
-            <div
-              className="timeline__temporal-start"
-              style={temporalStartStyle}
-            />
-            <div
-              className="timeline__temporal-end"
-              style={temporalEndStyle}
-            />
-          </>
-        )
-      }
       {
         timeIntervals && timeIntervals.map((startTime, intervalIndex) => {
           let endTime
@@ -122,10 +79,6 @@ TimelineList.defaultProps = {
 TimelineList.propTypes = {
   intervalListWidthInPixels: PropTypes.number,
   onTimelineMouseDown: PropTypes.func.isRequired,
-  temporalRange: PropTypes.shape({
-    end: PropTypes.number,
-    start: PropTypes.number
-  }).isRequired,
   timeIntervals: PropTypes.arrayOf(PropTypes.number).isRequired,
   timelineListRef: PropTypes.shape({
     current: PropTypes.shape({})

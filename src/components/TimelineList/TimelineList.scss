@@ -16,14 +16,4 @@
     box-shadow: 0 -10px 15px 0 rgba(0,0,0,.3);
     color: white;
   }
-
-  &__temporal-start, &__temporal-end {
-    display: block;
-    height: 100%;
-    width: 1px;
-    background-color: orange;
-    position: absolute;
-    left: 50%;
-    z-index: 1;
-  }
 }
