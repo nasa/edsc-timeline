@@ -1,3 +1,5 @@
+// !important is used in a few places to override default cursor properties in Bootstrap. Because attribute selectors
+// are used to style the cursor, this is the easiest way to override that behavior.
 .timeline-list {
   width: 100%;
   background-color: $color__black--050;
@@ -5,6 +7,26 @@
   border-top: 1px solid #727272;
   box-shadow: 0 -10px 15px 0 rgba(0,0,0,.3);
   color: white;
+  cursor: grab !important;
+
+  &--is-temporal-dragging {
+    cursor: grabbing !important;
+  }
+
+  &--is-dragging {
+    cursor: grabbing !important;
+  }
+
+  &__line {
+    display: block;
+    position: absolute;
+    bottom: 1.5rem;
+    width: 100%;
+    height: 0;
+    border-bottom: 1px solid $color__black--900;
+    z-index: 1;
+    pointer-events: none;
+  }
 
   &__markers {
     position: absolute;
@@ -36,7 +58,8 @@
     padding: 0;
     outline: none;
     border: 0;
-
+    box-shadow: 0 0 3px 3px rgba($color__black--050, 0.2);
+    transition: background-color 0.2s ease-in-out;
 
     &:after {
       content: '';
@@ -48,6 +71,32 @@
       top: -5px;
       background-color: $color__red-orange;
       transform: translateX(0.5px) rotate(45deg);
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    &:hover {
+      background-color: darken($color__red-orange, 10);
+
+      &:not(:disabled) {
+        cursor: ew-resize;
+      }
+
+      &:after {
+        background-color: darken($color__red-orange, 10);
+        cursor: ew-resize;
+      }
+
+      .timeline-list--is-temporal-dragging & {
+        cursor: grabbing;
+
+        &:not(:disabled) {
+          cursor: grabbing;
+        }
+
+        &:after {
+          cursor: grabbing;
+        }
+      }
     }
   }
 }

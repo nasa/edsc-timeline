@@ -5,6 +5,7 @@ import React, {
   useState
 } from 'react'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
 
 import { TimelineList } from './components/TimelineList/TimelineList'
 import { TimelineTools } from './components/TimelineTools/TimelineTools'
@@ -546,23 +547,14 @@ export const EDSCTimeline = ({
    * Mouse down event handler for the temporal markers in TimelineList
    */
   const onTemporalMarkerMouseDown = (e, type) => {
-    const { pageY: mouseY } = e
-    const { top } = timelineWrapperRef.current.getBoundingClientRect()
-
-    const clickHeight = mouseY - top
-
-    // If the user clicks on the top TEMPORAL_SELECTION_HEIGHT pixels of the timeline, start a temporal drag
-    // else start a timeline drag
-    if (clickHeight <= TEMPORAL_SELECTION_HEIGHT) {
-      if (type === 'start') {
-        setDraggingTemporalStart(true)
-      } else if (type === 'end') {
-        setDraggingTemporalEnd(true)
-      }
-      onTemporalDragStart(e)
-
-      e.stopPropagation()
+    if (type === 'start') {
+      setDraggingTemporalStart(true)
+    } else if (type === 'end') {
+      setDraggingTemporalEnd(true)
     }
+    onTemporalDragStart(e)
+
+    e.stopPropagation()
   }
 
   /**
@@ -678,7 +670,6 @@ export const EDSCTimeline = ({
         onChangeZoomLevel={onChangeZoomLevel}
       />
       <div className="timeline__outer-wrapper">
-        <span className="timeline__timeline" />
         <div
           ref={timelineWrapperRef}
           className="timeline__wrapper"
@@ -694,6 +685,9 @@ export const EDSCTimeline = ({
                 timelinePosition={timelinePosition}
                 timelineWrapperRef={timelineWrapperRef}
                 zoomLevel={zoomLevel}
+                dragging={dragging}
+                draggingTemporalStart={draggingTemporalStart}
+                draggingTemporalEnd={draggingTemporalEnd}
                 onTimelineMouseDown={onTimelineMouseDown}
                 onTimelineMouseMove={onTimelineMouseMove}
                 onTemporalMarkerMouseDown={onTemporalMarkerMouseDown}
