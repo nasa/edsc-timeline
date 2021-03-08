@@ -9,6 +9,9 @@ Enzyme.configure({ adapter: new Adapter() })
 
 function setup(overrideProps) {
   const props = {
+    dragging: false,
+    draggingTemporalStart: false,
+    draggingTemporalEnd: false,
     intervalListWidthInPixels: 3,
     temporalRange: {},
     temporalRangeMouseOverPosition: null,
@@ -54,6 +57,33 @@ describe('TimelineList component', () => {
     })
 
     expect(enzymeWrapper.isEmptyRender()).toBeTruthy()
+  })
+
+  describe('when the timeline is not dragging', () => {
+    test('renders the correct classnames', () => {
+      const { enzymeWrapper } = setup({
+        temporalRange: {
+          start: new Date('2021-03').getTime(),
+          end: new Date('2021-04').getTime()
+        }
+      })
+
+      expect(enzymeWrapper.props().className).not.toContain('timeline-list--is-dragging')
+    })
+  })
+
+  describe('when the timeline is dragging', () => {
+    test('renders the correct classnames', () => {
+      const { enzymeWrapper } = setup({
+        dragging: true,
+        temporalRange: {
+          start: new Date('2021-03').getTime(),
+          end: new Date('2021-04').getTime()
+        }
+      })
+
+      expect(enzymeWrapper.props().className).toContain('timeline-list--is-dragging')
+    })
   })
 
   describe('Temporal markers', () => {
@@ -115,6 +145,59 @@ describe('TimelineList component', () => {
       marker.props().onMouseDown()
 
       expect(props.onTemporalMarkerMouseDown).toHaveBeenCalledTimes(1)
+    })
+
+    describe('when the temporal markers are not dragging', () => {
+      test('renders the correct classnames', () => {
+        const { enzymeWrapper } = setup({
+          temporalRange: {
+            start: new Date('2021-03').getTime(),
+            end: new Date('2021-04').getTime()
+          }
+        })
+
+        const startMarker = enzymeWrapper.find('.timeline-list__temporal-start')
+        const endMarker = enzymeWrapper.find('.timeline-list__temporal-end')
+
+        expect(startMarker.props().className).not.toContain('timeline-list__temporal-marker--is-dragging')
+        expect(endMarker.props().className).not.toContain('timeline-list__temporal-marker--is-dragging')
+      })
+    })
+
+    describe('when the start temporal marker is dragging', () => {
+      test('renders the correct classnames', () => {
+        const { enzymeWrapper } = setup({
+          draggingTemporalStart: true,
+          temporalRange: {
+            start: new Date('2021-03').getTime(),
+            end: new Date('2021-04').getTime()
+          }
+        })
+
+        const startMarker = enzymeWrapper.find('.timeline-list__temporal-start')
+        const endMarker = enzymeWrapper.find('.timeline-list__temporal-end')
+
+        expect(startMarker.props().className).toContain('timeline-list__temporal-marker--is-dragging')
+        expect(endMarker.props().className).not.toContain('timeline-list__temporal-marker--is-dragging')
+      })
+    })
+
+    describe('when the end temporal marker is dragging', () => {
+      test('renders the correct classnames', () => {
+        const { enzymeWrapper } = setup({
+          draggingTemporalEnd: true,
+          temporalRange: {
+            start: new Date('2021-03').getTime(),
+            end: new Date('2021-04').getTime()
+          }
+        })
+
+        const startMarker = enzymeWrapper.find('.timeline-list__temporal-start')
+        const endMarker = enzymeWrapper.find('.timeline-list__temporal-end')
+
+        expect(startMarker.props().className).not.toContain('timeline-list__temporal-marker--is-dragging')
+        expect(endMarker.props().className).toContain('timeline-list__temporal-marker--is-dragging')
+      })
     })
   })
 })
