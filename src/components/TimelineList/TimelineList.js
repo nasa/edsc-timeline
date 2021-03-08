@@ -132,16 +132,16 @@ export const TimelineList = ({
                 className={temporalStartMarkerStartClassnames}
                 style={temporalStartStyle}
                 onMouseDown={(e) => onTemporalMarkerMouseDown(e, 'start')}
-                label="start"
-                aria-label="start"
+                label="Click and drag to edit the start of the selected temporal range"
+                aria-label="Click and drag to edit the start of the selected temporal range"
                 type="button"
               />
               <button
                 className={temporalStartMarkerEndClassnames}
                 style={temporalEndStyle}
                 onMouseDown={(e) => onTemporalMarkerMouseDown(e, 'end')}
-                label="start"
-                aria-label="start"
+                label="Click and drag to edit the end of the selected temporal range"
+                aria-label="Click and drag to edit the end of the selected temporal range"
                 type="button"
               />
             </>
