@@ -43,7 +43,7 @@ const App = () => {
           EDSC Timeline React Plugin Demo
         </h1>
 
-        <div className="timeline-one">
+        <div className="timeline-example timeline-example--one">
           <EDSCTimeline
             rows={[]}
             center={center}
@@ -58,40 +58,23 @@ const App = () => {
 
         <section className="demo__metadata mb-4">
           <div>
-            <span>
-              Center:
-              {' '}
-              {new Date(displayedCenter).toUTCString()}
-            </span>
+            <span className="demo__metadata-label">Center:</span>
+            {` ${new Date(displayedCenter).toUTCString()}`}
           </div>
 
           <div>
-            <span>
-              Interval:
-              {' '}
-              {startCase(RESOLUTIONS[displayedInterval])}
-              {` (${displayedInterval})`}
-            </span>
+            <span className="demo__metadata-label">Interval:</span>
+            {` ${startCase(RESOLUTIONS[displayedInterval])} (${displayedInterval})`}
           </div>
 
           <div>
-            <span>
-              Temporal Start:
-              {' '}
-              {
-                temporalStart && new Date(temporalStart).toISOString()
-              }
-            </span>
+            <span className="demo__metadata-label">Temporal Start:</span>
+            {` ${temporalStart && new Date(temporalStart).toISOString()}`}
           </div>
 
           <div>
-            <span>
-              Temporal End:
-              {' '}
-              {
-                temporalEnd && new Date(temporalEnd).toISOString()
-              }
-            </span>
+            <span className="demo__metadata-label">Temporal End:</span>
+            {` ${temporalEnd && new Date(temporalEnd).toISOString()}`}
           </div>
         </section>
       </section>

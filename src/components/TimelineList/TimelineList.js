@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
 
 import { TimelineInterval } from '../TimelineInterval/TimelineInterval'
 
@@ -23,6 +24,9 @@ import './TimelineList.scss'
  * @param {Function} param0.onTimelineMouseMove Callback function for onMouseMove
  */
 export const TimelineList = ({
+  dragging,
+  draggingTemporalStart,
+  draggingTemporalEnd,
   intervalListWidthInPixels,
   temporalRange,
   temporalRangeMouseOverPosition,
@@ -70,10 +74,34 @@ export const TimelineList = ({
     )
   }
 
+  const timelineListClassnames = classNames([
+    'timeline-list',
+    {
+      'timeline-list--is-dragging': dragging,
+      'timeline-list--is-temporal-dragging': draggingTemporalStart || draggingTemporalEnd
+    }
+  ])
+
+  const temporalStartMarkerStartClassnames = classNames([
+    'timeline-list__temporal-marker',
+    'timeline-list__temporal-start',
+    {
+      'timeline-list__temporal-marker--is-dragging': draggingTemporalStart
+    }
+  ])
+
+  const temporalStartMarkerEndClassnames = classNames([
+    'timeline-list__temporal-marker',
+    'timeline-list__temporal-end',
+    {
+      'timeline-list__temporal-marker--is-dragging': draggingTemporalEnd
+    }
+  ])
+
   return (
     <div
       ref={timelineListRef}
-      className="timeline-list"
+      className={timelineListClassnames}
       style={{
         width: `${intervalListWidthInPixels}px`,
         transform: `translateX(${timelinePosition.left}px)`
@@ -101,7 +129,7 @@ export const TimelineList = ({
           start && end && (
             <>
               <button
-                className="timeline-list__temporal-marker timeline-list__temporal-start"
+                className={temporalStartMarkerStartClassnames}
                 style={temporalStartStyle}
                 onMouseDown={(e) => onTemporalMarkerMouseDown(e, 'start')}
                 label="start"
@@ -109,7 +137,7 @@ export const TimelineList = ({
                 type="button"
               />
               <button
-                className="timeline-list__temporal-marker timeline-list__temporal-end"
+                className={temporalStartMarkerEndClassnames}
                 style={temporalEndStyle}
                 onMouseDown={(e) => onTemporalMarkerMouseDown(e, 'end')}
                 label="start"
@@ -120,6 +148,7 @@ export const TimelineList = ({
           )
         }
       </section>
+      <span className="timeline-list__line" />
       {
         timeIntervals && timeIntervals.map((startTime, intervalIndex) => {
           let endTime
@@ -158,6 +187,9 @@ TimelineList.defaultProps = {
 }
 
 TimelineList.propTypes = {
+  dragging: PropTypes.bool.isRequired,
+  draggingTemporalStart: PropTypes.bool.isRequired,
+  draggingTemporalEnd: PropTypes.bool.isRequired,
   intervalListWidthInPixels: PropTypes.number,
   onTemporalMarkerMouseDown: PropTypes.func.isRequired,
   onTimelineMouseDown: PropTypes.func.isRequired,
