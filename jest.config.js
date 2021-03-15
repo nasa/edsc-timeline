@@ -9,7 +9,8 @@ module.exports = {
   },
   coveragePathIgnorePatterns: [
     'package.json',
-    'package-lock.json'
+    'package-lock.json',
+    'src/css'
   ],
   // setupFiles: [
   //   '<rootDir>/test-env.js'

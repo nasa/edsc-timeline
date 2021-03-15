@@ -21,7 +21,7 @@ const LABELS = [
 
 /**
  * Determine the label for a given interval and zoom
- * @param {Array} intervals Time intervals calculated for the timeline
+ * @param {Integer} timeInterval Interval calculated for the label
  * @param {Integer} zoom The current zoom level of the timeline
  */
 export const determineIntervalLabel = (timeInterval, zoom) => {

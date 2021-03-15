@@ -8,9 +8,12 @@ Enzyme.configure({ adapter: new Adapter() })
 
 function setup(overrideProps) {
   const props = {
+    focusedInterval: {},
     maxZoom: 5,
     minZoom: 1,
+    temporalRange: {},
     zoomLevel: 3,
+    onChangeFocusedInterval: jest.fn(),
     onChangeZoomLevel: jest.fn(),
     ...overrideProps
   }
@@ -30,6 +33,19 @@ describe('TimelineTools component', () => {
     expect(enzymeWrapper.find('.timeline__tool-label').text()).toEqual('Month')
     expect(enzymeWrapper.find('.timeline__tool-action').first().props().title).toEqual('Increase zoom level')
     expect(enzymeWrapper.find('.timeline__tool-action').last().props().title).toEqual('Decrease zoom level')
+  })
+
+  test('renders focused interval buttons when an interval is focused', () => {
+    const { enzymeWrapper } = setup({
+      focusedInterval: {
+        start: new Date('2021-02').getTime(),
+        end: new Date('2021-03').getTime()
+      }
+    })
+
+    expect(enzymeWrapper.find('.timeline__tool-label').last().text()).toEqual('Feb 2021')
+    expect(enzymeWrapper.find('.timeline__tool-action').at(2).props().title).toEqual('Focus previous interval')
+    expect(enzymeWrapper.find('.timeline__tool-action').last().props().title).toEqual('Focus next interval')
   })
 
   describe('Increase zoom level button', () => {
@@ -73,6 +89,76 @@ describe('TimelineTools component', () => {
       })
 
       const button = enzymeWrapper.find('.timeline__tool-action').last()
+
+      expect(button.props().disabled).toBeTruthy()
+    })
+  })
+
+  describe('Focus previous interval button', () => {
+    test('calls onChangeFocusedInterval', () => {
+      const { enzymeWrapper, props } = setup({
+        focusedInterval: {
+          start: new Date('2021-02').getTime(),
+          end: new Date('2021-03').getTime()
+        }
+      })
+
+      const button = enzymeWrapper.find('.timeline__tool-action').at(2)
+
+      button.simulate('click')
+
+      expect(props.onChangeFocusedInterval).toHaveBeenCalledTimes(1)
+      expect(props.onChangeFocusedInterval).toHaveBeenCalledWith('previous')
+    })
+
+    test('is disabled when the temporalStart is within the focusedInterval', () => {
+      const { enzymeWrapper } = setup({
+        focusedInterval: {
+          start: new Date('2021-02').getTime(),
+          end: new Date('2021-03').getTime()
+        },
+        temporalRange: {
+          start: new Date('2021-02-03').getTime(),
+          end: new Date('2021-05').getTime()
+        }
+      })
+
+      const button = enzymeWrapper.find('.timeline__tool-action').at(2)
+
+      expect(button.props().disabled).toBeTruthy()
+    })
+  })
+
+  describe('Focus next interval button', () => {
+    test('calls onChangeFocusedInterval', () => {
+      const { enzymeWrapper, props } = setup({
+        focusedInterval: {
+          start: new Date('2021-02').getTime(),
+          end: new Date('2021-03').getTime()
+        }
+      })
+
+      const button = enzymeWrapper.find('.timeline__tool-action').at(3)
+
+      button.simulate('click')
+
+      expect(props.onChangeFocusedInterval).toHaveBeenCalledTimes(1)
+      expect(props.onChangeFocusedInterval).toHaveBeenCalledWith('next')
+    })
+
+    test('is disabled when the temporalEnd is within the focusedInterval', () => {
+      const { enzymeWrapper } = setup({
+        focusedInterval: {
+          start: new Date('2021-02').getTime(),
+          end: new Date('2021-03').getTime()
+        },
+        temporalRange: {
+          start: new Date('2021-01').getTime(),
+          end: new Date('2021-02-15').getTime()
+        }
+      })
+
+      const button = enzymeWrapper.find('.timeline__tool-action').at(3)
 
       expect(button.props().disabled).toBeTruthy()
     })
