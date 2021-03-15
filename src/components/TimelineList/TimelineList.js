@@ -25,7 +25,7 @@ import './TimelineList.scss'
  * @param {Object} param0.timelineWrapperRef Ref to the DOM element representing the timeline wrapper
  * @param {Integer} param0.zoomLevel Current zoom level of the timeline
  * @param {Function} param0.onTemporalMarkerMouseDown Callback function for onMouseDown
- * @param {Function} param0.onTimelineClick Callback function for onClick
+ * @param {Function} param0.onFocusedClick Callback function for onClick
  * @param {Function} param0.onTimelineMouseDown Callback function for onMouseDown
  * @param {Function} param0.onTimelineMouseMove Callback function for onMouseMove
  */
@@ -42,8 +42,8 @@ export const TimelineList = ({
   timelinePosition,
   timelineWrapperRef,
   zoomLevel,
+  onFocusedClick,
   onTemporalMarkerMouseDown,
-  onTimelineClick,
   onTimelineMouseDown,
   onTimelineMouseMove
 }) => {
@@ -120,10 +120,8 @@ export const TimelineList = ({
       }}
       onMouseDown={onTimelineMouseDown}
       onMouseMove={onTimelineMouseMove}
-      onClick={onTimelineClick}
       role="button"
       tabIndex="0"
-      // onKeyPress={() => {}}
     >
       <section
         className="timeline-list__markers"
@@ -191,6 +189,7 @@ export const TimelineList = ({
               timelineWrapperRef={timelineWrapperRef}
               zIndex={zIndex}
               zoomLevel={zoomLevel}
+              onFocusedClick={onFocusedClick}
             />
           )
         })
@@ -212,8 +211,8 @@ TimelineList.propTypes = {
     start: PropTypes.number
   }).isRequired,
   intervalListWidthInPixels: PropTypes.number,
+  onFocusedClick: PropTypes.func.isRequired,
   onTemporalMarkerMouseDown: PropTypes.func.isRequired,
-  onTimelineClick: PropTypes.func.isRequired,
   onTimelineMouseDown: PropTypes.func.isRequired,
   onTimelineMouseMove: PropTypes.func.isRequired,
   temporalRangeMouseOverPosition: PropTypes.number,

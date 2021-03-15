@@ -18,6 +18,7 @@ function setup(overrideProps) {
     },
     zIndex: 0,
     zoomLevel: 3,
+    onFocusedClick: jest.fn(),
     ...overrideProps
   }
 

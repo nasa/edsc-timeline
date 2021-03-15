@@ -22,7 +22,8 @@ export const TimelineInterval = ({
   startTime,
   timelineWrapperRef,
   zIndex,
-  zoomLevel
+  zoomLevel,
+  onFocusedClick
 }) => {
   const timelineWrapperWidth = timelineWrapperRef.current
     .getBoundingClientRect().width
@@ -60,7 +61,13 @@ export const TimelineInterval = ({
           )
         }
       </div>
-      <div className="timeline__interval-bottom">
+      <div
+        className="timeline__interval-bottom"
+        onClick={onFocusedClick}
+        role="button"
+        tabIndex="0"
+        onKeyPress={() => {}}
+      >
         {
           subText && (
             <span className="timeline__interval-section-label">{subText}</span>
@@ -81,5 +88,6 @@ TimelineInterval.propTypes = {
     })
   }).isRequired,
   zIndex: PropTypes.number.isRequired,
-  zoomLevel: PropTypes.number.isRequired
+  zoomLevel: PropTypes.number.isRequired,
+  onFocusedClick: PropTypes.func.isRequired
 }
