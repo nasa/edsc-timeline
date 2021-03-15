@@ -1026,38 +1026,7 @@ describe('EDSCTimeline component', () => {
   })
 
   describe('Focused intervals', () => {
-    describe('onTimelineClick', () => {
-      test('does not set the focusedInterval if clicked at the wrong height', () => {
-        jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
-        const getBoundingClientRectMock = jest.fn(() => ({
-          width: 1200,
-          top: 80,
-          height: 68.375
-        }))
-        const getListBoundingClientRectMock = jest.fn(() => ({
-          width: 4000,
-          x: -1848.62451171875
-        }))
-
-        const { enzymeWrapper, props } = setup()
-
-        enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-        enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
-
-        const list = enzymeWrapper.find(TimelineList)
-
-        list.invoke('onTimelineClick')({
-          pageY: 110,
-          pageX: 616
-        })
-
-        enzymeWrapper.update()
-
-        expect(enzymeWrapper.find(TimelineList).props().focusedInterval).toEqual({})
-        expect(props.onFocusedSet).toHaveBeenCalledTimes(0)
-      })
-
+    describe('onFocusedClick', () => {
       test('sets the focusedInterval', () => {
         jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
         jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
@@ -1078,7 +1047,7 @@ describe('EDSCTimeline component', () => {
 
         const list = enzymeWrapper.find(TimelineList)
 
-        list.invoke('onTimelineClick')({
+        list.invoke('onFocusedClick')({
           pageY: 133,
           pageX: 616
         })
@@ -1121,7 +1090,7 @@ describe('EDSCTimeline component', () => {
 
         const list = enzymeWrapper.find(TimelineList)
 
-        list.invoke('onTimelineClick')({
+        list.invoke('onFocusedClick')({
           pageY: 133,
           pageX: 616
         })
