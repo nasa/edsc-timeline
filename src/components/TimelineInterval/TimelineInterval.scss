@@ -19,6 +19,10 @@
       border-radius: 50%;
       box-shadow: 0 0 5px 5px rgba($color__black--050, 0.25);
     }
+
+    &--is-focused {
+      background-color: $color__black--200;
+    }
   }
 
   &__interval-top {
@@ -29,13 +33,15 @@
   &__interval-bottom {
     height: 1.5rem;
     flex-grow: 0;
+
+    &:hover {
+      cursor: pointer !important;
+      background-color: $color__black--200;
+    }
   }
 
   &__interval-label {
     font-size: 0.875rem;
-  }
-
-  &__interval-label {
     position: absolute;
     bottom: 0rem;
     padding: 0.2rem 0.25rem 0.325rem;
@@ -43,6 +49,7 @@
   }
 
   &__interval-section-label {
+    cursor: pointer !important;
     color: $color__black--650;
     position: absolute;
     top: 0rem;

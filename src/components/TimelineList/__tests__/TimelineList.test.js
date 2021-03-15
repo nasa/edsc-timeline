@@ -12,6 +12,7 @@ function setup(overrideProps) {
     dragging: false,
     draggingTemporalStart: false,
     draggingTemporalEnd: false,
+    focusedInterval: {},
     intervalListWidthInPixels: 3,
     temporalRange: {},
     temporalRangeMouseOverPosition: null,
@@ -30,6 +31,7 @@ function setup(overrideProps) {
       }
     },
     zoomLevel: 3,
+    onTimelineClick: jest.fn(),
     onTimelineMouseDown: jest.fn(),
     onTimelineMouseMove: jest.fn(),
     onTemporalMarkerMouseDown: jest.fn(),
@@ -57,6 +59,29 @@ describe('TimelineList component', () => {
     })
 
     expect(enzymeWrapper.isEmptyRender()).toBeTruthy()
+  })
+
+  test('renders a TimelineInterval for a focusedInterval', () => {
+    const { enzymeWrapper } = setup({
+      focusedInterval: {
+        start: new Date('2021-01-01').getTime()
+      }
+    })
+
+    expect(enzymeWrapper.find(TimelineInterval).first().props().focused).toBeTruthy()
+  })
+
+  describe('temporal range mouseover', () => {
+    test('renders a mouseover marker', () => {
+      const { enzymeWrapper } = setup({
+        temporalRangeMouseOverPosition: 42
+      })
+
+      const marker = enzymeWrapper.find('.timeline-list__temporal-mouseover-marker')
+
+      expect(marker.exists()).toBeTruthy()
+      expect(marker.props().style).toEqual({ left: 42 })
+    })
   })
 
   describe('when the timeline is not dragging', () => {

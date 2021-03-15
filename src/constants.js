@@ -6,7 +6,7 @@ export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', '
 export const INTERVAL_BUFFER = 30
 
 // Max number of intervals to keep loaded before removing old values
-export const MAX_INTERVAL_BUFFER = INTERVAL_BUFFER * 5
+export const MAX_INTERVAL_BUFFER = INTERVAL_BUFFER * 2
 
 // How many intervals should be beyond view before more are loaded
 export const INTERVAL_THRESHOLD = 5
@@ -35,3 +35,6 @@ export const ZOOM_LEVELS = {
 
 // The height in px of the area that will trigger a temporal selection
 export const TEMPORAL_SELECTION_HEIGHT = 20
+
+// The height in px of the area that will trigger a focused date selection
+export const FOCUSED_SELECTION_HEIGHT = 24

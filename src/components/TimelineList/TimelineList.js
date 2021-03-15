@@ -12,6 +12,10 @@ import './TimelineList.scss'
 /**
  * Renders a list of TimelineIntervals
  * @param {Object} param0
+ * @param {Boolean} param0.dragging Flag for if the timeline is currently in a dragging state
+ * @param {Boolean} param0.draggingTemporalStart Flag for if the temporal start marker is currently in a dragging state
+ * @param {Boolean} param0.draggingTemporalEnd Flag for if the temporal end marker is currently in a dragging state
+ * @param {Object} param0.focusedInterval Focused interval set on the timeline
  * @param {Integer} param0.intervalListWidthInPixels Width (in pixels) of the DOM element that holds the timeline intervals
  * @param {Object} param0.temporalRange Temporal range set on the timeline
  * @param {Array} param0.timeIntervals Array of dates representing intervals at the provided zoom level
@@ -20,6 +24,8 @@ import './TimelineList.scss'
  * @param {Object} param0.timelinePosition Position of the left side of the timeline DOM element in pixels
  * @param {Object} param0.timelineWrapperRef Ref to the DOM element representing the timeline wrapper
  * @param {Integer} param0.zoomLevel Current zoom level of the timeline
+ * @param {Function} param0.onTemporalMarkerMouseDown Callback function for onMouseDown
+ * @param {Function} param0.onTimelineClick Callback function for onClick
  * @param {Function} param0.onTimelineMouseDown Callback function for onMouseDown
  * @param {Function} param0.onTimelineMouseMove Callback function for onMouseMove
  */
@@ -27,6 +33,7 @@ export const TimelineList = ({
   dragging,
   draggingTemporalStart,
   draggingTemporalEnd,
+  focusedInterval,
   intervalListWidthInPixels,
   temporalRange,
   temporalRangeMouseOverPosition,
@@ -36,9 +43,11 @@ export const TimelineList = ({
   timelineWrapperRef,
   zoomLevel,
   onTemporalMarkerMouseDown,
+  onTimelineClick,
   onTimelineMouseDown,
   onTimelineMouseMove
 }) => {
+  // console.log('🚀 ~ file: TimelineList.js ~ line 50 ~ timelinePosition', timelinePosition)
   if (!timelineWrapperRef.current) return null
 
   const temporalStartStyle = {}
@@ -99,6 +108,8 @@ export const TimelineList = ({
     }
   ])
 
+  const { start: focusedStart } = focusedInterval
+
   return (
     <div
       ref={timelineListRef}
@@ -109,8 +120,10 @@ export const TimelineList = ({
       }}
       onMouseDown={onTimelineMouseDown}
       onMouseMove={onTimelineMouseMove}
+      onClick={onTimelineClick}
       role="button"
       tabIndex="0"
+      // onKeyPress={() => {}}
     >
       <section
         className="timeline-list__markers"
@@ -155,6 +168,7 @@ export const TimelineList = ({
       {
         timeIntervals && timeIntervals.map((startTime, intervalIndex) => {
           let endTime
+          const focused = startTime === focusedStart
 
           if (timeIntervals[intervalIndex + 1] != null) {
             // If the next interval is not null, use it as the endTime
@@ -171,6 +185,7 @@ export const TimelineList = ({
           return (
             <TimelineInterval
               key={startTime}
+              focused={focused}
               startTime={startTime}
               endTime={endTime}
               timelineWrapperRef={timelineWrapperRef}
@@ -193,8 +208,12 @@ TimelineList.propTypes = {
   dragging: PropTypes.bool.isRequired,
   draggingTemporalStart: PropTypes.bool.isRequired,
   draggingTemporalEnd: PropTypes.bool.isRequired,
+  focusedInterval: PropTypes.shape({
+    start: PropTypes.number
+  }).isRequired,
   intervalListWidthInPixels: PropTypes.number,
   onTemporalMarkerMouseDown: PropTypes.func.isRequired,
+  onTimelineClick: PropTypes.func.isRequired,
   onTimelineMouseDown: PropTypes.func.isRequired,
   onTimelineMouseMove: PropTypes.func.isRequired,
   temporalRangeMouseOverPosition: PropTypes.number,

@@ -13,8 +13,12 @@ import './styles.scss'
 const App = () => {
   const [center] = useState(() => (new Date(Date.UTC(2020, 0, 1, 3, 12, 58))).getTime())
   const [temporal, setTemporal] = useState({
-    start: new Date('2020-01').getTime(),
-    end: new Date('2020-02').getTime()
+    // start: new Date('2020-01').getTime(),
+    // end: new Date('2020-03-15').getTime()
+  })
+  const [focusedInterval, setFocusedInterval] = useState({
+    start: new Date('2020-01-01T00:00:00.000Z').getTime(),
+    end: new Date('2020-01-31T23:59:59.999Z').getTime()
   })
 
   const [displayedCenter, setDisplayedCenter] = useState()
@@ -31,10 +35,19 @@ const App = () => {
     setTemporal(values)
   }
 
+  const handleFocusedSet = (values) => {
+    setFocusedInterval(values)
+  }
+
   const {
     end: temporalEnd,
     start: temporalStart
   } = temporal
+
+  const {
+    end: focusedEnd,
+    start: focusedStart
+  } = focusedInterval
 
   return (
     <>
@@ -47,12 +60,14 @@ const App = () => {
           <EDSCTimeline
             rows={[]}
             center={center}
+            focusedInterval={focusedInterval}
             zoom={3}
             minZoom={1}
             maxZoom={5}
             temporalRange={temporal}
             onTimelineMove={handleTimelineMove}
             onTemporalSet={handleTemporalSet}
+            onFocusedSet={handleFocusedSet}
           />
         </div>
 
@@ -75,6 +90,16 @@ const App = () => {
           <div>
             <span className="demo__metadata-label">Temporal End:</span>
             {` ${temporalEnd && new Date(temporalEnd).toISOString()}`}
+          </div>
+
+          <div>
+            <span className="demo__metadata-label">Focused Start:</span>
+            {` ${focusedStart && new Date(focusedStart).toISOString()}`}
+          </div>
+
+          <div>
+            <span className="demo__metadata-label">Focused End:</span>
+            {` ${focusedEnd && new Date(focusedEnd).toISOString()}`}
           </div>
         </section>
       </section>
