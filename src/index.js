@@ -623,21 +623,6 @@ export const EDSCTimeline = ({
   }
 
   /**
-   * Click handler for the timeline.
-   */
-  const onTimelineClick = (e) => {
-    const { pageY: mouseY } = e
-    const { top, height } = timelineWrapperRef.current.getBoundingClientRect()
-
-    const clickHeight = mouseY - top
-
-    // If the user clicks on the bottom FOCUSED_SELECTION_HEIGHT pixels of the timeline, call onFocusedClick
-    if (clickHeight >= height - FOCUSED_SELECTION_HEIGHT) {
-      onFocusedClick(e)
-    }
-  }
-
-  /**
    * Mouse move event handler for the TimelineList.
    */
   const onTimelineMouseMove = (e) => {
@@ -935,7 +920,7 @@ export const EDSCTimeline = ({
                 dragging={dragging}
                 draggingTemporalStart={draggingTemporalStart}
                 draggingTemporalEnd={draggingTemporalEnd}
-                onTimelineClick={onTimelineClick}
+                onFocusedClick={onFocusedClick}
                 onTimelineMouseDown={onTimelineMouseDown}
                 onTimelineMouseMove={onTimelineMouseMove}
                 onTemporalMarkerMouseDown={onTemporalMarkerMouseDown}

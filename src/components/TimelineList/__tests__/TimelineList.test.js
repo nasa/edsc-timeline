@@ -31,7 +31,7 @@ function setup(overrideProps) {
       }
     },
     zoomLevel: 3,
-    onTimelineClick: jest.fn(),
+    onFocusedClick: jest.fn(),
     onTimelineMouseDown: jest.fn(),
     onTimelineMouseMove: jest.fn(),
     onTemporalMarkerMouseDown: jest.fn(),
