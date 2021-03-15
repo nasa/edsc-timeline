@@ -6,7 +6,7 @@ export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', '
 export const INTERVAL_BUFFER = 30
 
 // Max number of intervals to keep loaded before removing old values
-export const MAX_INTERVAL_BUFFER = INTERVAL_BUFFER * 2
+export const MAX_INTERVAL_BUFFER = INTERVAL_BUFFER * 5
 
 // How many intervals should be beyond view before more are loaded
 export const INTERVAL_THRESHOLD = 5

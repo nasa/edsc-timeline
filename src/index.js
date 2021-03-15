@@ -32,10 +32,12 @@ import './index.scss'
  * Renders the EDSC Timeline
  * @param {Object} param0
  * @param {Integer} param0.center Center timestamp of the timeline
+ * @param {Object} param0.focusedInterval Focused date range to display on the timeline
  * @param {Integer} param0.minZoom Min zoom allowed
  * @param {Integer} param0.maxZoom Max zoom allowed
  * @param {Object} param0.temporalRange Temporal range to display on the timeline
  * @param {Integer} param0.zoom Current zoom level of the timeline
+ * @param {Function} param0.onFocusedSet Callback that returns focused interval values
  * @param {Function} param0.onTimelineMove Callback that returns timeline center and interval values
  * @param {Function} param0.onTemporalSet Callback that returns temporal start and end values
  */
@@ -98,9 +100,6 @@ export const EDSCTimeline = ({
   // The focused interval
   const [focusedInterval, setFocusedInterval] = useState(propsFocusedInterval)
 
-  // const [wrapperWidth, setWrapperWidth] = useState(0)
-  const [toolsWidth, setToolsWidth] = useState(0)
-
   // Store calculated time intervals that power the display of the timeline dates
   const [timeIntervals, setTimeIntervals] = useState(() => [
     ...calculateTimeIntervals({
@@ -145,8 +144,6 @@ export const EDSCTimeline = ({
    * @param {Integer} zoom Optional - New zoomLevel to use
    */
   const moveTimeline = (center, intervals = timeIntervals, zoom = zoomLevel) => {
-    // console.log('🚀 ~ file: index.js ~ line 668 ~ moveTimeline ~ timelineWrapperRef.current.getBoundingClientRect()', timelineWrapperRef.current.getBoundingClientRect())
-    // console.log('🚀 ~ file: index.js ~ line 668 ~ moveTimeline ~ timelineToolsRef.current.getBoundingClientRect()', timelineToolsRef.current.getBoundingClientRect())
     const timelineToolsWidth = timelineToolsRef.current.getBoundingClientRect().width
     const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
     const left = -(
@@ -163,9 +160,7 @@ export const EDSCTimeline = ({
       ...timelinePosition,
       left
     })
-    // console.log('🚀 ~ file: index.js ~ line 166 ~ moveTimeline ~ left', left)
-    // console.log('🚀 ~ file: index.js ~ line 166 ~ moveTimeline ~ center', center)
-    // console.log('🚀 ~ file: index.js ~ line 173 ~ moveTimeline ~ zoom', zoom)
+
     if (onTimelineMove) onTimelineMove({ center, interval: zoom })
   }
 
@@ -179,20 +174,9 @@ export const EDSCTimeline = ({
       timelineWrapperRef,
       zoomLevel
     })
-    console.log('🚀 ~ file: index.js ~ line 180 ~ useEffect ~ centeredDate', centeredDate)
-    console.log('🚀 ~ file: index.js ~ line 179 ~ useEffect ~ centeredDate', new Date(centeredDate))
 
     if (centeredDate) moveTimeline(centeredDate)
   }, [intervalListWidthInPixels])
-
-  useEffect(() => {
-    // const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
-    const timelineToolsWidth = timelineToolsRef.current.getBoundingClientRect().width
-    // const width = timelineWrapperWidth - timelineToolsWidth
-    // console.log('🚀 ~ file: index.js ~ line 144 ~ useEffect ~ width', width)
-    // setWrapperWidth(width)
-    setToolsWidth(timelineToolsWidth)
-  }, [focusedInterval])
 
   // If the propsTemporalRange changes, use those values as the temporalRange
   useEffect(() => {
@@ -210,12 +194,10 @@ export const EDSCTimeline = ({
 
   const handleMove = () => {
     if (onTimelineMove) {
-      const timelineToolsWidth = timelineToolsRef.current.getBoundingClientRect().width
       const centeredDate = getCenterTimestamp({
         intervalListWidthInPixels,
         timeIntervals,
         timelinePosition,
-        timelineToolsWidth,
         timelineWrapperRef,
         zoomLevel
       })
@@ -231,7 +213,6 @@ export const EDSCTimeline = ({
     const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
     const width = determineScaledWidth(duration, zoomLevel, timelineWrapperWidth)
-    console.log('🚀 ~ file: index.js ~ line 230 ~ useEffect ~ width', width)
 
     setIntervalListWidthInPixels(width)
   }, [timeIntervals])
@@ -348,12 +329,10 @@ export const EDSCTimeline = ({
    * Scroll the timeline backward (up, or to the left)
    */
   const scrollBackward = (offset = 0) => {
-    console.log('🚀 ~ file: index.js ~ line 321 ~ scrollBackward ~ scrollBackward')
     // If the underlying dataset has grown larger than desired, trim off 1 buffers
     // worth of data from opposite of the array
     let currentTimeIntervals = timeIntervals
     if (timeIntervals.length > MAX_INTERVAL_BUFFER) {
-      console.log('REMOVING INTERVALS')
       currentTimeIntervals = currentTimeIntervals.slice(
         0, (currentTimeIntervals.length - INTERVAL_BUFFER)
       )
@@ -393,12 +372,8 @@ export const EDSCTimeline = ({
         })
       }
 
-      // TODO doesn't account for width of interval when using left arrow
       const leftPosition = -(intervalsWidth - timelinePosition.left)
-      console.log('🚀 ~ file: index.js ~ line 397 ~ scrollBackward ~ timelinePosition', timelinePosition)
-      console.log('🚀 ~ file: index.js ~ line 397 ~ scrollBackward ~ intervalsWidth', intervalsWidth)
-      console.log('🚀 ~ file: index.js ~ line 394 ~ scrollBackward ~ leftPosition', leftPosition)
-      console.log('🚀 ~ file: index.js ~ line 398 ~ scrollBackward ~ offset', offset)
+
       setTimelinePosition({
         ...timelinePosition,
         left: leftPosition + offset
@@ -411,9 +386,6 @@ export const EDSCTimeline = ({
    */
   const scrollForward = (offset = 0) => {
     let shouldMove = true
-    // TODO skips ahead a bunch when scrolling with arrows, doesn't happen with dragging
-    // jumps one click after the scroll is called
-    console.log('🚀 ~ file: index.js ~ line 370 ~ scrollForward ~ scrollForward')
     let translationAdjustment = 0
 
     // If the underlying dataset has grown larger than desired, trim off 1 buffers
@@ -433,12 +405,10 @@ export const EDSCTimeline = ({
       currentTimeIntervals = currentTimeIntervals.slice(
         INTERVAL_BUFFER, currentTimeIntervals.length
       )
-      console.log('🚀 ~ file: index.js ~ line 354 ~ scrollForward ~ currentTimeIntervals.length', currentTimeIntervals.length)
 
       const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
       translationAdjustment = determineScaledWidth(duration, zoomLevel, timelineWrapperWidth)
-      console.log('🚀 ~ file: index.js ~ line 360 ~ scrollForward ~ translationAdjustment', translationAdjustment)
 
       if (timelineStartPosition) {
         setTimelineStartPosition({
@@ -447,11 +417,8 @@ export const EDSCTimeline = ({
         })
       }
 
-      console.log('🚀 ~ file: index.js ~ line 364 ~ scrollForward ~ setTimelinePosition', translationAdjustment + timelinePosition.left)
       const leftPosition = translationAdjustment + timelinePosition.left - offset
-      console.log('🚀 ~ file: index.js ~ line 449 ~ scrollForward ~ timelinePosition', timelinePosition)
-      console.log('🚀 ~ file: index.js ~ line 378 ~ scrollForward ~ leftPosition', leftPosition)
-      console.log('🚀 ~ file: index.js ~ line 449 ~ scrollForward ~ offset', offset)
+
       setTimelinePosition({
         ...timelinePosition,
         left: leftPosition
@@ -781,13 +748,6 @@ export const EDSCTimeline = ({
     })
     const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
-    const currentCenterPosition = getPositionByTimestamp({
-      timestamp: currentCenterTime,
-      timeIntervals,
-      timelineToolsWidth,
-      zoomLevel,
-      wrapperWidth: timelineWrapperWidth
-    })
     const newStartPosition = getPositionByTimestamp({
       timestamp: newStart,
       timeIntervals,
@@ -808,34 +768,21 @@ export const EDSCTimeline = ({
 
     // this needs to be the width of an interval, not the offset from center, the scroll methods are only looking at the left position and keeping that
     const offsetInPx = newEndPosition - newStartPosition
-    // console.log('🚀 ~ file: index.js ~ line 753 ~ onChangeFocusedInterval ~ currentCenterTime', new Date(currentCenterTime).toISOString())
-
-    // // Move the timeline to newStart + offset
-    // const offsetStart = newStart + offset
-    // console.log('🚀 ~ file: index.js ~ line 747 ~ onChangeFocusedInterval ~ offsetStart', offsetStart)
-    // moveTimeline(offsetStart)
-
 
     let shouldMove = true
     const startIndex = timeIntervals.findIndex((interval) => interval >= newStart) - 1
-    console.log('🚀 ~ file: index.js ~ line 725 ~ onChangeFocusedInterval ~ startIndex', startIndex)
     if (direction === 'previous' && startIndex < INTERVAL_BUFFER / 3) {
       scrollBackward(offsetInPx)
       shouldMove = false
-      // backwards is working, except not scrolling with the new interval when it adds intervals
     } else if (direction === 'next' && startIndex > timeIntervals.length - (INTERVAL_BUFFER / 3)) {
       shouldMove = scrollForward(offsetInPx)
-      // forwards is skipping a bunch the change after it adds intervals
-    } //else {
+    }
 
-    // don't do this if scollBackward() happens
-    // do this scollForward() happens
-    // do this is neither happens
-    // don't? do this if scrollForward() removes intervals
+    // Move the timeline to keep the focusedInterval in the same position it was in previously
+    // don't do this if scollBackward() happens, that method moves the timeline
+    // don't do this if scrollForward() removes extra intervals
     if (shouldMove) {
-      // Move the timeline to newStart + offset
       const offsetStart = newStart + offset
-      console.log('🚀 ~ file: index.js ~ line 747 ~ onChangeFocusedInterval ~ offsetStart', offsetStart)
       moveTimeline(offsetStart)
     }
   }
@@ -954,8 +901,6 @@ export const EDSCTimeline = ({
     }
   }
 
-  // if (timelineWrapperRef.current) console.log('[DEBUG]: timelineWrapperRef width', timelineWrapperRef.current.getBoundingClientRect().width)
-
   return (
     <div
       className="timeline"
@@ -975,7 +920,6 @@ export const EDSCTimeline = ({
         <div
           className="timeline__wrapper"
         >
-          {/* <div className="timeline__center" /> */}
           {
             timeIntervals.length > 0 && (
               <TimelineList
@@ -1029,7 +973,6 @@ EDSCTimeline.propTypes = {
   onFocusedSet: PropTypes.func,
   onTemporalSet: PropTypes.func,
   onTimelineMove: PropTypes.func,
-  resolution: PropTypes.string, // resolution of timeline day/month/etc.
   rows: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string, // ?
