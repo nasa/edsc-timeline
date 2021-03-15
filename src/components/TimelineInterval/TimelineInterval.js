@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
 
 import { determineIntervalLabel } from '../../utils/determineIntervalLabel'
 import { determineScaledWidth } from '../../utils/determineScaledWidth'
@@ -16,6 +17,7 @@ import './TimelineInterval.scss'
  * @param {Integer} param0.zoomLevel Current zoom level of the timeline
  */
 export const TimelineInterval = ({
+  focused,
   endTime,
   startTime,
   timelineWrapperRef,
@@ -35,10 +37,17 @@ export const TimelineInterval = ({
     timelineWrapperWidth
   )
 
+  const intervalClassnames = classNames([
+    'timeline__interval',
+    {
+      'timeline__interval--is-focused': focused
+    }
+  ])
+
   return (
     <div
       key={startTime}
-      className="timeline__interval"
+      className={intervalClassnames}
       style={{
         width,
         zIndex
@@ -63,6 +72,7 @@ export const TimelineInterval = ({
 }
 
 TimelineInterval.propTypes = {
+  focused: PropTypes.bool.isRequired,
   endTime: PropTypes.number.isRequired,
   startTime: PropTypes.number.isRequired,
   timelineWrapperRef: PropTypes.shape({

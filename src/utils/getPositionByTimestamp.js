@@ -28,5 +28,5 @@ export const getPositionByTimestamp = ({
   const width = determineScaledWidth(totalDuration, zoomLevel, wrapperWidth)
 
   // Use the timestamp percentage to calculate the position of the timestamp within the time intervals
-  return width * timestampPercentage
+  return (width * timestampPercentage)
 }
