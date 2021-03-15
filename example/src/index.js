@@ -13,12 +13,12 @@ import './styles.scss'
 const App = () => {
   const [center] = useState(() => (new Date(Date.UTC(2020, 0, 1, 3, 12, 58))).getTime())
   const [temporal, setTemporal] = useState({
-    // start: new Date('2020-01').getTime(),
-    // end: new Date('2020-03-15').getTime()
+    start: new Date('2020-01').getTime(),
+    end: new Date('2020-03-15').getTime()
   })
   const [focusedInterval, setFocusedInterval] = useState({
-    start: new Date('2020-01-01T00:00:00.000Z').getTime(),
-    end: new Date('2020-01-31T23:59:59.999Z').getTime()
+    // start: new Date('2020-01-01T00:00:00.000Z').getTime(),
+    // end: new Date('2020-01-31T23:59:59.999Z').getTime()
   })
 
   const [displayedCenter, setDisplayedCenter] = useState()

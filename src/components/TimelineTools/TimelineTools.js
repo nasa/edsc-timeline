@@ -74,7 +74,7 @@ export const TimelineTools = forwardRef(({
       </section>
 
       {
-        focusedStart && (
+        focusedStart != null && (
           <section className="timeline__tool-section timeline__tool-section--horizontal">
             <button
               className="timeline__tool-action"
