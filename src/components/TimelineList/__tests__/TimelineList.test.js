@@ -236,4 +236,36 @@ describe('TimelineList component', () => {
       })
     })
   })
+
+  describe('Focused intervals', () => {
+    test('renders a focused TimelineInterval', () => {
+      const { enzymeWrapper } = setup({
+        focusedInterval: {
+          end: new Date('2021-03-31').getTime(),
+          start: new Date('2021-03-01').getTime()
+        }
+      })
+
+      expect(enzymeWrapper.find(TimelineInterval).at(2).props().focused).toBeTruthy()
+    })
+
+    test('renders an unfocusable TimelineInterval outside of the temporalRange', () => {
+      const { enzymeWrapper } = setup({
+        focusedInterval: {
+          end: new Date('2021-03-31').getTime(),
+          start: new Date('2021-03-01').getTime()
+        },
+        temporalRange: {
+          end: new Date('2021-03-15').getTime(),
+          start: new Date('2021-03-10').getTime()
+        }
+      })
+
+      expect(enzymeWrapper.find(TimelineInterval).at(2).props().focused).toBeTruthy()
+      expect(enzymeWrapper.find(TimelineInterval).at(0).props().focusable).toBeFalsy()
+      expect(enzymeWrapper.find(TimelineInterval).at(1).props().focusable).toBeFalsy()
+      expect(enzymeWrapper.find(TimelineInterval).at(3).props().focusable).toBeFalsy()
+      expect(enzymeWrapper.find(TimelineInterval).at(4).props().focusable).toBeFalsy()
+    })
+  })
 })

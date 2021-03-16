@@ -17,6 +17,7 @@ import './TimelineInterval.scss'
  * @param {Integer} param0.zoomLevel Current zoom level of the timeline
  */
 export const TimelineInterval = ({
+  focusable,
   focused,
   endTime,
   startTime,
@@ -45,6 +46,13 @@ export const TimelineInterval = ({
     }
   ])
 
+  const focusedClassnames = classNames([
+    'timeline__interval-bottom',
+    {
+      'timeline__interval-bottom--unfocusable': !focusable
+    }
+  ])
+
   return (
     <div
       key={startTime}
@@ -62,11 +70,11 @@ export const TimelineInterval = ({
         }
       </div>
       <div
-        className="timeline__interval-bottom"
+        className={focusedClassnames}
         onClick={onFocusedClick}
         role="button"
         tabIndex="0"
-        onKeyPress={() => {}}
+        onKeyPress={onFocusedClick}
       >
         {
           subText && (
@@ -79,6 +87,7 @@ export const TimelineInterval = ({
 }
 
 TimelineInterval.propTypes = {
+  focusable: PropTypes.bool.isRequired,
   focused: PropTypes.bool.isRequired,
   endTime: PropTypes.number.isRequired,
   startTime: PropTypes.number.isRequired,

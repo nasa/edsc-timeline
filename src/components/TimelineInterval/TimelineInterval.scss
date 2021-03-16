@@ -39,6 +39,14 @@
       cursor: pointer !important;
       background-color: $color__black--200;
     }
+
+    &--unfocusable {
+      cursor: not-allowed !important;
+
+      &:hover {
+        cursor: not-allowed !important;
+      }
+    }
   }
 
   &__interval-label {

@@ -176,6 +176,15 @@ export const TimelineList = ({
             endTime = generateEndTime(timeIntervals, zoomLevel)
           }
 
+          let focusable = true
+          const {
+            end: temporalEnd,
+            start: temporalStart
+          } = temporalRange
+          if (temporalStart || temporalEnd) {
+            focusable = startTime < temporalEnd && endTime > temporalStart
+          }
+
           // Each interval needs to be one zIndex lower than the interval to it's left.
           // This keeps labels on top of interval borders
           const zIndex = timeIntervals.length - intervalIndex
@@ -183,6 +192,7 @@ export const TimelineList = ({
           return (
             <TimelineInterval
               key={startTime}
+              focusable={focusable}
               focused={focused}
               startTime={startTime}
               endTime={endTime}
