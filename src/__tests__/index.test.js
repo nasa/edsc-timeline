@@ -1101,6 +1101,49 @@ describe('EDSCTimeline component', () => {
         expect(props.onFocusedSet).toHaveBeenCalledTimes(1)
         expect(props.onFocusedSet).toHaveBeenCalledWith({})
       })
+
+      test('does not set the focusedInterval outside of the temporalRange', () => {
+        jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
+        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
+        const getBoundingClientRectMock = jest.fn(() => ({
+          width: 1200,
+          top: 80,
+          height: 68.375
+        }))
+        const getListBoundingClientRectMock = jest.fn(() => ({
+          width: 4000,
+          x: -1848.62451171875
+        }))
+
+        const { enzymeWrapper, props } = setup({
+          temporalRange: {
+            start: new Date('2021-02-03').getTime(),
+            end: new Date('2021-05').getTime()
+          }
+        })
+
+        enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+        enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
+
+        const list = enzymeWrapper.find(TimelineList)
+
+        // Click after the end of temporalRange
+        list.invoke('onFocusedClick')({
+          pageY: 133,
+          pageX: 616
+        })
+
+        // Click before the start of temporalRange
+        list.invoke('onFocusedClick')({
+          pageY: 133,
+          pageX: 100
+        })
+
+        enzymeWrapper.update()
+
+        expect(enzymeWrapper.find(TimelineList).props().focusedInterval).toEqual({})
+        expect(props.onFocusedSet).toHaveBeenCalledTimes(0)
+      })
     })
 
     describe('onChangeFocusedInterval', () => {
