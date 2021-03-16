@@ -599,6 +599,13 @@ export const EDSCTimeline = ({
       start: newStart
     } = getIntervalBounds(timeIntervals, timestamp)
 
+    // If the focused interval is outside of the temporal bounds, return
+    const {
+      end: temporalEnd,
+      start: temporalStart
+    } = temporalRange
+    if (newStart > temporalEnd || newEnd < temporalStart) return
+
     const {
       end,
       start

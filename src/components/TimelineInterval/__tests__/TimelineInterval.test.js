@@ -8,6 +8,7 @@ Enzyme.configure({ adapter: new Adapter() })
 
 function setup(overrideProps) {
   const props = {
+    focusable: true,
     focused: false,
     startTime: new Date('2021-01-01').getTime(),
     endTime: new Date('2021-01-02').getTime(),
@@ -44,5 +45,11 @@ describe('TimelineInterval component', () => {
     expect(enzymeWrapper.find('.timeline__interval--is-focused').exists()).toBeTruthy()
     expect(enzymeWrapper.find('.timeline__interval-label').text()).toEqual('Jan')
     expect(enzymeWrapper.find('.timeline__interval-section-label').text()).toEqual('2021')
+  })
+
+  test('renders the unfocusable class when the interval cannot be focused', () => {
+    const { enzymeWrapper } = setup({ focusable: false })
+
+    expect(enzymeWrapper.find('.timeline__interval-bottom--unfocusable').exists()).toBeTruthy()
   })
 })
