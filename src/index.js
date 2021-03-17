@@ -240,10 +240,15 @@ export const EDSCTimeline = ({
 
     const { end, start } = temporalRange
 
+    if ((start && !end) || (!start && end)) {
+      if (onTemporalSet) onTemporalSet(temporalRange)
+      setTemporalRange(temporalRange)
+      return
+    }
+
     // Only report the temporal values if start and end exist, and are different
     if (start && end && start !== end && amountDragged !== 0) {
       // Reverse start and end if needed
-      const { start } = temporalRange
       let range = {
         end,
         start
