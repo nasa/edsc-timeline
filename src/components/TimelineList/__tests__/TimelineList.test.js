@@ -106,15 +106,26 @@ describe('TimelineList component', () => {
       })
     })
 
-    test('does not render markers if temporal range does not have an end', () => {
+    test('renders only a start marker if temporal range does not have an end', () => {
       const { enzymeWrapper } = setup({
         temporalRange: {
           start: new Date('2021-03').getTime()
         }
       })
 
-      expect(enzymeWrapper.find('.timeline-list__temporal-start').exists()).toBeFalsy()
+      expect(enzymeWrapper.find('.timeline-list__temporal-start').exists()).toBeTruthy()
       expect(enzymeWrapper.find('.timeline-list__temporal-end').exists()).toBeFalsy()
+    })
+
+    test('renders only a end marker if temporal range does not have a start', () => {
+      const { enzymeWrapper } = setup({
+        temporalRange: {
+          end: new Date('2021-03').getTime()
+        }
+      })
+
+      expect(enzymeWrapper.find('.timeline-list__temporal-start').exists()).toBeFalsy()
+      expect(enzymeWrapper.find('.timeline-list__temporal-end').exists()).toBeTruthy()
     })
 
     test('clicking on the start marker calls onTemporalStartMouseDown', () => {

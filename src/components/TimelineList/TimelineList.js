@@ -53,8 +53,8 @@ export const TimelineList = ({
   const { end, start } = temporalRange
 
   // If a time is set for the start and end, set the left property to that temporal position
-  if (start && end) {
-    const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+  const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+  if (start) {
     temporalStartStyle.left = (
       getPositionByTimestamp({
         timestamp: start,
@@ -63,7 +63,8 @@ export const TimelineList = ({
         wrapperWidth: timelineWrapperWidth
       })
     )
-
+  }
+  if (end) {
     temporalEndStyle.left = (
       getPositionByTimestamp({
         timestamp: end,
@@ -126,25 +127,27 @@ export const TimelineList = ({
           )
         }
         {
-          start && end && (
-            <>
-              <button
-                className={temporalStartMarkerStartClassnames}
-                style={temporalStartStyle}
-                onMouseDown={(e) => onTemporalMarkerMouseDown(e, 'start')}
-                label="Click and drag to edit the start of the selected temporal range"
-                aria-label="Click and drag to edit the start of the selected temporal range"
-                type="button"
-              />
-              <button
-                className={temporalStartMarkerEndClassnames}
-                style={temporalEndStyle}
-                onMouseDown={(e) => onTemporalMarkerMouseDown(e, 'end')}
-                label="Click and drag to edit the end of the selected temporal range"
-                aria-label="Click and drag to edit the end of the selected temporal range"
-                type="button"
-              />
-            </>
+          start && (
+            <button
+              className={temporalStartMarkerStartClassnames}
+              style={temporalStartStyle}
+              onMouseDown={(e) => onTemporalMarkerMouseDown(e, 'start')}
+              label="Click and drag to edit the start of the selected temporal range"
+              aria-label="Click and drag to edit the start of the selected temporal range"
+              type="button"
+            />
+          )
+        }
+        {
+          end && (
+            <button
+              className={temporalStartMarkerEndClassnames}
+              style={temporalEndStyle}
+              onMouseDown={(e) => onTemporalMarkerMouseDown(e, 'end')}
+              label="Click and drag to edit the end of the selected temporal range"
+              aria-label="Click and drag to edit the end of the selected temporal range"
+              type="button"
+            />
           )
         }
       </section>
