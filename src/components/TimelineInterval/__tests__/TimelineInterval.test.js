@@ -35,16 +35,16 @@ describe('TimelineInterval component', () => {
   test('renders the interval text', () => {
     const { enzymeWrapper } = setup()
 
-    expect(enzymeWrapper.find('.timeline__interval-label').text()).toEqual('Jan')
-    expect(enzymeWrapper.find('.timeline__interval-section-label').text()).toEqual('2021')
+    expect(enzymeWrapper.find('.timeline-interval__interval-label').text()).toEqual('Jan')
+    expect(enzymeWrapper.find('.timeline-interval__interval-section-label').text()).toEqual('2021')
   })
 
   test('renders a focused interval', () => {
     const { enzymeWrapper } = setup({ focused: true })
 
-    expect(enzymeWrapper.find('.timeline__interval--is-focused').exists()).toBeTruthy()
-    expect(enzymeWrapper.find('.timeline__interval-label').text()).toEqual('Jan')
-    expect(enzymeWrapper.find('.timeline__interval-section-label').text()).toEqual('2021')
+    expect(enzymeWrapper.find('.timeline-interval--is-focused').exists()).toBeTruthy()
+    expect(enzymeWrapper.find('.timeline-interval__interval-label').text()).toEqual('Jan')
+    expect(enzymeWrapper.find('.timeline-interval__interval-section-label').text()).toEqual('2021')
   })
 
   test('renders the unfocusable class when the interval cannot be focused', () => {

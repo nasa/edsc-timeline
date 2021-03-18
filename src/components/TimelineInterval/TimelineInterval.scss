@@ -1,43 +1,73 @@
-.timeline {
-  &__interval {
-    display: inline-flex;
-    flex-direction: column;
-    position: relative;
-    flex-grow: 1;
-    height: 100%;
-    cursor: ew-resize;
+.timeline-interval {
+  display: inline-flex;
+  flex-direction: column;
+  position: relative;
+  flex-grow: 1;
+  height: 100%;
+  cursor: ew-resize;
+  background: linear-gradient(
+    90deg,
+    rgba($color__blue, 0) 0%,
+    rgba($color__blue, 0) 20px,
+    rgba($color__blue, 0) calc(100% - 20px),
+    rgba($color__blue, 0) 100%
+  );
+  transition: background 0.2s ease-in-out;
 
-    &:after {
-      content: '';
-      display: block;
-      position: absolute;
-      bottom: calc(1.5rem - 3px);
-      height: 7px;
-      width: 7px;
-      left: -0.19rem;
-      background: $color__black--900;
-      border-radius: 50%;
-      box-shadow: 0 0 5px 5px rgba($color__black--050, 0.25);
-    }
+  &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: calc(1.5rem - 3px);
+    height: 7px;
+    width: 7px;
+    left: -0.19rem;
+    background: $color__black--900;
+    border-radius: 50%;
+    box-shadow: 0 0 5px 5px rgba($color__black--050, 0.25);
+  }
 
-    &--is-focused {
-      background-color: $color__black--200;
-    }
+  &--is-focused {
+    background: rgb(26,26,26);
+    background: linear-gradient(
+      90deg,
+      rgba($color__blue, 0.325) 0%,
+      rgba($color__blue, 0) 20px,
+      rgba($color__blue, 0) calc(100% - 20px),
+      rgba($color__blue, 0.325) 100%
+    )
   }
 
   &__interval-top {
     flex-grow: 1;
     border-left: 1px solid #666;
+    border-right: 2px solid transparent;
+    transition: border-color 0.2s ease-in-out;
+
+    .timeline-interval--is-focused & {
+      border-left: 2px solid $color__blue;
+      border-right: 2px solid $color__blue;
+    }
   }
 
   &__interval-bottom {
     height: 1.5rem;
     flex-grow: 0;
     outline: none;
+    border-left: 2px solid transparent;
+    border-right: 2px solid transparent;
+    transition: border-color 0.2s ease-in-out;
 
     &:hover {
       cursor: pointer !important;
-      background-color: $color__black--200;
+      border-left: 2px solid $color__blue;
+      border-right: 2px solid $color__blue;
+    }
+
+    .timeline-interval--is-focused & {
+      cursor: pointer !important;
+      border-left: 2px solid $color__blue;
+      border-right: 2px solid $color__blue;
     }
 
     &--unfocusable {
@@ -55,6 +85,13 @@
     bottom: 0rem;
     padding: 0.2rem 0.25rem 0.325rem;
     font-size: 0.75rem;
+    transition: color 0.2s ease-in-out;
+
+
+    .timeline-interval__interval-bottom:hover &,
+    .timeline-interval--is-focused & {
+      color: $color__blue;
+    }
   }
 
   &__interval-section-label {
@@ -72,3 +109,4 @@
     z-index: 1;
   }
 }
+
