@@ -35,6 +35,3 @@ export const ZOOM_LEVELS = {
 
 // The height in px of the area that will trigger a temporal selection
 export const TEMPORAL_SELECTION_HEIGHT = 20
-
-// The height in px of the area that will trigger a focused date selection
-export const FOCUSED_SELECTION_HEIGHT = 24

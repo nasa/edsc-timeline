@@ -10,11 +10,14 @@ import './TimelineInterval.scss'
 /**
  * Renders a timeline interval
  * @param {Object} param0
+ * @param {Boolean} param0.focusable Flag for if this interval is able to be focused
+ * @param {Boolean} param0.focused Flag for if this interval is focused
  * @param {Integer} param0.endTime End timestamp of the interval
  * @param {Integer} param0.startTime Start timestamp of the interval
  * @param {Integer} param0.timelineWrapperRef Ref to the DOM element representing the timeline wrapper
- * @param {Function} param0.zIndex CSS zIndex of this interval
+ * @param {Integer} param0.zIndex CSS zIndex of this interval
  * @param {Integer} param0.zoomLevel Current zoom level of the timeline
+ * @param {Function} param0.onFocusedClick Callback function for onClick
  */
 export const TimelineInterval = ({
   focusable,

@@ -24,6 +24,7 @@ import './TimelineTools.scss'
  * @param {Integer} param0.zoomLevel Current zoom level of the timeline
  * @param {Function} param0.onChangeFocusedInterval Callback function for changing the focusedInterval
  * @param {Function} param0.onChangeZoomLevel Callback function for changing the zoom level
+ * @param {Function} timelineToolsRef Ref to the DOM element representing the timeline tools
  */
 // eslint-disable-next-line react/display-name
 export const TimelineTools = forwardRef(({
@@ -34,7 +35,7 @@ export const TimelineTools = forwardRef(({
   zoomLevel,
   onChangeFocusedInterval,
   onChangeZoomLevel
-}, ref) => {
+}, timelineToolsRef) => {
   const {
     end: focusedEnd,
     start: focusedStart
@@ -53,7 +54,7 @@ export const TimelineTools = forwardRef(({
   ])
 
   return (
-    <section className="timeline-tools" ref={ref}>
+    <section className="timeline-tools" ref={timelineToolsRef}>
       <section className="timeline-tools__section">
         <button
           className="timeline-tools__action"
@@ -109,7 +110,6 @@ export const TimelineTools = forwardRef(({
           </section>
         )
       }
-
     </section>
   )
 })
