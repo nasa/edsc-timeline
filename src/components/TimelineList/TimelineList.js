@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
@@ -20,7 +20,6 @@ import './TimelineList.scss'
  * @param {Object} param0.temporalRange Temporal range set on the timeline
  * @param {Array} param0.timeIntervals Array of dates representing intervals at the provided zoom level
  * @param {Number} param0.temporalRangeMouseOverPosition Position of the temporal selection mouse over indicator
- * @param {Object} param0.timelineListRef Ref to the DOM element representing the timeline list
  * @param {Object} param0.timelinePosition Position of the left side of the timeline DOM element in pixels
  * @param {Object} param0.timelineWrapperRef Ref to the DOM element representing the timeline wrapper
  * @param {Integer} param0.zoomLevel Current zoom level of the timeline
@@ -28,8 +27,9 @@ import './TimelineList.scss'
  * @param {Function} param0.onFocusedClick Callback function for onClick
  * @param {Function} param0.onTimelineMouseDown Callback function for onMouseDown
  * @param {Function} param0.onTimelineMouseMove Callback function for onMouseMove
+ * @param {Object} timelineListRef Ref to the DOM element representing the timeline list
  */
-export const TimelineList = ({
+export const TimelineList = forwardRef(({
   dragging,
   draggingTemporalStart,
   draggingTemporalEnd,
@@ -38,7 +38,6 @@ export const TimelineList = ({
   temporalRange,
   temporalRangeMouseOverPosition,
   timeIntervals,
-  timelineListRef,
   timelinePosition,
   timelineWrapperRef,
   zoomLevel,
@@ -46,8 +45,7 @@ export const TimelineList = ({
   onTemporalMarkerMouseDown,
   onTimelineMouseDown,
   onTimelineMouseMove
-}) => {
-  // console.log('🚀 ~ file: TimelineList.js ~ line 50 ~ timelinePosition', timelinePosition)
+}, timelineListRef) => {
   if (!timelineWrapperRef.current) return null
 
   const temporalStartStyle = {}
@@ -206,7 +204,7 @@ export const TimelineList = ({
       }
     </div>
   )
-}
+})
 
 TimelineList.defaultProps = {
   temporalRangeMouseOverPosition: null,
@@ -231,9 +229,6 @@ TimelineList.propTypes = {
     start: PropTypes.number
   }).isRequired,
   timeIntervals: PropTypes.arrayOf(PropTypes.number).isRequired,
-  timelineListRef: PropTypes.shape({
-    current: PropTypes.shape({})
-  }).isRequired,
   timelinePosition: PropTypes.shape({
     left: PropTypes.number
   }).isRequired,

@@ -20,7 +20,6 @@ import { getTimestampByPosition } from './utils/getTimestampByPosition'
 import { roundTime } from './utils/roundTime'
 
 import {
-  FOCUSED_SELECTION_HEIGHT,
   INTERVAL_BUFFER,
   MAX_INTERVAL_BUFFER,
   TEMPORAL_SELECTION_HEIGHT
@@ -920,7 +919,7 @@ export const EDSCTimeline = ({
                 temporalRange={temporalRange}
                 temporalRangeMouseOverPosition={temporalRangeMouseOverPosition}
                 timeIntervals={timeIntervals}
-                timelineListRef={timelineListRef}
+                ref={timelineListRef}
                 timelinePosition={timelinePosition}
                 timelineWrapperRef={timelineWrapperRef}
                 zoomLevel={zoomLevel}
