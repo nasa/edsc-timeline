@@ -7,6 +7,7 @@ import {
   FaChevronRight,
   FaChevronLeft
 } from 'react-icons/fa'
+import classNames from 'classnames'
 
 import { RESOLUTIONS } from '../../constants'
 import { determineFocusedIntervalLabel } from '../../utils/determineFocusedIntervalLabel'
@@ -45,11 +46,17 @@ export const TimelineTools = forwardRef(({
 
   const focusedIntervalLabel = determineFocusedIntervalLabel(focusedStart, zoomLevel)
 
+  const focusedIntervalLabelClassnames = classNames([
+    'timeline-tools__label',
+    'timeline-tools__label--focused-interval',
+    `timeline-tools__label--focused-interval-${zoomLevel}`
+  ])
+
   return (
-    <section className="timeline__tools" ref={ref}>
-      <section className="timeline__tool-section">
+    <section className="timeline-tools" ref={ref}>
+      <section className="timeline-tools__section">
         <button
-          className="timeline__tool-action"
+          className="timeline-tools__action"
           type="button"
           disabled={zoomLevel === maxZoom}
           onClick={() => onChangeZoomLevel(zoomLevel + 1)}
@@ -58,11 +65,11 @@ export const TimelineTools = forwardRef(({
         >
           <FaChevronUp />
         </button>
-        <span className="timeline__tool-label">
+        <span className="timeline-tools__label timeline-tools__label--resolution">
           {startCase(RESOLUTIONS[zoomLevel])}
         </span>
         <button
-          className="timeline__tool-action"
+          className="timeline-tools__action"
           type="button"
           disabled={zoomLevel === minZoom}
           onClick={() => onChangeZoomLevel(zoomLevel - 1)}
@@ -75,9 +82,9 @@ export const TimelineTools = forwardRef(({
 
       {
         focusedStart != null && (
-          <section className="timeline__tool-section timeline__tool-section--horizontal">
+          <section className="timeline-tools__section timeline-tools__section--horizontal">
             <button
-              className="timeline__tool-action"
+              className="timeline-tools__action"
               type="button"
               disabled={temporalStart >= focusedStart}
               onClick={() => onChangeFocusedInterval('previous')}
@@ -86,11 +93,11 @@ export const TimelineTools = forwardRef(({
             >
               <FaChevronLeft />
             </button>
-            <span className="timeline__tool-label">
+            <span className={focusedIntervalLabelClassnames}>
               {focusedIntervalLabel}
             </span>
             <button
-              className="timeline__tool-action"
+              className="timeline-tools__action"
               type="button"
               disabled={temporalEnd <= focusedEnd}
               onClick={() => onChangeFocusedInterval('next')}

@@ -30,9 +30,9 @@ describe('TimelineTools component', () => {
   test('renders zoom buttons and the current zoom level', () => {
     const { enzymeWrapper } = setup()
 
-    expect(enzymeWrapper.find('.timeline__tool-label').text()).toEqual('Month')
-    expect(enzymeWrapper.find('.timeline__tool-action').first().props().title).toEqual('Increase zoom level')
-    expect(enzymeWrapper.find('.timeline__tool-action').last().props().title).toEqual('Decrease zoom level')
+    expect(enzymeWrapper.find('.timeline-tools__label').text()).toEqual('Month')
+    expect(enzymeWrapper.find('.timeline-tools__action').first().props().title).toEqual('Increase zoom level')
+    expect(enzymeWrapper.find('.timeline-tools__action').last().props().title).toEqual('Decrease zoom level')
   })
 
   test('renders focused interval buttons when an interval is focused', () => {
@@ -43,16 +43,16 @@ describe('TimelineTools component', () => {
       }
     })
 
-    expect(enzymeWrapper.find('.timeline__tool-label').last().text()).toEqual('Feb 2021')
-    expect(enzymeWrapper.find('.timeline__tool-action').at(2).props().title).toEqual('Focus previous interval')
-    expect(enzymeWrapper.find('.timeline__tool-action').last().props().title).toEqual('Focus next interval')
+    expect(enzymeWrapper.find('.timeline-tools__label').last().text()).toEqual('Feb 2021')
+    expect(enzymeWrapper.find('.timeline-tools__action').at(2).props().title).toEqual('Focus previous interval')
+    expect(enzymeWrapper.find('.timeline-tools__action').last().props().title).toEqual('Focus next interval')
   })
 
   describe('Increase zoom level button', () => {
     test('calls onChangeZoomLevel', () => {
       const { enzymeWrapper, props } = setup()
 
-      const button = enzymeWrapper.find('.timeline__tool-action').first()
+      const button = enzymeWrapper.find('.timeline-tools__action').first()
 
       button.simulate('click')
 
@@ -65,7 +65,7 @@ describe('TimelineTools component', () => {
         zoomLevel: 5
       })
 
-      const button = enzymeWrapper.find('.timeline__tool-action').first()
+      const button = enzymeWrapper.find('.timeline-tools__action').first()
 
       expect(button.props().disabled).toBeTruthy()
     })
@@ -75,7 +75,7 @@ describe('TimelineTools component', () => {
     test('calls onChangeZoomLevel', () => {
       const { enzymeWrapper, props } = setup()
 
-      const button = enzymeWrapper.find('.timeline__tool-action').last()
+      const button = enzymeWrapper.find('.timeline-tools__action').last()
 
       button.simulate('click')
 
@@ -88,7 +88,7 @@ describe('TimelineTools component', () => {
         zoomLevel: 1
       })
 
-      const button = enzymeWrapper.find('.timeline__tool-action').last()
+      const button = enzymeWrapper.find('.timeline-tools__action').last()
 
       expect(button.props().disabled).toBeTruthy()
     })
@@ -103,7 +103,7 @@ describe('TimelineTools component', () => {
         }
       })
 
-      const button = enzymeWrapper.find('.timeline__tool-action').at(2)
+      const button = enzymeWrapper.find('.timeline-tools__action').at(2)
 
       button.simulate('click')
 
@@ -123,7 +123,7 @@ describe('TimelineTools component', () => {
         }
       })
 
-      const button = enzymeWrapper.find('.timeline__tool-action').at(2)
+      const button = enzymeWrapper.find('.timeline-tools__action').at(2)
 
       expect(button.props().disabled).toBeTruthy()
     })
@@ -138,7 +138,7 @@ describe('TimelineTools component', () => {
         }
       })
 
-      const button = enzymeWrapper.find('.timeline__tool-action').at(3)
+      const button = enzymeWrapper.find('.timeline-tools__action').at(3)
 
       button.simulate('click')
 
@@ -158,7 +158,7 @@ describe('TimelineTools component', () => {
         }
       })
 
-      const button = enzymeWrapper.find('.timeline__tool-action').at(3)
+      const button = enzymeWrapper.find('.timeline-tools__action').at(3)
 
       expect(button.props().disabled).toBeTruthy()
     })
