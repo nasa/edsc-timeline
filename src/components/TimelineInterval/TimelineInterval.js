@@ -40,16 +40,16 @@ export const TimelineInterval = ({
   )
 
   const intervalClassnames = classNames([
-    'timeline__interval',
+    'timeline-interval',
     {
-      'timeline__interval--is-focused': focused
+      'timeline-interval--is-focused': focused
     }
   ])
 
   const focusedClassnames = classNames([
-    'timeline__interval-bottom',
+    'timeline-interval__interval-bottom',
     {
-      'timeline__interval-bottom--unfocusable': !focusable
+      'timeline-interval__interval-bottom--unfocusable': !focusable
     }
   ])
 
@@ -62,10 +62,10 @@ export const TimelineInterval = ({
         zIndex
       }}
     >
-      <div className="timeline__interval-top">
+      <div className="timeline-interval__interval-top">
         {
-          text && (
-            <span className="timeline__interval-label">{text}</span>
+          subText && (
+            <span className="timeline-interval__interval-section-label">{subText}</span>
           )
         }
       </div>
@@ -77,8 +77,8 @@ export const TimelineInterval = ({
         onKeyPress={onFocusedClick}
       >
         {
-          subText && (
-            <span className="timeline__interval-section-label">{subText}</span>
+          text && (
+            <span className="timeline-interval__interval-label">{text}</span>
           )
         }
       </div>
