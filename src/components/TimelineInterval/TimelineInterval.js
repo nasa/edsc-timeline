@@ -29,6 +29,20 @@ export const TimelineInterval = ({
   zoomLevel,
   onFocusedClick
 }) => {
+  /**
+   * Click handler for the focused interval section
+   */
+  const handleFocusedClick = () => {
+    // If the interval isn't focusable, return
+    if (!focusable) return
+
+    // Call the onFocusedClick callback to focus the interval
+    onFocusedClick({
+      end: endTime,
+      start: startTime
+    })
+  }
+
   const timelineWrapperWidth = timelineWrapperRef.current
     .getBoundingClientRect().width
 
@@ -74,10 +88,10 @@ export const TimelineInterval = ({
       </div>
       <div
         className={focusedClassnames}
-        onClick={onFocusedClick}
+        onClick={handleFocusedClick}
         role="button"
         tabIndex="0"
-        onKeyPress={onFocusedClick}
+        onKeyPress={handleFocusedClick}
       >
         {
           text && (

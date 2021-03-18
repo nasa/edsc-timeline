@@ -64,17 +64,23 @@
     border-left: 2px solid transparent;
     transition: border-color 0.2s ease-in-out;
 
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0;
+      right: -2px;
+      width: 0px;
+      height: 100%;
+      border-right: 2px solid transparent;
+      transition: border-color 0.2s ease-in-out;
+    }
+
     &:hover {
       cursor: pointer !important;
       border-left: 2px solid $color__blue;
 
       &:after {
-        content: '';
-        display: block;
-        position: absolute;
-        right: -2px;
-        width: 0px;
-        height: 100%;
         border-right: 2px solid $color__blue;
       }
     }
