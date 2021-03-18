@@ -242,7 +242,6 @@ export const EDSCTimeline = ({
 
     if ((start && !end) || (!start && end)) {
       if (onTemporalSet) onTemporalSet(temporalRange)
-      setTemporalRange(temporalRange)
       return
     }
 
