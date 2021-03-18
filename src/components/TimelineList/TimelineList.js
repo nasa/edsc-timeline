@@ -174,6 +174,9 @@ export const TimelineList = forwardRef(({
             endTime = generateEndTime(timeIntervals, zoomLevel)
           }
 
+          // The end of the interval is 1ms before the next startTime
+          endTime -= 1
+
           let focusable = true
           const {
             end: temporalEnd,

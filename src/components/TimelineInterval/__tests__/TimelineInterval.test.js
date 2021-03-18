@@ -11,7 +11,7 @@ function setup(overrideProps) {
     focusable: true,
     focused: false,
     startTime: new Date('2021-01-01').getTime(),
-    endTime: new Date('2021-01-02').getTime(),
+    endTime: new Date('2021-01-02').getTime() - 1,
     timelineWrapperRef: {
       current: {
         getBoundingClientRect: jest.fn(() => ({ width: 100 }))
@@ -51,5 +51,29 @@ describe('TimelineInterval component', () => {
     const { enzymeWrapper } = setup({ focusable: false })
 
     expect(enzymeWrapper.find('.timeline-interval__interval-bottom--unfocusable').exists()).toBeTruthy()
+  })
+
+  describe('handleFocusedClick', () => {
+    test('calls onFocusedClick', () => {
+      const { enzymeWrapper, props } = setup()
+
+      enzymeWrapper.find('.timeline-interval__interval-bottom').invoke('onClick')({ mock: 'event' })
+
+      expect(props.onFocusedClick).toHaveBeenCalledTimes(1)
+      expect(props.onFocusedClick).toHaveBeenCalledWith({
+        end: 1609545599999,
+        start: 1609459200000
+      })
+    })
+
+    test('does not call onFocusedClick when not focusable', () => {
+      const { enzymeWrapper, props } = setup({
+        focusable: false
+      })
+
+      enzymeWrapper.find('.timeline-interval__interval-bottom').invoke('onClick')({ mock: 'event' })
+
+      expect(props.onFocusedClick).toHaveBeenCalledTimes(0)
+    })
   })
 })
