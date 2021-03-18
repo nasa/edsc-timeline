@@ -1,15 +1,13 @@
-.timeline {
-  &__tools {
-    flex-grow: 0;
-    display: flex;
-    flex-direction: row;
-    background-color: $color__black--050;
-    color: $color__black--900;
-    position: sticky;
-    z-index: 5;
-  }
+.timeline-tools {
+  flex-grow: 0;
+  display: flex;
+  flex-direction: row;
+  background-color: $color__black--050;
+  color: $color__black--900;
+  position: sticky;
+  z-index: 5;
 
-  &__tool-action {
+  &__action {
     outline: 0;
     border: 0;
     background: transparent;
@@ -35,16 +33,42 @@
     }
   }
 
-  &__tool-label {
+  &__label {
     padding: 0.025rem 0;
     text-transform: uppercase;
     font-size: 0.725rem;
     color: $color__black--900;
     letter-spacing: 0.02rem;
     white-space: nowrap;
+    text-align: center;
+
+    &--resolution {
+      width: 3.25rem;
+    }
+
+    // Hour
+    &--focused-interval-1 {
+      width: 8.75rem;
+    }
+
+    // Day
+    &--focused-interval-2 {
+      width: 6.25rem;
+    }
+
+    // Month
+    &--focused-interval-3 {
+      width: 4.8125rem;
+    }
+
+    // Year & Decade
+    &--focused-interval-4,
+    &--focused-interval-5 {
+      width: 2.5625rem;
+    }
   }
 
-  &__tool-section {
+  &__section {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -57,9 +81,9 @@
       flex-direction: row;
     }
 
-    // .timeline__tool-label {
-    //   text-align: center;
-    //   width: 3.25rem;
-    // }
+    .timeline-tools__label--resolution {
+      text-align: center;
+      width: 3.25rem;
+    }
   }
 }

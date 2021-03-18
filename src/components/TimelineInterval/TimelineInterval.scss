@@ -18,10 +18,10 @@
     content: '';
     display: block;
     position: absolute;
-    bottom: calc(1.5rem - 3px);
+    bottom: calc(#{$timeline__axis-height} - 3px);
     height: 7px;
     width: 7px;
-    left: -0.19rem;
+    right: -4px;
     background: $color__black--900;
     border-radius: 50%;
     box-shadow: 0 0 5px 5px rgba($color__black--050, 0.25);
@@ -35,39 +35,54 @@
       rgba($color__blue, 0) 20px,
       rgba($color__blue, 0) calc(100% - 20px),
       rgba($color__blue, 0.325) 100%
-    )
+    );
+
+    + .timeline-interval {
+      .timeline-interval__interval-top,
+      .timeline-interval__interval-bottom {
+        border-left: 2px solid $color__blue;
+      }
+    }
   }
 
   &__interval-top {
     flex-grow: 1;
     border-left: 1px solid #666;
-    border-right: 2px solid transparent;
     transition: border-color 0.2s ease-in-out;
 
     .timeline-interval--is-focused & {
       border-left: 2px solid $color__blue;
-      border-right: 2px solid $color__blue;
+
     }
   }
 
   &__interval-bottom {
-    height: 1.5rem;
+    position: relative;
+    height: $timeline__axis-height;
     flex-grow: 0;
     outline: none;
     border-left: 2px solid transparent;
-    border-right: 2px solid transparent;
     transition: border-color 0.2s ease-in-out;
 
     &:hover {
       cursor: pointer !important;
       border-left: 2px solid $color__blue;
-      border-right: 2px solid $color__blue;
+
+      &:after {
+        content: '';
+        display: block;
+        position: absolute;
+        right: -2px;
+        width: 0px;
+        height: 100%;
+        border-right: 2px solid $color__blue;
+      }
     }
 
     .timeline-interval--is-focused & {
       cursor: pointer !important;
       border-left: 2px solid $color__blue;
-      border-right: 2px solid $color__blue;
+
     }
 
     &--unfocusable {
@@ -80,17 +95,13 @@
   }
 
   &__interval-label {
-    font-size: 0.875rem;
-    position: absolute;
-    bottom: 0rem;
-    padding: 0.2rem 0.25rem 0.325rem;
+    padding: 0.125rem 0.25rem;
     font-size: 0.75rem;
     transition: color 0.2s ease-in-out;
 
-
     .timeline-interval__interval-bottom:hover &,
     .timeline-interval--is-focused & {
-      color: $color__blue;
+      color: lighten($color__blue, 20);
     }
   }
 
@@ -99,6 +110,7 @@
     color: $color__black--650;
     position: absolute;
     top: 0rem;
+    left: 2px;
     padding: 0.125rem 0.25rem;
     font-size: 0.675rem;
     width: auto;
@@ -107,6 +119,10 @@
     letter-spacing: -0.01rem;
     white-space: nowrap;
     z-index: 1;
+
+    .timeline-interval--is-focused + .timeline-interval & {
+      left: 2px;
+    }
   }
 }
 
