@@ -20,7 +20,7 @@
   &__line {
     display: block;
     position: absolute;
-    bottom: 1.5rem;
+    bottom: $timeline__axis-height;
     width: 100%;
     height: 0;
     border-bottom: 1px solid $color__black--900;
