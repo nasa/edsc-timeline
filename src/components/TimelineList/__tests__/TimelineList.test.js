@@ -69,6 +69,8 @@ describe('TimelineList component', () => {
     })
 
     expect(enzymeWrapper.find(TimelineInterval).first().props().focused).toBeTruthy()
+    expect(enzymeWrapper.find(TimelineInterval).first().props().startTime).toEqual(1609459200000)
+    expect(enzymeWrapper.find(TimelineInterval).first().props().endTime).toEqual(1612137599999)
   })
 
   describe('temporal range mouseover', () => {

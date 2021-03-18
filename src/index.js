@@ -57,9 +57,6 @@ export const EDSCTimeline = ({
   // Ref for the timeline to access the wrapper DOM element
   const timelineWrapperRef = useRef(null)
 
-  // Ref for the timeline to access the tools DOM element
-  const timelineToolsRef = useRef(null)
-
   // Store the zoom level and allow for changing props to modify the state
   const [zoomLevel, setZoomLevel] = useState(zoom)
 
@@ -143,13 +140,11 @@ export const EDSCTimeline = ({
    * @param {Integer} zoom Optional - New zoomLevel to use
    */
   const moveTimeline = (center, intervals = timeIntervals, zoom = zoomLevel) => {
-    const timelineToolsWidth = timelineToolsRef.current.getBoundingClientRect().width
     const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
     const left = -(
       getPositionByTimestamp({
         timestamp: center,
         timeIntervals: intervals,
-        timelineToolsWidth,
         zoomLevel: zoom,
         wrapperWidth: timelineWrapperWidth
       }) - (timelineWrapperWidth / 2)
@@ -164,12 +159,10 @@ export const EDSCTimeline = ({
   }
 
   useEffect(() => {
-    const timelineToolsWidth = timelineToolsRef.current.getBoundingClientRect().width
     const centeredDate = getCenterTimestamp({
       intervalListWidthInPixels,
       timeIntervals,
       timelinePosition,
-      timelineToolsWidth,
       timelineWrapperRef,
       zoomLevel
     })
@@ -220,13 +213,10 @@ export const EDSCTimeline = ({
     if (timelineWrapperRef.current && !isLoaded && intervalsCenterInPixels) {
       // Center the timeline on load
       const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
-      const timelineToolsWidth = timelineToolsRef.current.getBoundingClientRect().width
-
       const left = -(
         getPositionByTimestamp({
           timestamp: center,
           timeIntervals,
-          timelineToolsWidth,
           zoomLevel,
           wrapperWidth: timelineWrapperWidth
         }) - (timelineWrapperWidth / 2)
@@ -243,7 +233,6 @@ export const EDSCTimeline = ({
         timelinePosition: {
           left
         },
-        timelineToolsWidth,
         timelineWrapperRef,
         zoomLevel
       })
@@ -577,33 +566,11 @@ export const EDSCTimeline = ({
   /**
    * Sets or unsets the focusedInterval as the interval where the user clicked
    */
-  const onFocusedClick = (e) => {
-    // Find the selected interval
-    const { pageX: mouseX } = e
-
-    const { x: listX } = timelineListRef.current.getBoundingClientRect()
-    const startPosition = mouseX - listX
-
-    // Find the timestamp where the user clicked
-    const timestamp = getTimestampByPosition({
-      intervalListWidthInPixels,
-      position: startPosition,
-      timeIntervals,
-      zoomLevel
-    })
-
-    // Find the beginning and end of the interval where the timestamp sits
+  const onFocusedClick = (newFocusedInterval) => {
     const {
       end: newEnd,
       start: newStart
-    } = getIntervalBounds(timeIntervals, timestamp)
-
-    // If the focused interval is outside of the temporal bounds, return
-    const {
-      end: temporalEnd,
-      start: temporalStart
-    } = temporalRange
-    if (newStart > temporalEnd || newEnd < temporalStart) return
+    } = newFocusedInterval
 
     const {
       end,
@@ -618,14 +585,9 @@ export const EDSCTimeline = ({
       return
     }
 
-    const focused = {
-      end: newEnd,
-      start: newStart
-    }
-
     // Set the selected interval as focused
-    if (onFocusedSet) onFocusedSet(focused)
-    setFocusedInterval(focused)
+    if (onFocusedSet) onFocusedSet(newFocusedInterval)
+    setFocusedInterval(newFocusedInterval)
   }
 
   /**
@@ -717,8 +679,7 @@ export const EDSCTimeline = ({
     // `end` is within the intervals of timeIntervals, use it with getIntervalBounds to find the bounds that include it
     const newFocused = getIntervalBounds(timeIntervals, currentEnd, delta)
 
-    // Update the focusedInterval state
-    // call onFocusedSet
+    // Update the focusedInterval state and call onFocusedSet
     if (onFocusedSet) onFocusedSet(newFocused)
     setFocusedInterval(newFocused)
 
@@ -727,37 +688,21 @@ export const EDSCTimeline = ({
       start: newStart
     } = newFocused
 
-    const timelineToolsWidth = timelineToolsRef.current.getBoundingClientRect().width
-    // The focused interval might not be at the start, need to keep the focused interval in the same spot as the timeline scrolls
-    const currentCenterTime = getCenterTimestamp({
-      intervalListWidthInPixels,
-      timeIntervals,
-      timelinePosition,
-      timelineToolsWidth,
-      timelineWrapperRef,
-      zoomLevel
-    })
     const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
-
     const newStartPosition = getPositionByTimestamp({
       timestamp: newStart,
       timeIntervals,
-      timelineToolsWidth,
       zoomLevel,
       wrapperWidth: timelineWrapperWidth
     })
     const newEndPosition = getPositionByTimestamp({
       timestamp: newEnd,
       timeIntervals,
-      timelineToolsWidth,
       zoomLevel,
       wrapperWidth: timelineWrapperWidth
     })
 
-    // Find the offset of the current timeline center and the current focused interval start
-    const offset = currentCenterTime - currentStart
-
-    // this needs to be the width of an interval, not the offset from center, the scroll methods are only looking at the left position and keeping that
+    // Find the width of the new focusedInterval so the scroll methods can keep the focusedInterval in the same position
     const offsetInPx = newEndPosition - newStartPosition
 
     let shouldMove = true
@@ -773,6 +718,18 @@ export const EDSCTimeline = ({
     // don't do this if scollBackward() happens, that method moves the timeline
     // don't do this if scrollForward() removes extra intervals
     if (shouldMove) {
+      // The focused interval might not be at the start, need to keep the focused interval in the same spot as the timeline scrolls
+      const currentCenterTime = getCenterTimestamp({
+        intervalListWidthInPixels,
+        timeIntervals,
+        timelinePosition,
+        timelineWrapperRef,
+        zoomLevel
+      })
+
+      // Find the offset of the current timeline center and the current focused interval start
+      const offset = currentCenterTime - currentStart
+
       const offsetStart = newStart + offset
       moveTimeline(offsetStart)
     }
@@ -856,13 +813,10 @@ export const EDSCTimeline = ({
   const onChangeZoomLevel = (newZoomLevel) => {
     if (newZoomLevel >= minZoom && newZoomLevel <= maxZoom) {
       // Get the current (zoomLevel) centeredDate to use as the new center with the newZoomLevel
-      const timelineToolsWidth = timelineToolsRef.current.getBoundingClientRect().width
-
       const centeredDate = getCenterTimestamp({
         intervalListWidthInPixels,
         timeIntervals,
         timelinePosition,
-        timelineToolsWidth,
         timelineWrapperRef,
         zoomLevel
       })
@@ -902,7 +856,6 @@ export const EDSCTimeline = ({
         minZoom={minZoom}
         maxZoom={maxZoom}
         temporalRange={temporalRange}
-        ref={timelineToolsRef}
         zoomLevel={zoomLevel}
         onChangeFocusedInterval={onChangeFocusedInterval}
         onChangeZoomLevel={onChangeZoomLevel}
