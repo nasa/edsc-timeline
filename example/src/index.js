@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { render } from 'react-dom'
 import GithubCorner from 'react-github-corner'
-import { startCase } from 'lodash'
+import { reduce, startCase } from 'lodash'
 
 import EDSCTimeline from '../../src'
 
@@ -49,6 +49,26 @@ const App = () => {
     start: focusedStart
   } = focusedInterval
 
+  const data = [
+    {
+      id: 'row1',
+      title: 'Test Collection With A Really Really Really Super Long Name',
+      color: 'red',
+      intervals: [
+        [
+          new Date('2019-08-12').getTime(),
+          new Date('2019-12-20').getTime(),
+          42
+        ],
+        [
+          new Date('2020-01-04').getTime(),
+          new Date('2020-05-18').getTime(),
+          50
+        ]
+      ]
+    }
+  ]
+
   return (
     <>
       <section className="container">
@@ -58,7 +78,7 @@ const App = () => {
 
         <div className="timeline-example timeline-example--one">
           <EDSCTimeline
-            rows={[]}
+            data={data}
             center={center}
             focusedInterval={focusedInterval}
             zoom={3}

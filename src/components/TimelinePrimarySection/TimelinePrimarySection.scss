@@ -1,0 +1,25 @@
+.timeline-primary-section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-top: 0.625rem;
+  margin-bottom: $timeline__axis-height + 0.25rem;
+  z-index: 3;
+  color: $color__white;
+  width: 20rem;
+  pointer-events: none;
+  user-select: none;
+
+  &__entry {
+    display: inline;
+    align-items: center;
+    margin-left: 0.625rem;
+    height: 1.75rem;
+    font-size: 0.875rem;
+    text-shadow: 0px 0px 10px $color__black;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+}
