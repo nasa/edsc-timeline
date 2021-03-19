@@ -59,14 +59,8 @@ export const TimelineInterval = ({
   const intervalClassnames = classNames([
     'timeline-interval',
     {
-      'timeline-interval--is-focused': focused
-    }
-  ])
-
-  const focusedClassnames = classNames([
-    'timeline-interval__interval-bottom',
-    {
-      'timeline-interval__interval-bottom--unfocusable': !focusable
+      'timeline-interval--is-focused': focused,
+      'timeline-interval--is-unfocusable': !focusable
     }
   ])
 
@@ -87,7 +81,7 @@ export const TimelineInterval = ({
         }
       </div>
       <div
-        className={focusedClassnames}
+        className="timeline-interval__interval-bottom"
         onClick={handleFocusedClick}
         role="button"
         tabIndex="0"

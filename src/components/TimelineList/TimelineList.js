@@ -82,11 +82,14 @@ export const TimelineList = forwardRef(({
     )
   }
 
+  const { start: focusedStart } = focusedInterval
+
   const timelineListClassnames = classNames([
     'timeline-list',
     {
       'timeline-list--is-dragging': dragging,
-      'timeline-list--is-temporal-dragging': draggingTemporalStart || draggingTemporalEnd
+      'timeline-list--is-temporal-dragging': draggingTemporalStart || draggingTemporalEnd,
+      'timeline-list--has-focused-interval': !!focusedStart
     }
   ])
 
@@ -105,8 +108,6 @@ export const TimelineList = forwardRef(({
       'timeline-list__temporal-marker--is-dragging': draggingTemporalEnd
     }
   ])
-
-  const { start: focusedStart } = focusedInterval
 
   return (
     <div

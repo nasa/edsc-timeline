@@ -251,6 +251,17 @@ describe('TimelineList component', () => {
       expect(enzymeWrapper.find(TimelineInterval).at(2).props().focused).toBeTruthy()
     })
 
+    test('adds the focused classname to the timeline list', () => {
+      const { enzymeWrapper } = setup({
+        focusedInterval: {
+          end: new Date('2021-03-31').getTime(),
+          start: new Date('2021-03-01').getTime()
+        }
+      })
+
+      expect(enzymeWrapper.props().className).toContain('timeline-list--has-focused-interval')
+    })
+
     test('renders an unfocusable TimelineInterval outside of the temporalRange', () => {
       const { enzymeWrapper } = setup({
         focusedInterval: {
