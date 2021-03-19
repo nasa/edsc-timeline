@@ -50,7 +50,7 @@ describe('TimelineInterval component', () => {
   test('renders the unfocusable class when the interval cannot be focused', () => {
     const { enzymeWrapper } = setup({ focusable: false })
 
-    expect(enzymeWrapper.find('.timeline-interval__interval-bottom--unfocusable').exists()).toBeTruthy()
+    expect(enzymeWrapper.props().className).toContain('timeline-interval--is-unfocusable')
   })
 
   describe('handleFocusedClick', () => {
