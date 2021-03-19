@@ -26,6 +26,7 @@ import {
 } from './constants'
 
 import './index.scss'
+import { TimelinePrimarySection } from './components/TimelinePrimarySection/TimelinePrimarySection'
 
 /**
  * Renders the EDSC Timeline
@@ -42,6 +43,7 @@ import './index.scss'
  */
 export const EDSCTimeline = ({
   center,
+  data,
   focusedInterval: propsFocusedInterval,
   minZoom,
   maxZoom,
@@ -860,6 +862,7 @@ export const EDSCTimeline = ({
         onChangeFocusedInterval={onChangeFocusedInterval}
         onChangeZoomLevel={onChangeZoomLevel}
       />
+      <TimelinePrimarySection data={data} />
       <div className="timeline__outer-wrapper">
         <div
           className="timeline__wrapper"
@@ -908,6 +911,18 @@ EDSCTimeline.defaultProps = {
 
 EDSCTimeline.propTypes = {
   center: PropTypes.number,
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string, // ?
+      title: PropTypes.string,
+      color: PropTypes.string,
+      intervals: PropTypes.arrayOf(
+        PropTypes.arrayOf(
+          PropTypes.number
+        ) // [start, end, number of items in interval]
+      ).isRequired
+    })
+  ).isRequired,
   focusedInterval: PropTypes.shape({
     end: PropTypes.number,
     start: PropTypes.number
@@ -917,7 +932,7 @@ EDSCTimeline.propTypes = {
   onFocusedSet: PropTypes.func,
   onTemporalSet: PropTypes.func,
   onTimelineMove: PropTypes.func,
-  rows: PropTypes.arrayOf(
+  data: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string, // ?
       title: PropTypes.string,
