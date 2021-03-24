@@ -21,6 +21,7 @@ import { roundTime } from './utils/roundTime'
 
 import {
   INTERVAL_BUFFER,
+  MAX_DATA_ROWS,
   MAX_INTERVAL_BUFFER,
   TEMPORAL_SELECTION_HEIGHT
 } from './constants'
@@ -114,6 +115,12 @@ export const EDSCTimeline = ({
       reverse: false
     })
   ])
+
+  let trimmedData = data
+
+  if (data.length >= MAX_DATA_ROWS) {
+    trimmedData = data.slice(0, MAX_DATA_ROWS)
+  }
 
   /**
    * DEBUG USEEFFECTS
@@ -862,7 +869,7 @@ export const EDSCTimeline = ({
         onChangeFocusedInterval={onChangeFocusedInterval}
         onChangeZoomLevel={onChangeZoomLevel}
       />
-      <TimelinePrimarySection data={data} />
+      <TimelinePrimarySection data={trimmedData} />
       <div className="timeline__outer-wrapper">
         <div
           className="timeline__wrapper"
@@ -870,18 +877,19 @@ export const EDSCTimeline = ({
           {
             timeIntervals.length > 0 && (
               <TimelineList
+                ref={timelineListRef}
+                data={trimmedData}
+                dragging={dragging}
+                draggingTemporalEnd={draggingTemporalEnd}
+                draggingTemporalStart={draggingTemporalStart}
                 focusedInterval={focusedInterval}
                 intervalListWidthInPixels={intervalListWidthInPixels}
                 temporalRange={temporalRange}
                 temporalRangeMouseOverPosition={temporalRangeMouseOverPosition}
                 timeIntervals={timeIntervals}
-                ref={timelineListRef}
                 timelinePosition={timelinePosition}
                 timelineWrapperRef={timelineWrapperRef}
                 zoomLevel={zoomLevel}
-                dragging={dragging}
-                draggingTemporalStart={draggingTemporalStart}
-                draggingTemporalEnd={draggingTemporalEnd}
                 onFocusedClick={onFocusedClick}
                 onTimelineMouseDown={onTimelineMouseDown}
                 onTimelineMouseMove={onTimelineMouseMove}

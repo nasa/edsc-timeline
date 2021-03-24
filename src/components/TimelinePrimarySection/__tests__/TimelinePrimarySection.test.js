@@ -7,9 +7,28 @@ import { TimelinePrimarySection } from '../TimelinePrimarySection'
 Enzyme.configure({ adapter: new Adapter() })
 
 function setup(overrideProps) {
-  const props = {}
+  const props = {
+    data: [
+      {
+        id: 'row1',
+        title: 'Test Data Row 1',
+        intervals: []
+      },
+      {
+        id: 'row2',
+        title: 'Test Data Row 2',
+        intervals: []
+      },
+      {
+        id: 'row3',
+        title: 'Test Data Row 3',
+        intervals: []
+      }
+    ],
+    ...overrideProps
+  }
 
-  const enzymeWrapper = shallow(<TimelineTools {...props} />)
+  const enzymeWrapper = shallow(<TimelinePrimarySection {...props} />)
 
   return {
     enzymeWrapper,
@@ -17,12 +36,19 @@ function setup(overrideProps) {
   }
 }
 
-describe('TimelineTools component', () => {
-  test('renders zoom buttons and the current zoom level', () => {
+describe('TimelinePrimarySection component', () => {
+  test('renders the data row titles', () => {
     const { enzymeWrapper } = setup()
 
-    expect(enzymeWrapper.find('.timeline-tools__label').text()).toEqual('Month')
-    expect(enzymeWrapper.find('.timeline-tools__action').first().props().title).toEqual('Increase zoom level')
-    expect(enzymeWrapper.find('.timeline-tools__action').last().props().title).toEqual('Decrease zoom level')
+    const dataRows = enzymeWrapper.find('.timeline-primary-section__entry')
+
+    expect(dataRows.at(0).text()).toEqual('Test Data Row 1')
+    expect(dataRows.at(0).props().title).toEqual('Test Data Row 1')
+
+    expect(dataRows.at(1).text()).toEqual('Test Data Row 2')
+    expect(dataRows.at(1).props().title).toEqual('Test Data Row 2')
+
+    expect(dataRows.at(2).text()).toEqual('Test Data Row 3')
+    expect(dataRows.at(2).props().title).toEqual('Test Data Row 3')
   })
 })

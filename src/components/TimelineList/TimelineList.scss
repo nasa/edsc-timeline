@@ -1,6 +1,7 @@
 // !important is used in a few places to override default cursor properties in Bootstrap. Because attribute selectors
 // are used to style the cursor, this is the easiest way to override that behavior.
 .timeline-list {
+  height: 100%;
   width: 100%;
   background-color: $color__black--050;
   position: relative;
@@ -15,6 +16,14 @@
 
   &--is-dragging {
     cursor: grabbing !important;
+  }
+
+  &__intervals {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
   }
 
   &__line {
@@ -55,12 +64,12 @@
     background-color: $color__red-orange;
     position: absolute;
     left: 50%;
-    z-index: 1;
+    z-index: 2;
     user-select: none;
     padding: 0;
     outline: none;
     border: 0;
-    box-shadow: 0 0 3px 3px rgba($color__black--050, 0.2);
+    box-shadow: 0 0 3px 3px rgba($color__black--050, 0.1);
     transition: background-color 0.2s ease-in-out;
 
     &:after {
@@ -101,5 +110,54 @@
         }
       }
     }
+  }
+
+  &__temporal-range {
+    pointer-events: none;
+    display: block;
+    height: 100%;
+    background-color: rgba($color__red-orange, 0.25);
+    position: absolute;
+    z-index: 1;
+    user-select: none;
+    padding: 0;
+    outline: none;
+    border: 0;
+    box-shadow: 0 0 3px 3px rgba($color__black--050, 0.1);
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  &__focused-range {
+    pointer-events: none;
+    display: block;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      rgba($color__blue, 0.325) 0%,
+      rgba($color__blue, 0) 20px,
+      rgba($color__blue, 0) calc(100% - 20px),
+      rgba($color__blue, 0.325) 100%
+    );
+    border-left: 2px solid $color__blue;
+    border-right: 2px solid $color__blue;
+    position: absolute;
+    z-index: 2;
+    user-select: none;
+    padding: 0;
+    outline: none;
+    box-shadow: 0 0 3px 3px rgba($color__black--050, 0.1);
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  &__focused-range-mask {
+    pointer-events: none;
+    display: block;
+    height: 100%;
+    background: rgba($color__black, 0.325);
+    position: absolute;
+    z-index: 2;
+    user-select: none;
+    padding: 0;
+    transition: background-color 0.2s ease-in-out;
   }
 }
