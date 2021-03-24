@@ -35,3 +35,6 @@ export const ZOOM_LEVELS = {
 
 // The height in px of the area that will trigger a temporal selection
 export const TEMPORAL_SELECTION_HEIGHT = 20
+
+// The maximum number of data rows to be displayed
+export const MAX_DATA_ROWS = 3

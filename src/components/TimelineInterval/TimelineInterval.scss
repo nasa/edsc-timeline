@@ -14,24 +14,6 @@
   );
   transition: background 0.2s ease-in-out;
 
-  &:before {
-    content: '';
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba($color__black, 0.4);
-    z-index: 3;
-    user-select: none;
-    pointer-events: none;
-
-    .timeline-list--has-focused-interval & {
-      display: block;
-    }
-  }
-
   &:after {
     content: '';
     display: block;
@@ -47,15 +29,6 @@
   }
 
   &--is-focused {
-    background: rgb(26,26,26);
-    background: linear-gradient(
-      90deg,
-      rgba($color__blue, 0.325) 0%,
-      rgba($color__blue, 0) 20px,
-      rgba($color__blue, 0) calc(100% - 20px),
-      rgba($color__blue, 0.325) 100%
-    );
-
     &:before {
       .timeline-list--has-focused-interval & {
         display: none;
