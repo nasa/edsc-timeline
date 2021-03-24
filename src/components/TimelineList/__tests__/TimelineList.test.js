@@ -3,12 +3,14 @@ import Enzyme, { shallow } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
 
 import { TimelineList } from '../TimelineList'
+import { TimelineDataSection } from '../../TimelineDataSection/TimelineDataSection'
 import { TimelineInterval } from '../../TimelineInterval/TimelineInterval'
 
 Enzyme.configure({ adapter: new Adapter() })
 
 function setup(overrideProps) {
   const props = {
+    data: [],
     dragging: false,
     draggingTemporalStart: false,
     draggingTemporalEnd: false,
@@ -113,6 +115,20 @@ describe('TimelineList component', () => {
     })
   })
 
+  describe('when and interval is not focused', () => {
+    test('does not render the focused area or masks', () => {
+      const { enzymeWrapper } = setup({
+        temporalRange: {
+          start: new Date('2021-03').getTime(),
+          end: new Date('2021-04').getTime()
+        }
+      })
+
+      expect(enzymeWrapper.find('.timeline-list__focused-range').length).toEqual(0)
+      expect(enzymeWrapper.find('.timeline-list__focused-range-mask').length).toEqual(0)
+    })
+  })
+
   describe('Temporal markers', () => {
     test('renders markers if temporal range has start and end', () => {
       const { enzymeWrapper } = setup({
@@ -133,6 +149,21 @@ describe('TimelineList component', () => {
       })
     })
 
+    test('renders hightlighted area correctly if temporal range has start and end', () => {
+      const { enzymeWrapper } = setup({
+        temporalRange: {
+          start: new Date('2021-03').getTime(),
+          end: new Date('2021-04').getTime()
+        }
+      })
+
+      const temporalRange = enzymeWrapper.find('.timeline-list__temporal-range')
+
+      expect(temporalRange.exists()).toBeTruthy()
+      expect(temporalRange.props().style.left).toEqual(200.43835616438355)
+      expect(temporalRange.props().style.width).toEqual(105.31506849315068)
+    })
+
     test('renders only a start marker if temporal range does not have an end', () => {
       const { enzymeWrapper } = setup({
         temporalRange: {
@@ -144,6 +175,20 @@ describe('TimelineList component', () => {
       expect(enzymeWrapper.find('.timeline-list__temporal-end').exists()).toBeFalsy()
     })
 
+    test('renders hightlighted area correctly if temporal range does not have an end', () => {
+      const { enzymeWrapper } = setup({
+        temporalRange: {
+          start: new Date('2021-03').getTime()
+        }
+      })
+
+      const temporalRange = enzymeWrapper.find('.timeline-list__temporal-range')
+
+      expect(temporalRange.exists()).toBeTruthy()
+      expect(temporalRange.props().style.left).toEqual(200.43835616438355)
+      expect(temporalRange.props().style.width).toEqual(312.54794520547944)
+    })
+
     test('renders only a end marker if temporal range does not have a start', () => {
       const { enzymeWrapper } = setup({
         temporalRange: {
@@ -153,6 +198,20 @@ describe('TimelineList component', () => {
 
       expect(enzymeWrapper.find('.timeline-list__temporal-start').exists()).toBeFalsy()
       expect(enzymeWrapper.find('.timeline-list__temporal-end').exists()).toBeTruthy()
+    })
+
+    test('renders hightlighted area correctly if temporal range does not have an start', () => {
+      const { enzymeWrapper } = setup({
+        temporalRange: {
+          end: new Date('2021-03').getTime()
+        }
+      })
+
+      const temporalRange = enzymeWrapper.find('.timeline-list__temporal-range')
+
+      expect(temporalRange.exists()).toBeTruthy()
+      expect(temporalRange.props().style.left).toEqual(0)
+      expect(temporalRange.props().style.width).toEqual(200.43835616438355)
     })
 
     test('clicking on the start marker calls onTemporalStartMouseDown', () => {
@@ -279,6 +338,62 @@ describe('TimelineList component', () => {
       expect(enzymeWrapper.find(TimelineInterval).at(1).props().focusable).toBeFalsy()
       expect(enzymeWrapper.find(TimelineInterval).at(3).props().focusable).toBeFalsy()
       expect(enzymeWrapper.find(TimelineInterval).at(4).props().focusable).toBeFalsy()
+    })
+
+    test('renders an the highlighted interval and masks', () => {
+      const { enzymeWrapper } = setup({
+        focusedInterval: {
+          end: new Date('2021-03-31').getTime(),
+          start: new Date('2021-03-01').getTime()
+        },
+        temporalRange: {
+          end: new Date('2021-03-15').getTime(),
+          start: new Date('2021-03-10').getTime()
+        }
+      })
+
+      const focusedRange = enzymeWrapper.find('.timeline-list__focused-range')
+      const focusedRangeMaskLeft = enzymeWrapper.find('.timeline-list__focused-range-mask').at(0)
+      const focusedRangeMaskRight = enzymeWrapper.find('.timeline-list__focused-range-mask').at(1)
+
+      expect(focusedRange.length).toEqual(1)
+      expect(focusedRange.props().style.left).toEqual(200.43835616438355)
+      expect(focusedRange.props().style.width).toEqual(103.91780821917807)
+
+      expect(focusedRangeMaskLeft.length).toEqual(1)
+      expect(focusedRangeMaskLeft.props().style.left).toEqual(0)
+      expect(focusedRangeMaskLeft.props().style.width).toEqual(200.43835616438355)
+
+      expect(focusedRangeMaskRight.length).toEqual(1)
+      expect(focusedRangeMaskRight.props().style.left).toEqual(304.35616438356163)
+      expect(focusedRangeMaskRight.props().style.width).toEqual(210.63013698630135)
+    })
+  })
+
+  describe('Data', () => {
+    test('renders data row', () => {
+      const { enzymeWrapper } = setup({
+        data: [
+          {
+            id: 'row1',
+            title: 'Test Data Row 1',
+            intervals: [
+              [
+                new Date('2021-02-20').getTime(),
+                new Date('2021-02-29').getTime(),
+                42
+              ],
+              [
+                new Date('2021-03-02').getTime(),
+                new Date('2021-03-10').getTime(),
+                50
+              ]
+            ]
+          }
+        ]
+      })
+
+      expect(enzymeWrapper.find(TimelineDataSection).exists()).toBeTruthy()
     })
   })
 })

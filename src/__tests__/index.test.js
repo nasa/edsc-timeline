@@ -16,6 +16,7 @@ Enzyme.configure({ adapter: new Adapter() })
 function setup(overrideProps) {
   const props = {
     center: new Date('2021').getTime(),
+    data: [],
     minZoom: 1,
     maxZoom: 5,
     zoom: 3,
@@ -1407,6 +1408,43 @@ describe('EDSCTimeline component', () => {
           expect(props.onTimelineMove).toHaveBeenCalledTimes(53)
         })
       })
+    })
+  })
+
+
+  describe('When more than 3 data rows are provided', () => {
+    test('trims the data rows', () => {
+      const { enzymeWrapper } = setup({
+        data: [
+          {
+            id: 'row1',
+            title: 'Test Data Row 1',
+            intervals: []
+          },
+          {
+            id: 'row2',
+            title: 'Test Data Row 2',
+            intervals: []
+          },
+          {
+            id: 'row3',
+            title: 'Test Data Row 3',
+            intervals: []
+          },
+          {
+            id: 'row4',
+            title: 'Test Data Row 4',
+            intervals: []
+          },
+          {
+            id: 'row5',
+            title: 'Test Data Row 5',
+            intervals: []
+          }
+        ]
+      })
+
+      expect(enzymeWrapper.find(TimelineList).props().data.length).toBe(3)
     })
   })
 })

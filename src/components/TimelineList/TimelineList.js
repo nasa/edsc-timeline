@@ -4,14 +4,17 @@ import classNames from 'classnames'
 
 import { TimelineInterval } from '../TimelineInterval/TimelineInterval'
 
+import { determineScaledWidth } from '../../utils/determineScaledWidth'
 import { generateEndTime } from '../../utils/generateEndTime'
 import { getPositionByTimestamp } from '../../utils/getPositionByTimestamp'
+import { TimelineDataSection } from '../TimelineDataSection/TimelineDataSection'
 
 import './TimelineList.scss'
 
 /**
  * Renders a list of TimelineIntervals
  * @param {Object} param0
+ * @param {Array} param0.data An array of objects defining the data to display
  * @param {Boolean} param0.dragging Flag for if the timeline is currently in a dragging state
  * @param {Boolean} param0.draggingTemporalStart Flag for if the temporal start marker is currently in a dragging state
  * @param {Boolean} param0.draggingTemporalEnd Flag for if the temporal end marker is currently in a dragging state
@@ -30,6 +33,7 @@ import './TimelineList.scss'
  * @param {Object} timelineListRef Ref to the DOM element representing the timeline list
  */
 export const TimelineList = forwardRef(({
+  data,
   dragging,
   draggingTemporalStart,
   draggingTemporalEnd,
@@ -48,8 +52,12 @@ export const TimelineList = forwardRef(({
 }, timelineListRef) => {
   if (!timelineWrapperRef.current) return null
 
+  const focusedRangeStyle = {}
+  const focusedRangeMaskLeftStyle = {}
+  const focusedRangeMaskRightStyle = {}
   const temporalStartStyle = {}
   const temporalEndStyle = {}
+  const temporalRangeStyle = {}
   const temporalRangeMouseOverStyle = {}
 
   // If a position is set for the temporal selection mouseover indicator, set the left property to that value
@@ -58,9 +66,11 @@ export const TimelineList = forwardRef(({
   }
 
   const { end, start } = temporalRange
+  const { end: focusedIntervalEnd, start: focusedIntervalStart } = focusedInterval
 
   // If a time is set for the start and end, set the left property to that temporal position
   const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+
   if (start) {
     temporalStartStyle.left = (
       getPositionByTimestamp({
@@ -71,6 +81,7 @@ export const TimelineList = forwardRef(({
       })
     )
   }
+
   if (end) {
     temporalEndStyle.left = (
       getPositionByTimestamp({
@@ -82,14 +93,69 @@ export const TimelineList = forwardRef(({
     )
   }
 
-  const { start: focusedStart } = focusedInterval
+  if (end || start) {
+    const range = [
+      start || timeIntervals[0],
+      end || generateEndTime(timeIntervals, zoomLevel)
+    ].sort()
+    const [startPosition, endPosition] = range
+
+    // Style the temporal range area
+    temporalRangeStyle.left = getPositionByTimestamp({
+      timestamp: startPosition,
+      timeIntervals,
+      zoomLevel,
+      wrapperWidth: timelineWrapperWidth
+    })
+    temporalRangeStyle.width = determineScaledWidth(
+      endPosition - startPosition,
+      zoomLevel,
+      timelineWrapperWidth
+    )
+  }
+
+  if (focusedIntervalStart && focusedIntervalEnd) {
+    // Style the focused area
+    focusedRangeStyle.left = getPositionByTimestamp({
+      timestamp: focusedIntervalStart,
+      timeIntervals,
+      zoomLevel,
+      wrapperWidth: timelineWrapperWidth
+    })
+    focusedRangeStyle.width = determineScaledWidth(
+      focusedIntervalEnd - focusedIntervalStart,
+      zoomLevel,
+      timelineWrapperWidth
+    ) + 2 // Accomodate for the 2px border on the interval
+
+    // Style the left focused interval mask
+    focusedRangeMaskLeftStyle.left = 0
+    focusedRangeMaskLeftStyle.width = determineScaledWidth(
+      focusedIntervalStart - timeIntervals[0],
+      zoomLevel,
+      timelineWrapperWidth
+    )
+
+    // Style the right focused interval mask
+    focusedRangeMaskRightStyle.left = getPositionByTimestamp({
+      timestamp: focusedIntervalEnd,
+      timeIntervals,
+      zoomLevel,
+      wrapperWidth: timelineWrapperWidth
+    }) + 2 // Accomodate for the 2px border on the interval
+    focusedRangeMaskRightStyle.width = determineScaledWidth(
+      generateEndTime(timeIntervals, zoomLevel) - focusedIntervalEnd,
+      zoomLevel,
+      timelineWrapperWidth
+    )
+  }
 
   const timelineListClassnames = classNames([
     'timeline-list',
     {
       'timeline-list--is-dragging': dragging,
       'timeline-list--is-temporal-dragging': draggingTemporalStart || draggingTemporalEnd,
-      'timeline-list--has-focused-interval': !!focusedStart
+      'timeline-list--has-focused-interval': !!focusedIntervalStart
     }
   ])
 
@@ -125,7 +191,7 @@ export const TimelineList = forwardRef(({
       <section
         className="timeline-list__markers"
         style={{
-          zIndex: timeIntervals.length + 1
+          zIndex: timeIntervals.length + 2
         }}
       >
         {
@@ -160,52 +226,86 @@ export const TimelineList = forwardRef(({
             />
           )
         }
-      </section>
-      <span className="timeline-list__line" />
-      {
-        timeIntervals && timeIntervals.map((startTime, intervalIndex) => {
-          let endTime
-          const focused = startTime === focusedStart
-
-          if (timeIntervals[intervalIndex + 1] != null) {
-            // If the next interval is not null, use it as the endTime
-            endTime = timeIntervals[intervalIndex + 1]
-          } else {
-            // Generate a new interval to use as the endTime
-            endTime = generateEndTime(timeIntervals, zoomLevel)
-          }
-
-          // The end of the interval is 1ms before the next startTime
-          endTime -= 1
-
-          let focusable = true
-          const {
-            end: temporalEnd,
-            start: temporalStart
-          } = temporalRange
-          if (temporalStart || temporalEnd) {
-            focusable = startTime < temporalEnd && endTime > temporalStart
-          }
-
-          // Each interval needs to be one zIndex lower than the interval to it's left.
-          // This keeps labels on top of interval borders
-          const zIndex = timeIntervals.length - intervalIndex
-
-          return (
-            <TimelineInterval
-              key={startTime}
-              focusable={focusable}
-              focused={focused}
-              startTime={startTime}
-              endTime={endTime}
-              timelineWrapperRef={timelineWrapperRef}
-              zIndex={zIndex}
-              zoomLevel={zoomLevel}
-              onFocusedClick={onFocusedClick}
+        {
+          (start || end) && (
+            <div
+              className="timeline-list__temporal-range"
+              style={temporalRangeStyle}
             />
           )
-        })
-      }
+        }
+        {
+          focusedIntervalStart && (
+            <>
+              <div
+                className="timeline-list__focused-range"
+                style={focusedRangeStyle}
+              />
+              <div
+                className="timeline-list__focused-range-mask"
+                style={focusedRangeMaskLeftStyle}
+              />
+              <div
+                className="timeline-list__focused-range-mask"
+                style={focusedRangeMaskRightStyle}
+              />
+            </>
+          )
+        }
+      </section>
+      <span className="timeline-list__line" />
+      <TimelineDataSection
+        data={data}
+        timeIntervals={timeIntervals}
+        timelineWrapperWidth={timelineWrapperWidth}
+        zoomLevel={zoomLevel}
+      />
+      <div className="timeline-list__intervals">
+        {
+          timeIntervals && timeIntervals.map((startTime, intervalIndex) => {
+            let endTime
+            const focused = startTime === focusedIntervalStart
+
+            if (timeIntervals[intervalIndex + 1] != null) {
+              // If the next interval is not null, use it as the endTime
+              endTime = timeIntervals[intervalIndex + 1]
+            } else {
+              // Generate a new interval to use as the endTime
+              endTime = generateEndTime(timeIntervals, zoomLevel)
+            }
+
+            // The end of the interval is 1ms before the next startTime
+            endTime -= 1
+
+            let focusable = true
+            const {
+              end: temporalEnd,
+              start: temporalStart
+            } = temporalRange
+            if (temporalStart || temporalEnd) {
+              focusable = startTime < temporalEnd && endTime > temporalStart
+            }
+
+            // Each interval needs to be one zIndex lower than the interval to it's left.
+            // This keeps labels on top of interval borders
+            const zIndex = timeIntervals.length - intervalIndex
+
+            return (
+              <TimelineInterval
+                key={startTime}
+                focusable={focusable}
+                focused={focused}
+                startTime={startTime}
+                endTime={endTime}
+                timelineWrapperRef={timelineWrapperRef}
+                zIndex={zIndex}
+                zoomLevel={zoomLevel}
+                onFocusedClick={onFocusedClick}
+              />
+            )
+          })
+        }
+      </div>
     </div>
   )
 })
@@ -216,11 +316,24 @@ TimelineList.defaultProps = {
 }
 
 TimelineList.propTypes = {
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string, // ?
+      title: PropTypes.string,
+      color: PropTypes.string,
+      intervals: PropTypes.arrayOf(
+        PropTypes.arrayOf(
+          PropTypes.number
+        ) // [start, end, number of items in interval]
+      ).isRequired
+    })
+  ).isRequired,
   dragging: PropTypes.bool.isRequired,
   draggingTemporalStart: PropTypes.bool.isRequired,
   draggingTemporalEnd: PropTypes.bool.isRequired,
   focusedInterval: PropTypes.shape({
-    start: PropTypes.number
+    start: PropTypes.number,
+    end: PropTypes.number
   }).isRequired,
   intervalListWidthInPixels: PropTypes.number,
   onFocusedClick: PropTypes.func.isRequired,

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { render } from 'react-dom'
 import GithubCorner from 'react-github-corner'
-import { reduce, startCase } from 'lodash'
+import { startCase } from 'lodash'
 
 import EDSCTimeline from '../../src'
 
@@ -53,11 +53,98 @@ const App = () => {
     {
       id: 'row1',
       title: 'Test Collection With A Really Really Really Super Long Name',
-      color: 'red',
       intervals: [
         [
           new Date('2019-08-12').getTime(),
           new Date('2019-12-20').getTime(),
+          42
+        ],
+        [
+          new Date('2020-01-04').getTime(),
+          new Date('2020-05-18').getTime(),
+          50
+        ]
+      ]
+    },
+    {
+      id: 'row2',
+      title: 'Test Collection 2',
+      color: '#3498DB',
+      intervals: [
+        [
+          new Date('2019-08-12').getTime(),
+          new Date('2019-12-20').getTime(),
+          42
+        ],
+        [
+          new Date('2019-12-25').getTime(),
+          new Date('2019-12-26').getTime(),
+          42
+        ],
+        [
+          new Date('2020-01-04').getTime(),
+          new Date('2020-05-18').getTime(),
+          50
+        ]
+      ]
+    },
+    {
+      id: 'row3',
+      title: 'Test Collection 3',
+      color: '#dc3545',
+      intervals: [
+        [
+          new Date('2019-08-12').getTime(),
+          new Date('2019-12-20').getTime(),
+          42
+        ],
+        [
+          new Date('2019-12-25').getTime(),
+          new Date('2019-12-26').getTime(),
+          42
+        ],
+        [
+          new Date('2020-01-04').getTime(),
+          new Date('2020-05-18').getTime(),
+          50
+        ]
+      ]
+    },
+    {
+      id: 'row4',
+      title: 'Test Collection 4',
+      color: '#3498DB',
+      intervals: [
+        [
+          new Date('2019-08-12').getTime(),
+          new Date('2019-12-20').getTime(),
+          42
+        ],
+        [
+          new Date('2019-12-25').getTime(),
+          new Date('2019-12-26').getTime(),
+          42
+        ],
+        [
+          new Date('2020-01-04').getTime(),
+          new Date('2020-05-18').getTime(),
+          50
+        ]
+      ]
+    },
+    {
+      id: 'row5',
+      title: 'Test Collection 5',
+      color: '#3498DB',
+      intervals: [
+        [
+          new Date('2019-08-12').getTime(),
+          new Date('2019-12-20').getTime(),
+          42
+        ],
+        [
+          new Date('2019-12-25').getTime(),
+          new Date('2019-12-26').getTime(),
           42
         ],
         [
