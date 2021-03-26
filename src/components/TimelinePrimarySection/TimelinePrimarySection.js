@@ -1,5 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
+import { FaAngleDoubleLeft, FaAngleDoubleRight } from 'react-icons/fa'
+import { inRange } from 'lodash'
+
+import { DEFAULT_COLOR } from '../../constants'
 
 import './TimelinePrimarySection.scss'
 /**
@@ -8,27 +13,99 @@ import './TimelinePrimarySection.scss'
  * @param {Object} param0.data The timeline data
  */
 export const TimelinePrimarySection = ({
-  data
+  data,
+  visibleTemporalRange
 }) => (
   <section className="timeline-primary-section">
-    {
-      data && data.map((entry, i) => {
-        const {
-          id,
-          title
-        } = entry
-        const key = `${id}-${i}`
-        return (
-          <div
-            className="timeline-primary-section__entry"
-            key={key}
-            title={title}
-          >
-            {title}
-          </div>
-        )
-      })
-    }
+    <ul className="timeline-primary-section__entries">
+      {
+        data && data.map((entry, i) => {
+          const {
+            id,
+            intervals,
+            title,
+            color = DEFAULT_COLOR
+          } = entry
+
+          const { end: visibleEnd, start: visibleStart } = visibleTemporalRange
+
+          const intervalsBeforeVisibleRange = []
+          const intervalsAfterVisibleRange = []
+          const intervalsInVisibleRange = []
+
+          intervals.forEach((interval) => {
+            const [intervalStart, intervalEnd] = interval
+
+            if (intervalEnd < visibleStart) {
+              intervalsBeforeVisibleRange.push(interval)
+            }
+
+            if (intervalStart > visibleEnd) {
+              intervalsAfterVisibleRange.push(interval)
+            }
+
+            if (
+              inRange(intervalStart, visibleStart, visibleEnd)
+              || inRange(intervalEnd, visibleStart, visibleEnd)
+            ) {
+              intervalsInVisibleRange.push(interval)
+            }
+          })
+
+          const noVisibleDataBeforeMarkerClassnames = classNames([
+            'timeline-primary-section__no-visible-data-marker',
+            'timeline-primary-section__no-visible-data-marker--before',
+            {
+              'timeline-primary-section__no-visible-data-marker--is-visible': !intervalsInVisibleRange.length && intervalsBeforeVisibleRange.length > 0
+            }
+          ])
+
+          const noVisibleDataAfterMarkerClassnames = classNames([
+            'timeline-primary-section__no-visible-data-marker',
+            'timeline-primary-section__no-visible-data-marker--before',
+            {
+              'timeline-primary-section__no-visible-data-marker--is-visible': !intervalsInVisibleRange.length && intervalsAfterVisibleRange.length > 0
+            }
+          ])
+
+          const key = `${id}-${i}`
+          return (
+            <li
+              className="timeline-primary-section__entry"
+              key={key}
+              title={title}
+            >
+              <div className={noVisibleDataBeforeMarkerClassnames}>
+                <FaAngleDoubleLeft
+                  className="timeline-primary-section__no-visible-data-icon"
+                  style={{
+                    fill: color
+                  }}
+                />
+              </div>
+              <div className="timeline-primary-section__primary">
+                <div className="timeline-primary-section__title-wrapper">
+                  <h3
+                    className="timeline-primary-section__title"
+                    title={title}
+                  >
+                    {title}
+                  </h3>
+                </div>
+              </div>
+              <div className={noVisibleDataAfterMarkerClassnames}>
+                <FaAngleDoubleRight
+                  className="timeline-primary-section__no-visible-data-icon"
+                  style={{
+                    fill: color
+                  }}
+                />
+              </div>
+            </li>
+          )
+        })
+      }
+    </ul>
   </section>
 )
 
@@ -44,5 +121,9 @@ TimelinePrimarySection.propTypes = {
         ) // [start, end, number of items in interval]
       ).isRequired
     })
-  ).isRequired
+  ).isRequired,
+  visibleTemporalRange: PropTypes.shape({
+    end: PropTypes.number,
+    start: PropTypes.number
+  }).isRequired
 }

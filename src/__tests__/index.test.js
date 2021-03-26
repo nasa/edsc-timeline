@@ -4,6 +4,7 @@ import Adapter from 'enzyme-adapter-react-16'
 import { act } from 'react-dom/test-utils'
 
 import EDSCTimeline from '../index'
+import { TimelinePrimarySection } from '../components/TimelinePrimarySection/TimelinePrimarySection'
 import { TimelineTools } from '../components/TimelineTools/TimelineTools'
 import { TimelineList } from '../components/TimelineList/TimelineList'
 
@@ -162,6 +163,7 @@ describe('EDSCTimeline component', () => {
         const { enzymeWrapper, props } = setup()
 
         enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+        enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
 
         const list = enzymeWrapper.find(TimelineList)
 
@@ -734,7 +736,8 @@ describe('EDSCTimeline component', () => {
         jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
         jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
         const getBoundingClientRectWrapperMock = jest.fn(() => ({
-          top: 50
+          top: 50,
+          width: 1000
         }))
 
         const getBoundingClientRectListMock = jest.fn(() => ({
@@ -767,7 +770,8 @@ describe('EDSCTimeline component', () => {
         jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
         jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
         const getBoundingClientRectWrapperMock = jest.fn(() => ({
-          top: 50
+          top: 50,
+          width: 1000
         }))
 
         const getBoundingClientRectListMock = jest.fn(() => ({
@@ -1411,6 +1415,50 @@ describe('EDSCTimeline component', () => {
     })
   })
 
+  describe('Visible Temporal Range', () => {
+    describe('sets the visible temporal range', () => {
+      test('does not display the indicator', () => {
+        jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
+        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
+        const getBoundingClientRectWrapperMock = jest.fn(() => ({
+          top: 50,
+          width: 1000
+        }))
+
+        const getBoundingClientRectListMock = jest.fn(() => ({
+          x: 400
+        }))
+
+        const getBoundingClientRectToolsMock = jest.fn(() => ({
+          width: 70
+        }))
+
+        const { enzymeWrapper } = setup({
+          focusedInterval: {
+            end: new Date('2021-03').getTime(),
+            start: new Date('2021-02').getTime()
+          }
+        })
+
+        enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectWrapperMock
+        enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getBoundingClientRectListMock
+        enzymeWrapper.find('.timeline-tools').getElement().ref.current.getBoundingClientRect = getBoundingClientRectToolsMock
+
+        enzymeWrapper.find(TimelineTools).invoke('onChangeFocusedInterval')('next')
+
+        enzymeWrapper.update()
+
+        const primarySection = enzymeWrapper.find(TimelinePrimarySection)
+
+        expect(primarySection.props().visibleTemporalRange).toEqual(
+          {
+            end: 1630681200000,
+            start: 1593377784000
+          }
+        )
+      })
+    })
+  })
 
   describe('When more than 3 data rows are provided', () => {
     test('trims the data rows', () => {

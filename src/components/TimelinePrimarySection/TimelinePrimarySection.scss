@@ -7,19 +7,57 @@
   margin-bottom: $timeline__axis-height + 0.25rem;
   z-index: 3;
   color: $color__white;
-  width: 20rem;
+  width: 100%;
   pointer-events: none;
   user-select: none;
 
+  &__entries {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
   &__entry {
-    display: inline;
+    display: flex;
+    flex-direction: row;
     align-items: center;
-    margin-left: 0.625rem;
     height: 1.5rem;
-    font-size: 0.875rem;
-    text-shadow: 0px 0px 10px $color__black;
+    margin: 0;
+    padding: 0;
+    text-shadow: 0px 0px 5px rgba($color__black, 0.75);
+  }
+
+  &__primary {
+    flex-grow: 1;
+  }
+
+  &__title-wrapper {
+    height: 1.25rem;
+    max-width: 20rem;
+    padding: 0.125rem;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+  }
+
+  &__title {
+    display: inline;
+    font-size: 0.875rem;
+  }
+
+  &__no-visible-data-marker {
+    margin-left: 0.125rem;
+    margin-right: 0.125rem;
+  }
+
+  &__no-visible-data-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+    opacity: 0;
+    transition: opacity 0.1s ease-in-out;
+
+    .timeline-primary-section__no-visible-data-marker--is-visible & {
+      opacity: 1;
+    }
   }
 }

@@ -4,6 +4,8 @@ import PropTypes from 'prop-types'
 import { determineScaledWidth } from '../../utils/determineScaledWidth'
 import { getPositionByTimestamp } from '../../utils/getPositionByTimestamp'
 
+import { DEFAULT_COLOR } from '../../constants'
+
 import './TimelineDataSection.scss'
 
 /**
@@ -32,7 +34,7 @@ export const TimelineDataSection = ({
           id,
           intervals,
           title,
-          color = '#25c85b'
+          color = DEFAULT_COLOR
         } = entry
 
         const key = `${id}-${i}`
