@@ -38,3 +38,6 @@ export const TEMPORAL_SELECTION_HEIGHT = 20
 
 // The maximum number of data rows to be displayed
 export const MAX_DATA_ROWS = 3
+
+// The default color used for data rows and indicators
+export const DEFAULT_COLOR = '#25c85b'
