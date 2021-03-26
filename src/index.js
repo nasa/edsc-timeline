@@ -7,6 +7,7 @@ import React, {
 import PropTypes from 'prop-types'
 
 import { TimelineList } from './components/TimelineList/TimelineList'
+import { TimelinePrimarySection } from './components/TimelinePrimarySection/TimelinePrimarySection'
 import { TimelineTools } from './components/TimelineTools/TimelineTools'
 
 import { calculateTimeIntervals } from './utils/calculateTimeIntervals'
@@ -27,7 +28,6 @@ import {
 } from './constants'
 
 import './index.scss'
-import { TimelinePrimarySection } from './components/TimelinePrimarySection/TimelinePrimarySection'
 
 /**
  * Renders the EDSC Timeline
@@ -59,6 +59,9 @@ export const EDSCTimeline = ({
 
   // Ref for the timeline to access the wrapper DOM element
   const timelineWrapperRef = useRef(null)
+
+  // Ref for the timeline to access the wrapper DOM element
+  const timelineToolsRef = useRef(null)
 
   // Store the zoom level and allow for changing props to modify the state
   const [zoomLevel, setZoomLevel] = useState(zoom)
@@ -98,6 +101,11 @@ export const EDSCTimeline = ({
 
   // The focused interval
   const [focusedInterval, setFocusedInterval] = useState(propsFocusedInterval)
+
+  const [visibleTemporalRange, setVisibleTemporalRange] = useState({
+    start: null,
+    end: null
+  })
 
   // Store calculated time intervals that power the display of the timeline dates
   const [timeIntervals, setTimeIntervals] = useState(() => [
@@ -141,6 +149,32 @@ export const EDSCTimeline = ({
   /**
    * END DEBUG USEEFFECTS
    */
+
+  useEffect(() => {
+    const wrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+    const toolsWidth = timelineToolsRef.current.getBoundingClientRect().width
+
+    const visibleEndPosition = -timelinePosition.left + wrapperWidth
+    const visibleEndTimestamp = getTimestampByPosition({
+      intervalListWidthInPixels,
+      position: visibleEndPosition,
+      timeIntervals,
+      zoomLevel
+    })
+
+    const visibleStartPosition = -timelinePosition.left + toolsWidth
+    const visibleStartTimestamp = getTimestampByPosition({
+      intervalListWidthInPixels,
+      position: visibleStartPosition,
+      timeIntervals,
+      zoomLevel
+    })
+
+    setVisibleTemporalRange({
+      start: visibleStartTimestamp,
+      end: visibleEndTimestamp
+    })
+  }, [timelinePosition, focusedInterval.start])
 
   /**
    * Move the timeline to the new center position
@@ -772,6 +806,7 @@ export const EDSCTimeline = ({
    */
   const onWindowMouseMove = (e) => {
     if (dragging) onTimelineDrag(e)
+    // if (dragging) requestAnimationFrame(() => onTimelineDrag(e))
     if (draggingTemporal) onTimelineTemporalDrag(e)
     if (draggingTemporalStart) onTemporalMarkerStartDrag(e)
     if (draggingTemporalEnd) onTemporalMarkerEndDrag(e)
@@ -797,7 +832,7 @@ export const EDSCTimeline = ({
 
   useEffect(() => {
     window.addEventListener('mouseup', onWindowMouseUp)
-    window.addEventListener('mousemove', onWindowMouseMove)
+    window.addEventListener('mousemove', onWindowMouseMove, false)
     window.addEventListener('keydown', onWindowKeydown)
 
     return () => {
@@ -861,6 +896,7 @@ export const EDSCTimeline = ({
       ref={timelineWrapperRef}
     >
       <TimelineTools
+        ref={timelineToolsRef}
         focusedInterval={focusedInterval}
         minZoom={minZoom}
         maxZoom={maxZoom}
@@ -869,7 +905,10 @@ export const EDSCTimeline = ({
         onChangeFocusedInterval={onChangeFocusedInterval}
         onChangeZoomLevel={onChangeZoomLevel}
       />
-      <TimelinePrimarySection data={trimmedData} />
+      <TimelinePrimarySection
+        data={trimmedData}
+        visibleTemporalRange={visibleTemporalRange}
+      />
       <div className="timeline__outer-wrapper">
         <div
           className="timeline__wrapper"

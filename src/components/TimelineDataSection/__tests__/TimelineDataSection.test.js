@@ -31,36 +31,57 @@ function setup(overrideProps) {
 
 describe('TimelineDataSection component', () => {
   describe('when a single data row is added', () => {
-    const { enzymeWrapper } = setup({
-      data: [
-        {
-          id: 'row1',
-          title: 'Test Data Row 1',
-          intervals: [
-            [
-              new Date('2021-02-20').getTime(),
-              new Date('2021-02-29').getTime(),
-              42
-            ],
-            [
-              new Date('2021-03-02').getTime(),
-              new Date('2021-03-10').getTime(),
-              50
-            ]
-          ]
-        }
-      ]
-    })
-
-    const dataRow = enzymeWrapper.find('.timeline-data-section__entry')
-
     test('renders data row', () => {
+      const { enzymeWrapper } = setup({
+        data: [
+          {
+            id: 'row1',
+            title: 'Test Data Row 1',
+            intervals: [
+              [
+                new Date('2021-02-20').getTime(),
+                new Date('2021-02-29').getTime(),
+                42
+              ],
+              [
+                new Date('2021-03-02').getTime(),
+                new Date('2021-03-10').getTime(),
+                50
+              ]
+            ]
+          }
+        ]
+      })
+
+      const dataRow = enzymeWrapper.find('.timeline-data-section__entry')
       expect(dataRow.exists()).toBeTruthy()
       expect(dataRow.length).toEqual(1)
       expect(dataRow.children().length).toEqual(2)
     })
 
     test('renders data in the correct position', () => {
+      const { enzymeWrapper } = setup({
+        data: [
+          {
+            id: 'row1',
+            title: 'Test Data Row 1',
+            intervals: [
+              [
+                new Date('2021-02-20').getTime(),
+                new Date('2021-02-29').getTime(),
+                42
+              ],
+              [
+                new Date('2021-03-02').getTime(),
+                new Date('2021-03-10').getTime(),
+                50
+              ]
+            ]
+          }
+        ]
+      })
+
+      const dataRow = enzymeWrapper.find('.timeline-data-section__entry')
       expect(dataRow.exists()).toBeTruthy()
       expect(dataRow.length).toEqual(1)
 
@@ -74,6 +95,28 @@ describe('TimelineDataSection component', () => {
     })
 
     test('sets a default color', () => {
+      const { enzymeWrapper } = setup({
+        data: [
+          {
+            id: 'row1',
+            title: 'Test Data Row 1',
+            intervals: [
+              [
+                new Date('2021-02-20').getTime(),
+                new Date('2021-02-29').getTime(),
+                42
+              ],
+              [
+                new Date('2021-03-02').getTime(),
+                new Date('2021-03-10').getTime(),
+                50
+              ]
+            ]
+          }
+        ]
+      })
+
+      const dataRow = enzymeWrapper.find('.timeline-data-section__entry')
       const firstDataChild = dataRow.childAt(0)
       expect(firstDataChild.props().style.backgroundColor).toEqual('#25c85b')
     })

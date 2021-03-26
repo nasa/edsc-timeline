@@ -61,7 +61,7 @@ const App = () => {
         ],
         [
           new Date('2020-01-04').getTime(),
-          new Date('2020-05-18').getTime(),
+          new Date('2020-05-20').getTime(),
           50
         ]
       ]
@@ -72,19 +72,9 @@ const App = () => {
       color: '#3498DB',
       intervals: [
         [
-          new Date('2019-08-12').getTime(),
-          new Date('2019-12-20').getTime(),
+          new Date('2019-07-01').getTime(),
+          new Date('2021-12-20').getTime(),
           42
-        ],
-        [
-          new Date('2019-12-25').getTime(),
-          new Date('2019-12-26').getTime(),
-          42
-        ],
-        [
-          new Date('2020-01-04').getTime(),
-          new Date('2020-05-18').getTime(),
-          50
         ]
       ]
     },
@@ -94,18 +84,13 @@ const App = () => {
       color: '#dc3545',
       intervals: [
         [
-          new Date('2019-08-12').getTime(),
-          new Date('2019-12-20').getTime(),
+          new Date('2019-07-12').getTime(),
+          new Date('2019-07-13').getTime(),
           42
         ],
         [
-          new Date('2019-12-25').getTime(),
-          new Date('2019-12-26').getTime(),
-          42
-        ],
-        [
-          new Date('2020-01-04').getTime(),
-          new Date('2020-05-18').getTime(),
+          new Date('2021-01-01').getTime(),
+          new Date('2021-01-02').getTime(),
           50
         ]
       ]
