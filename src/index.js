@@ -102,6 +102,7 @@ export const EDSCTimeline = ({
   // The focused interval
   const [focusedInterval, setFocusedInterval] = useState(propsFocusedInterval)
 
+  // The visible start and end time for the current timeline position
   const [visibleTemporalRange, setVisibleTemporalRange] = useState({
     start: null,
     end: null
@@ -150,18 +151,13 @@ export const EDSCTimeline = ({
    * END DEBUG USEEFFECTS
    */
 
+  // When the timeline position or focused interval changes, update the calculate and update
+  // the visible temporal range
   useEffect(() => {
     const wrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
     const toolsWidth = timelineToolsRef.current.getBoundingClientRect().width
 
-    const visibleEndPosition = -timelinePosition.left + wrapperWidth
-    const visibleEndTimestamp = getTimestampByPosition({
-      intervalListWidthInPixels,
-      position: visibleEndPosition,
-      timeIntervals,
-      zoomLevel
-    })
-
+    // Add the current tools container width to the timeline position to get the current start position
     const visibleStartPosition = -timelinePosition.left + toolsWidth
     const visibleStartTimestamp = getTimestampByPosition({
       intervalListWidthInPixels,
@@ -170,9 +166,19 @@ export const EDSCTimeline = ({
       zoomLevel
     })
 
+    // Add the current wrapper width to the timeline position to get the current end position
+    const visibleEndPosition = -timelinePosition.left + wrapperWidth
+    const visibleEndTimestamp = getTimestampByPosition({
+      intervalListWidthInPixels,
+      position: visibleEndPosition,
+      timeIntervals,
+      zoomLevel
+    })
+
+    // Set the visible start range
     setVisibleTemporalRange({
-      start: visibleStartTimestamp,
-      end: visibleEndTimestamp
+      end: visibleEndTimestamp,
+      start: visibleStartTimestamp
     })
   }, [timelinePosition, focusedInterval.start])
 
@@ -750,10 +756,10 @@ export const EDSCTimeline = ({
 
     let shouldMove = true
     const startIndex = timeIntervals.findIndex((interval) => interval >= newStart) - 1
-    if (direction === 'previous' && startIndex < INTERVAL_BUFFER / 3) {
+    if (direction === 'previous' && startIndex < INTERVAL_BUFFER) {
       scrollBackward(offsetInPx)
       shouldMove = false
-    } else if (direction === 'next' && startIndex > timeIntervals.length - (INTERVAL_BUFFER / 3)) {
+    } else if (direction === 'next' && startIndex > timeIntervals.length - (INTERVAL_BUFFER)) {
       shouldMove = scrollForward(offsetInPx)
     }
 

@@ -11,6 +11,7 @@ import './TimelinePrimarySection.scss'
  * Renders the primary collection information
  * @param {Object} param0
  * @param {Object} param0.data The timeline data
+ * @param {Object} param0.visibleTemporalRange The visible temporal range
  */
 export const TimelinePrimarySection = ({
   data,
@@ -36,17 +37,22 @@ export const TimelinePrimarySection = ({
           intervals.forEach((interval) => {
             const [intervalStart, intervalEnd] = interval
 
+            // Push any intervals that end before the visible start
             if (intervalEnd < visibleStart) {
               intervalsBeforeVisibleRange.push(interval)
             }
 
+            // Push any intervals that start before the visible end
             if (intervalStart > visibleEnd) {
               intervalsAfterVisibleRange.push(interval)
             }
 
+            // Push any intervals that either start or end between the visible start or visible end, or
+            // if the start is before the visible start AND the end is after the visible end
             if (
               inRange(intervalStart, visibleStart, visibleEnd)
               || inRange(intervalEnd, visibleStart, visibleEnd)
+              || (intervalStart < visibleStart && intervalEnd > visibleEnd)
             ) {
               intervalsInVisibleRange.push(interval)
             }
@@ -56,7 +62,9 @@ export const TimelinePrimarySection = ({
             'timeline-primary-section__no-visible-data-marker',
             'timeline-primary-section__no-visible-data-marker--before',
             {
-              'timeline-primary-section__no-visible-data-marker--is-visible': !intervalsInVisibleRange.length && intervalsBeforeVisibleRange.length > 0
+              'timeline-primary-section__no-visible-data-marker--is-visible': (
+                !intervalsInVisibleRange.length && intervalsBeforeVisibleRange.length > 0
+              )
             }
           ])
 
@@ -64,7 +72,9 @@ export const TimelinePrimarySection = ({
             'timeline-primary-section__no-visible-data-marker',
             'timeline-primary-section__no-visible-data-marker--before',
             {
-              'timeline-primary-section__no-visible-data-marker--is-visible': !intervalsInVisibleRange.length && intervalsAfterVisibleRange.length > 0
+              'timeline-primary-section__no-visible-data-marker--is-visible': (
+                !intervalsInVisibleRange.length && intervalsAfterVisibleRange.length > 0
+              )
             }
           ])
 
