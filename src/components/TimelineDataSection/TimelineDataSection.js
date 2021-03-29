@@ -84,7 +84,7 @@ export const TimelineDataSection = ({
 TimelineDataSection.propTypes = {
   data: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string, // ?
+      id: PropTypes.string,
       title: PropTypes.string,
       color: PropTypes.string,
       intervals: PropTypes.arrayOf(

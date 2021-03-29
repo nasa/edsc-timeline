@@ -97,7 +97,8 @@ export const TimelineList = forwardRef(({
     const range = [
       start || timeIntervals[0],
       end || generateEndTime(timeIntervals, zoomLevel)
-    ].sort()
+    ]
+
     const [startPosition, endPosition] = range
 
     // Style the temporal range area
@@ -318,7 +319,7 @@ TimelineList.defaultProps = {
 TimelineList.propTypes = {
   data: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string, // ?
+      id: PropTypes.string,
       title: PropTypes.string,
       color: PropTypes.string,
       intervals: PropTypes.arrayOf(
