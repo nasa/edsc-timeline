@@ -812,7 +812,6 @@ export const EDSCTimeline = ({
    */
   const onWindowMouseMove = (e) => {
     if (dragging) onTimelineDrag(e)
-    // if (dragging) requestAnimationFrame(() => onTimelineDrag(e))
     if (draggingTemporal) onTimelineTemporalDrag(e)
     if (draggingTemporalStart) onTemporalMarkerStartDrag(e)
     if (draggingTemporalEnd) onTemporalMarkerEndDrag(e)
@@ -838,7 +837,7 @@ export const EDSCTimeline = ({
 
   useEffect(() => {
     window.addEventListener('mouseup', onWindowMouseUp)
-    window.addEventListener('mousemove', onWindowMouseMove, false)
+    window.addEventListener('mousemove', onWindowMouseMove)
     window.addEventListener('keydown', onWindowKeydown)
 
     return () => {
@@ -966,7 +965,7 @@ EDSCTimeline.propTypes = {
   center: PropTypes.number,
   data: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string, // ?
+      id: PropTypes.string,
       title: PropTypes.string,
       color: PropTypes.string,
       intervals: PropTypes.arrayOf(
@@ -987,7 +986,7 @@ EDSCTimeline.propTypes = {
   onTimelineMove: PropTypes.func,
   data: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string, // ?
+      id: PropTypes.string,
       title: PropTypes.string,
       color: PropTypes.string,
       intervals: PropTypes.arrayOf(
