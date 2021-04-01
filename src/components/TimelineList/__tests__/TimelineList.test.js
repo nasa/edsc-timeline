@@ -10,6 +10,7 @@ Enzyme.configure({ adapter: new Adapter() })
 
 function setup(overrideProps) {
   const props = {
+    bindTimelineGestures: jest.fn(),
     data: [],
     dragging: false,
     draggingTemporalStart: false,

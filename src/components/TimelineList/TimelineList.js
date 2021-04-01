@@ -34,6 +34,7 @@ import './TimelineList.scss'
  */
 export const TimelineList = forwardRef(({
   data,
+  bindTimelineGestures,
   dragging,
   draggingTemporalStart,
   draggingTemporalEnd,
@@ -178,14 +179,14 @@ export const TimelineList = forwardRef(({
 
   return (
     <div
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...bindTimelineGestures()}
       ref={timelineListRef}
       className={timelineListClassnames}
       style={{
         width: `${intervalListWidthInPixels}px`,
         transform: `translateX(${timelinePosition.left}px)`
       }}
-      onMouseDown={onTimelineMouseDown}
-      onMouseMove={onTimelineMouseMove}
       role="button"
       tabIndex="0"
     >
@@ -212,6 +213,7 @@ export const TimelineList = forwardRef(({
               label="Click and drag to edit the start of the selected temporal range"
               aria-label="Click and drag to edit the start of the selected temporal range"
               type="button"
+              data-marker-type="start"
             />
           )
         }
@@ -224,6 +226,7 @@ export const TimelineList = forwardRef(({
               label="Click and drag to edit the end of the selected temporal range"
               aria-label="Click and drag to edit the end of the selected temporal range"
               type="button"
+              data-marker-type="end"
             />
           )
         }
@@ -329,6 +332,7 @@ TimelineList.propTypes = {
       ).isRequired
     })
   ).isRequired,
+  bindTimelineGestures: PropTypes.func.isRequired,
   dragging: PropTypes.bool.isRequired,
   draggingTemporalStart: PropTypes.bool.isRequired,
   draggingTemporalEnd: PropTypes.bool.isRequired,

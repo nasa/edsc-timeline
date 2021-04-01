@@ -107,6 +107,7 @@
   "dependencies": {
     "classnames": "^2.2.6",
     "lodash": "^4.17.21",
-    "react-icons": "^4.2.0"
+    "react-icons": "^4.2.0",
+    "react-use-gesture": "^9.1.3"
   }
 }
