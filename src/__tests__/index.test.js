@@ -123,9 +123,8 @@ describe('EDSCTimeline component', () => {
 
       tools.invoke('onChangeZoomLevel')(2)
 
-      expect(props.onTimelineMove).toHaveBeenCalledTimes(3)
+      expect(props.onTimelineMove).toHaveBeenCalledTimes(2)
       expect(props.onTimelineMove.mock.calls).toEqual([
-        [{ center: 1530403200000, interval: 3 }],
         [{ center: 1593691200000, interval: 3 }],
         [{ center: 1593691200000, interval: 2 }]
       ])
@@ -155,9 +154,9 @@ describe('EDSCTimeline component', () => {
 
   describe('onTimelineDrag', () => {
     describe('when dragging backwards', () => {
-      test('new intervals and position are passed to TimelineList', () => {
+      test('new intervals are passed to TimelineList', () => {
         jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
+        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 2500)
         const getBoundingClientRectMock = jest.fn(() => ({ width: 1200 }))
 
         const { enzymeWrapper, props } = setup()
@@ -165,44 +164,37 @@ describe('EDSCTimeline component', () => {
         enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
         enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
 
-        const list = enzymeWrapper.find(TimelineList)
+        const list = enzymeWrapper.find(TimelineList).find('.timeline-list')
+
+        // expect(enzymeWrapper.find(TimelineList).props().timelinePosition).toEqual()
+
+        // console.log('list', list.debug())
 
         // Clicks on the timeline
-        list.invoke('onTimelineMouseDown')({
-          pageX: 500
-        })
-
-        // Drags the mouse
+        // list.invoke('onTimelineMouseDown')({
+        //   pageX: 500
+        // })
         act(() => {
-          windowEventMap.mousemove({
-            pageX: 2250
+          list.simulate('pointerdown', {
+            pointerId: 1,
+            clientX: 500
           })
         })
+
         // Drag the mouse again
         act(() => {
-          windowEventMap.mousemove({
-            pageX: 2251
+          list.simulate('pointermove', {
+            pointerId: 1,
+            clientX: 2251
           })
         })
         // Let go of the mouse button
         act(() => {
-          windowEventMap.mouseup()
+          list.simulate('pointerup', { pointerId: 1 })
         })
 
         enzymeWrapper.update()
 
-        expect(props.onTimelineMove).toHaveBeenCalledTimes(4)
-        expect(props.onTimelineMove.mock.calls).toEqual([
-          [{ center: 1530403200000, interval: 3 }],
-          [{ center: 1610625600000, interval: 3 }],
-          [{ center: 1634692320000, interval: 3 }],
-          [{ center: 1564497720000, interval: 3 }]
-        ])
-
-        expect(enzymeWrapper.find(TimelineList).props().timelinePosition).toEqual({
-          left: -4250,
-          top: 0
-        })
         expect(enzymeWrapper.find(TimelineList).props().timeIntervals).toEqual([
           1451606400000, 1454284800000, 1456790400000, 1459468800000,
           1462060800000, 1464739200000, 1467331200000, 1470009600000,
@@ -232,7 +224,7 @@ describe('EDSCTimeline component', () => {
 
       test('trims the intervals after they exceed MAX_INTERVAL_BUFFER', () => {
         jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
+        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 2500)
         const getBoundingClientRectMock = jest.fn(() => ({ width: 1200 }))
         constants.MAX_INTERVAL_BUFFER = constants.INTERVAL_BUFFER * 3
 
@@ -240,70 +232,54 @@ describe('EDSCTimeline component', () => {
 
         enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
 
-        const list = enzymeWrapper.find(TimelineList)
+        const list = enzymeWrapper.find(TimelineList).find('.timeline-list')
 
         // Clicks on the timeline
-        list.invoke('onTimelineMouseDown')({
-          pageX: 500
+        act(() => {
+          list.simulate('pointerdown', {
+            pointerId: 1,
+            clientX: 500
+          })
         })
 
-        // Drags the mouse
-        act(() => {
-          windowEventMap.mousemove({
-            pageX: 2250
-          })
-        })
         // Drag the mouse again
         act(() => {
-          windowEventMap.mousemove({
-            pageX: 2251
+          list.simulate('pointermove', {
+            pointerId: 1,
+            clientX: 2251
           })
         })
+
         // Let go of the mouse button
         act(() => {
-          windowEventMap.mouseup()
+          list.simulate('pointerup', { pointerId: 1 })
         })
 
         enzymeWrapper.update()
 
-        // Clicks on the timeline
-        list.invoke('onTimelineMouseDown')({
-          pageX: 500
-        })
-
-        // Drags the mouse
         act(() => {
-          windowEventMap.mousemove({
-            pageX: 2250
+          list.simulate('pointerdown', {
+            pointerId: 1,
+            clientX: 500
           })
         })
+
         // Drag the mouse again
         act(() => {
-          windowEventMap.mousemove({
-            pageX: 2251
+          list.simulate('pointermove', {
+            pointerId: 1,
+            clientX: 5000
           })
         })
         // Let go of the mouse button
         act(() => {
-          windowEventMap.mouseup()
+          list.simulate('pointerup', { pointerId: 1 })
         })
 
         enzymeWrapper.update()
 
-        expect(props.onTimelineMove).toHaveBeenCalledTimes(6)
-        expect(props.onTimelineMove.mock.calls).toEqual([
-          [{ center: 1530403200000, interval: 3 }],
-          [{ center: 1610625600000, interval: 3 }],
-          [{ center: 1634692320000, interval: 3 }],
-          [{ center: 1564497720000, interval: 3 }],
-          [{ center: 1741686840000, interval: 3 }],
-          [{ center: 1502445240000, interval: 3 }]
-        ])
+        expect(props.onTimelineMove).toHaveBeenCalledTimes(3)
 
-        expect(enzymeWrapper.find(TimelineList).props().timelinePosition).toEqual({
-          left: -4250,
-          top: 0
-        })
         expect(enzymeWrapper.find(TimelineList).props().timeIntervals).toEqual([
           1372636800000, 1375315200000, 1377993600000, 1380585600000,
           1383264000000, 1385856000000, 1388534400000, 1391212800000,
@@ -333,9 +309,9 @@ describe('EDSCTimeline component', () => {
     })
 
     describe('when dragging forwards', () => {
-      test('new intervals and position are passed to TimelineList', () => {
+      test('new intervals are passed to TimelineList', () => {
         jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
+        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 2500)
         const getBoundingClientRectMock = jest.fn(() => ({ width: 1200 }))
         const getListBoundingClientRectMock = jest.fn(() => ({ width: 4000 }))
 
@@ -347,41 +323,50 @@ describe('EDSCTimeline component', () => {
         const list = enzymeWrapper.find(TimelineList)
 
         // Clicks on the timeline
-        list.invoke('onTimelineMouseDown')({
-          pageX: 500
+        act(() => {
+          list.simulate('pointerdown', {
+            pointerId: 1,
+            clientX: 500
+          })
         })
 
-        // Drags the mouse
-        act(() => {
-          windowEventMap.mousemove({
-            pageX: 0
-          })
-        })
         // Drag the mouse again
         act(() => {
-          windowEventMap.mousemove({
-            pageX: -1
+          list.simulate('pointermove', {
+            pointerId: 1,
+            clientX: -1
           })
         })
+
         // Let go of the mouse button
         act(() => {
-          windowEventMap.mouseup()
+          list.simulate('pointerup', { pointerId: 1 })
         })
+
+        // // Clicks on the timeline
+        // list.invoke('onTimelineMouseDown')({
+        //   pageX: 500
+        // })
+
+        // // Drags the mouse
+        // act(() => {
+        //   windowEventMap.mousemove({
+        //     pageX: 0
+        //   })
+        // })
+        // // Drag the mouse again
+        // act(() => {
+        //   windowEventMap.mousemove({
+        //     pageX: -1
+        //   })
+        // })
+        // // Let go of the mouse button
+        // act(() => {
+        //   windowEventMap.mouseup()
+        // })
 
         enzymeWrapper.update()
 
-        expect(props.onTimelineMove).toHaveBeenCalledTimes(4)
-        expect(props.onTimelineMove.mock.calls).toEqual([
-          [{ center: 1530403200000, interval: 3 }],
-          [{ center: 1610625600000, interval: 3 }],
-          [{ center: 1634692320000, interval: 3 }],
-          [{ center: 1654747920000, interval: 3 }]
-        ])
-
-        expect(enzymeWrapper.find(TimelineList).props().timelinePosition).toEqual({
-          left: -2501,
-          top: 0
-        })
         expect(enzymeWrapper.find(TimelineList).props().timeIntervals).toEqual([
           1530403200000, 1533081600000, 1535760000000, 1538352000000,
           1541030400000, 1543622400000, 1546300800000, 1548979200000,
@@ -411,9 +396,11 @@ describe('EDSCTimeline component', () => {
 
       test('trims the intervals after they exceed MAX_INTERVAL_BUFFER', () => {
         jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
+        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 2500)
         const getBoundingClientRectMock = jest.fn(() => ({ width: 1200 }))
-        const getListBoundingClientRectMock = jest.fn(() => ({ width: 4000 }))
+        const getListBoundingClientRectMock = jest.fn()
+          .mockReturnValueOnce({ width: 4000 })
+          .mockReturnValueOnce({ width: 6500 })
         constants.MAX_INTERVAL_BUFFER = constants.INTERVAL_BUFFER * 3
 
         const { enzymeWrapper, props } = setup()
@@ -424,67 +411,51 @@ describe('EDSCTimeline component', () => {
         const list = enzymeWrapper.find(TimelineList)
 
         // Clicks on the timeline
-        list.invoke('onTimelineMouseDown')({
-          pageX: 500
+        act(() => {
+          list.simulate('pointerdown', {
+            pointerId: 1,
+            clientX: 500
+          })
         })
 
-        // Drags the mouse
-        act(() => {
-          windowEventMap.mousemove({
-            pageX: 0
-          })
-        })
         // Drag the mouse again
         act(() => {
-          windowEventMap.mousemove({
-            pageX: -1
+          list.simulate('pointermove', {
+            pointerId: 1,
+            clientX: -1
           })
         })
+
         // Let go of the mouse button
         act(() => {
-          windowEventMap.mouseup()
+          list.simulate('pointerup', { pointerId: 1 })
         })
 
         enzymeWrapper.update()
 
         // Clicks on the timeline
-        list.invoke('onTimelineMouseDown')({
-          pageX: 500
+        act(() => {
+          list.simulate('pointerdown', {
+            pointerId: 1,
+            clientX: 500
+          })
         })
 
-        // Drags the mouse
-        act(() => {
-          windowEventMap.mousemove({
-            pageX: 0
-          })
-        })
         // Drag the mouse again
         act(() => {
-          windowEventMap.mousemove({
-            pageX: -1
+          list.simulate('pointermove', {
+            pointerId: 1,
+            clientX: -2001
           })
         })
+
         // Let go of the mouse button
         act(() => {
-          windowEventMap.mouseup()
+          list.simulate('pointerup', { pointerId: 1 })
         })
 
         enzymeWrapper.update()
 
-        expect(props.onTimelineMove).toHaveBeenCalledTimes(6)
-        expect(props.onTimelineMove.mock.calls).toEqual([
-          [{ center: 1530403200000, interval: 3 }],
-          [{ center: 1610625600000, interval: 3 }],
-          [{ center: 1634692320000, interval: 3 }],
-          [{ center: 1654747920000, interval: 3 }],
-          [{ center: 1716076195200, interval: 3 }],
-          [{ center: 1555689650400, interval: 3 }]
-        ])
-
-        expect(enzymeWrapper.find(TimelineList).props().timelinePosition).toEqual({
-          left: 1499,
-          top: 0
-        })
         expect(enzymeWrapper.find(TimelineList).props().timeIntervals).toEqual([
           1609459200000, 1612137600000, 1614556800000, 1617235200000,
           1619827200000, 1622505600000, 1625097600000, 1627776000000,
@@ -517,7 +488,7 @@ describe('EDSCTimeline component', () => {
   describe('Temporal Range', () => {
     test('loading with temporalRange set renders markers on the list', () => {
       jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-      jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
+      jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 2500)
       const getBoundingClientRectMock = jest.fn(() => ({
         top: 56,
         width: 1200
@@ -545,7 +516,7 @@ describe('EDSCTimeline component', () => {
 
     test('changing the temporalRange props renders the new range on the list', () => {
       jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-      jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
+      jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 2500)
       const getBoundingClientRectMock = jest.fn(() => ({
         top: 56,
         width: 1200
@@ -582,7 +553,7 @@ describe('EDSCTimeline component', () => {
 
     test('dragging a temporal range saves temporalRange and calls onTemporalSet', () => {
       jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-      jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
+      jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 2500)
       const getBoundingClientRectMock = jest.fn(() => ({
         top: 56,
         width: 1200
@@ -600,41 +571,45 @@ describe('EDSCTimeline component', () => {
       const list = enzymeWrapper.find(TimelineList)
 
       // Clicks on the timeline
-      list.invoke('onTimelineMouseDown')({
-        pageX: 500,
-        pageY: 63
+      act(() => {
+        list.simulate('pointerdown', {
+          pointerId: 1,
+          clientX: 500,
+          clientY: 63
+        })
       })
 
-      // Drags the mouse
+      // Drag the mouse again
       act(() => {
-        windowEventMap.mousemove({
-          pageX: 600
+        list.simulate('pointermove', {
+          pointerId: 1,
+          clientX: 603,
+          clientY: 63
         })
       })
+
       // Let go of the mouse button
       act(() => {
-        windowEventMap.mouseup({
-          pageX: 600
-        })
+        list.simulate('pointerup', { pointerId: 1 })
       })
 
       enzymeWrapper.update()
 
       expect(enzymeWrapper.find(TimelineList).props().temporalRange).toEqual({
-        end: 1634692320000,
-        start: 1630681200000
+        end: 1697265792000,
+        start: 1690848000000
       })
 
       expect(props.onTemporalSet).toHaveBeenCalledTimes(1)
       expect(props.onTemporalSet).toHaveBeenCalledWith({
-        end: 1634692320000,
-        start: 1630681200000
+        end: 1697265792000,
+        start: 1690848000000
       })
     })
 
     test('dragging a temporal range in reverse saves temporalRange and calls onTemporalSet', () => {
       jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-      jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
+      jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 2500)
       const getBoundingClientRectMock = jest.fn(() => ({
         top: 56,
         width: 1200
@@ -652,41 +627,45 @@ describe('EDSCTimeline component', () => {
       const list = enzymeWrapper.find(TimelineList)
 
       // Clicks on the timeline
-      list.invoke('onTimelineMouseDown')({
-        pageX: 500,
-        pageY: 63
+      act(() => {
+        list.simulate('pointerdown', {
+          pointerId: 1,
+          clientX: 500,
+          clientY: 63
+        })
       })
 
-      // Drags the mouse
+      // Drag the mouse again
       act(() => {
-        windowEventMap.mousemove({
-          pageX: 400
+        list.simulate('pointermove', {
+          pointerId: 1,
+          clientX: 397,
+          clientY: 63
         })
       })
+
       // Let go of the mouse button
       act(() => {
-        windowEventMap.mouseup({
-          pageX: 400
-        })
+        list.simulate('pointerup', { pointerId: 1 })
       })
 
       enzymeWrapper.update()
 
       expect(enzymeWrapper.find(TimelineList).props().temporalRange).toEqual({
-        end: 1630681200000,
-        start: 1626670080000
+        end: 1690848000000,
+        start: 1684430208000
       })
 
       expect(props.onTemporalSet).toHaveBeenCalledTimes(1)
       expect(props.onTemporalSet).toHaveBeenCalledWith({
-        end: 1630681200000,
-        start: 1626670080000
+        end: 1690848000000,
+        start: 1684430208000
       })
     })
 
     test('clicking in the temporal range zone clears existing temporal range and calls on TemporalSet', () => {
       jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-      jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
+      jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 2500)
       const getBoundingClientRectMock = jest.fn(() => ({
         top: 56,
         width: 1200
@@ -709,16 +688,17 @@ describe('EDSCTimeline component', () => {
       const list = enzymeWrapper.find(TimelineList)
 
       // Clicks on the timeline
-      list.invoke('onTimelineMouseDown')({
-        pageX: 500,
-        pageY: 63
+      act(() => {
+        list.simulate('pointerdown', {
+          pointerId: 1,
+          clientX: 500,
+          clientY: 63
+        })
       })
 
       // Let go of the mouse button
       act(() => {
-        windowEventMap.mouseup({
-          pageX: 500
-        })
+        list.simulate('pointerup', { pointerId: 1 })
       })
 
       enzymeWrapper.update()
@@ -734,7 +714,7 @@ describe('EDSCTimeline component', () => {
     describe('when hovering outside the temporal range selection area', () => {
       test('does not display the indicator', () => {
         jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
+        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 2500)
         const getBoundingClientRectWrapperMock = jest.fn(() => ({
           top: 50,
           width: 1000
@@ -752,9 +732,12 @@ describe('EDSCTimeline component', () => {
         const list = enzymeWrapper.find(TimelineList)
 
         // Mousemove on the timeline
-        list.invoke('onTimelineMouseMove')({
-          pageY: 100,
-          pageX: 500
+        act(() => {
+          list.simulate('pointermove', {
+            pointerId: 1,
+            clientX: 500,
+            clientY: 100
+          })
         })
 
         const updatedList = enzymeWrapper.find(TimelineList)
@@ -768,7 +751,7 @@ describe('EDSCTimeline component', () => {
     describe('when hovering over the temporal range selection area', () => {
       test('displays the indicator in the correct position', () => {
         jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
+        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 2500)
         const getBoundingClientRectWrapperMock = jest.fn(() => ({
           top: 50,
           width: 1000
@@ -786,246 +769,17 @@ describe('EDSCTimeline component', () => {
         const list = enzymeWrapper.find(TimelineList)
 
         // Mousemove on the timeline
-        list.invoke('onTimelineMouseMove')({
-          pageY: 55,
-          pageX: 500
-        })
-
-        const updatedList = enzymeWrapper.find(TimelineList)
-
-        enzymeWrapper.update()
-
-        expect(updatedList.props().temporalRangeMouseOverPosition).toEqual(100)
-      })
-    })
-  })
-
-  describe('dragging temporal markers', () => {
-    test('dragging the start marker changes the temporal range', () => {
-      jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-      jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
-      const getBoundingClientRectMock = jest.fn(() => ({
-        top: 56,
-        width: 1200
-      }))
-      const getListBoundingClientRectMock = jest.fn(() => ({
-        width: 4000,
-        x: -2000
-      }))
-
-      const { enzymeWrapper, props } = setup({
-        temporalRange: {
-          end: 1634692320000,
-          start: 1630681200000
-        }
-      })
-
-      enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-      enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
-
-      const list = enzymeWrapper.find(TimelineList)
-
-      // Clicks on the timeline
-      list.invoke('onTemporalMarkerMouseDown')({
-        pageX: 500,
-        pageY: 63,
-        stopPropagation: jest.fn()
-      }, 'start')
-
-      // Drags the mouse
-      act(() => {
-        windowEventMap.mousemove({
-          pageX: 400
-        })
-      })
-      // Let go of the mouse button
-      act(() => {
-        windowEventMap.mouseup({
-          pageX: 400
-        })
-      })
-
-      enzymeWrapper.update()
-
-      expect(enzymeWrapper.find(TimelineList).props().temporalRange).toEqual({
-        end: 1634692320000,
-        start: 1626670080000
-      })
-
-      expect(props.onTemporalSet).toHaveBeenCalledTimes(1)
-      expect(props.onTemporalSet).toHaveBeenCalledWith({
-        end: 1634692320000,
-        start: 1626670080000
-      })
-    })
-
-    test('dragging the end marker changes the temporal range', () => {
-      jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-      jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
-      const getBoundingClientRectMock = jest.fn(() => ({
-        top: 56,
-        width: 1200
-      }))
-      const getListBoundingClientRectMock = jest.fn(() => ({
-        width: 4000,
-        x: -2000
-      }))
-
-      const { enzymeWrapper, props } = setup({
-        temporalRange: {
-          end: 1634692320000,
-          start: 1630681200000
-        }
-      })
-
-      enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-      enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
-
-      const list = enzymeWrapper.find(TimelineList)
-
-      // Clicks on the timeline
-      list.invoke('onTemporalMarkerMouseDown')({
-        pageX: 600,
-        pageY: 63,
-        stopPropagation: jest.fn()
-      }, 'end')
-
-      // Drags the mouse
-      act(() => {
-        windowEventMap.mousemove({
-          pageX: 700
-        })
-      })
-      // Let go of the mouse button
-      act(() => {
-        windowEventMap.mouseup({
-          pageX: 700
-        })
-      })
-
-      enzymeWrapper.update()
-
-      expect(enzymeWrapper.find(TimelineList).props().temporalRange).toEqual({
-        end: 1638703440000,
-        start: 1630681200000
-      })
-
-      expect(props.onTemporalSet).toHaveBeenCalledTimes(1)
-      expect(props.onTemporalSet).toHaveBeenCalledWith({
-        end: 1638703440000,
-        start: 1630681200000
-      })
-    })
-
-    describe('when there is only one temporal marker', () => {
-      test('dragging the start marker changes the temporal range', () => {
-        jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
-        const getBoundingClientRectMock = jest.fn(() => ({
-          top: 56,
-          width: 1200
-        }))
-        const getListBoundingClientRectMock = jest.fn(() => ({
-          width: 4000,
-          x: -2000
-        }))
-
-        const { enzymeWrapper, props } = setup({
-          temporalRange: {
-            start: 1630681200000
-          }
-        })
-
-        enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-        enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
-
-        const list = enzymeWrapper.find(TimelineList)
-
-        // Clicks on the timeline
-        list.invoke('onTemporalMarkerMouseDown')({
-          pageX: 500,
-          pageY: 63,
-          stopPropagation: jest.fn()
-        }, 'start')
-
-        // Drags the mouse
         act(() => {
-          windowEventMap.mousemove({
-            pageX: 400
-          })
-        })
-        // Let go of the mouse button
-        act(() => {
-          windowEventMap.mouseup({
-            pageX: 400
+          list.simulate('pointermove', {
+            pointerId: 1,
+            clientX: 500,
+            clientY: 55
           })
         })
 
         enzymeWrapper.update()
 
-        expect(enzymeWrapper.find(TimelineList).props().temporalRange).toEqual({
-          start: 1626670080000
-        })
-
-        expect(props.onTemporalSet).toHaveBeenCalledTimes(1)
-        expect(props.onTemporalSet).toHaveBeenCalledWith({
-          start: 1626670080000
-        })
-      })
-
-      test('dragging the end marker changes the temporal range', () => {
-        jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
-        const getBoundingClientRectMock = jest.fn(() => ({
-          top: 56,
-          width: 1200
-        }))
-        const getListBoundingClientRectMock = jest.fn(() => ({
-          width: 4000,
-          x: -2000
-        }))
-
-        const { enzymeWrapper, props } = setup({
-          temporalRange: {
-            end: 1634692320000
-          }
-        })
-
-        enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-        enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
-
-        const list = enzymeWrapper.find(TimelineList)
-
-        // Clicks on the timeline
-        list.invoke('onTemporalMarkerMouseDown')({
-          pageX: 600,
-          pageY: 63,
-          stopPropagation: jest.fn()
-        }, 'end')
-
-        // Drags the mouse
-        act(() => {
-          windowEventMap.mousemove({
-            pageX: 700
-          })
-        })
-        // Let go of the mouse button
-        act(() => {
-          windowEventMap.mouseup({
-            pageX: 700
-          })
-        })
-
-        enzymeWrapper.update()
-
-        expect(enzymeWrapper.find(TimelineList).props().temporalRange).toEqual({
-          end: 1638703440000
-        })
-
-        expect(props.onTemporalSet).toHaveBeenCalledTimes(1)
-        expect(props.onTemporalSet).toHaveBeenCalledWith({
-          end: 1638703440000
-        })
+        expect(enzymeWrapper.find(TimelineList).props().temporalRangeMouseOverPosition).toEqual(100)
       })
     })
   })
@@ -1150,7 +904,7 @@ describe('EDSCTimeline component', () => {
 
       test('changes the focusedInterval with left arrow keypress', () => {
         jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
+        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 2500)
         const getBoundingClientRectMock = jest.fn(() => ({
           width: 1200,
           top: 80,
@@ -1192,7 +946,7 @@ describe('EDSCTimeline component', () => {
 
       test('changes the focusedInterval with right arrow keypress', () => {
         jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
+        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 2500)
         const getBoundingClientRectMock = jest.fn(() => ({
           width: 1200,
           top: 80,
@@ -1234,7 +988,7 @@ describe('EDSCTimeline component', () => {
 
       test('changes the focusedInterval with TimelineTools', () => {
         jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
+        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 2500)
         const getBoundingClientRectMock = jest.fn(() => ({
           width: 1200,
           top: 80,
@@ -1273,7 +1027,7 @@ describe('EDSCTimeline component', () => {
       describe('loading more intervals', () => {
         test('loads more intervals when changing the focusedInterval backwards', () => {
           jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-          jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
+          jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 2500)
           constants.MAX_INTERVAL_BUFFER = constants.INTERVAL_BUFFER * 3
           const getBoundingClientRectMock = jest.fn(() => ({
             width: 1200,
@@ -1320,7 +1074,7 @@ describe('EDSCTimeline component', () => {
 
         test('loads more intervals when changing the focusedInterval forwards', () => {
           jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-          jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
+          jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 2500)
           constants.MAX_INTERVAL_BUFFER = constants.INTERVAL_BUFFER * 3
           const getBoundingClientRectMock = jest.fn(() => ({
             width: 1200,
@@ -1362,12 +1116,12 @@ describe('EDSCTimeline component', () => {
           })
 
           expect(props.onFocusedSet).toHaveBeenCalledTimes(22)
-          expect(props.onTimelineMove).toHaveBeenCalledTimes(24)
+          expect(props.onTimelineMove).toHaveBeenCalledTimes(23)
         })
 
         test('loads more intervals when changing the focusedInterval forwards and removes extra intervals', () => {
           jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-          jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
+          jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 2500)
           constants.MAX_INTERVAL_BUFFER = constants.INTERVAL_BUFFER * 3
           const getBoundingClientRectMock = jest.fn(() => ({
             width: 1200,
@@ -1416,47 +1170,40 @@ describe('EDSCTimeline component', () => {
   })
 
   describe('Visible Temporal Range', () => {
-    describe('sets the visible temporal range', () => {
-      test('does not display the indicator', () => {
-        jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2000)
-        jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 4000)
-        const getBoundingClientRectWrapperMock = jest.fn(() => ({
-          top: 50,
-          width: 1000
-        }))
+    test('sets the visible temporal range', () => {
+      jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2224.9691647640793)
+      jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 5647.315068493151)
+      const getBoundingClientRectWrapperMock = jest.fn(() => ({
+        top: 50,
+        width: 1110
+      }))
 
-        const getBoundingClientRectListMock = jest.fn(() => ({
-          x: 400
-        }))
+      const getBoundingClientRectToolsMock = jest.fn(() => ({
+        width: 77
+      }))
 
-        const getBoundingClientRectToolsMock = jest.fn(() => ({
-          width: 70
-        }))
-
-        const { enzymeWrapper } = setup({
-          focusedInterval: {
-            end: new Date('2021-03').getTime(),
-            start: new Date('2021-02').getTime()
-          }
-        })
-
-        enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectWrapperMock
-        enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getBoundingClientRectListMock
-        enzymeWrapper.find('.timeline-tools').getElement().ref.current.getBoundingClientRect = getBoundingClientRectToolsMock
-
-        enzymeWrapper.find(TimelineTools).invoke('onChangeFocusedInterval')('next')
-
-        enzymeWrapper.update()
-
-        const primarySection = enzymeWrapper.find(TimelinePrimarySection)
-
-        expect(primarySection.props().visibleTemporalRange).toEqual(
-          {
-            end: 1630681200000,
-            start: 1593377784000
-          }
-        )
+      const { enzymeWrapper } = setup({
+        focusedInterval: {
+          end: new Date('2021-03').getTime(),
+          start: new Date('2021-02').getTime()
+        }
       })
+
+      enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectWrapperMock
+      enzymeWrapper.find('.timeline-tools').getElement().ref.current.getBoundingClientRect = getBoundingClientRectToolsMock
+
+      enzymeWrapper.find(TimelineTools).invoke('onChangeFocusedInterval')('next')
+
+      enzymeWrapper.update()
+
+      const primarySection = enzymeWrapper.find(TimelinePrimarySection)
+
+      expect(primarySection.props().visibleTemporalRange).toEqual(
+        {
+          end: 1625152378000,
+          start: 1595804010432
+        }
+      )
     })
   })
 
