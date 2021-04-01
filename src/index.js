@@ -5,6 +5,7 @@ import React, {
   useState
 } from 'react'
 import PropTypes from 'prop-types'
+import { useGesture } from 'react-use-gesture'
 
 import { TimelineList } from './components/TimelineList/TimelineList'
 import { TimelinePrimarySection } from './components/TimelinePrimarySection/TimelinePrimarySection'
@@ -76,22 +77,12 @@ export const EDSCTimeline = ({
   const [isLoaded, setIsLoaded] = useState(false)
 
   // Flag for if the timeline is currently in a dragging state
-  const [dragging, setDragging] = useState(false)
+  const [draggingTimeline, setDraggingTimeline] = useState(false)
   const [draggingTemporal, setDraggingTemporal] = useState(false)
-  const [draggingTemporalStart, setDraggingTemporalStart] = useState(false)
-  const [draggingTemporalEnd, setDraggingTemporalEnd] = useState(false)
-
-  // Track the position of the timeline at the start of a drag event
-  const [timelineStartPosition, setTimelineStartPosition] = useState(null)
-
-  // The position of the cursor at the start of a drag event
-  const [timelineDragStartPosition, setTimelineDragStartPosition] = useState(null)
+  const [draggingTemporalMarker, setDraggingTemporalMarker] = useState(null)
 
   // The current position of the timeline
   const [timelinePosition, setTimelinePosition] = useState({ top: 0, left: 0 })
-
-  // The position of the beginning of the temporal drag within the timeline list
-  const [temporalStartPosition, setTemporalStartPosition] = useState(null)
 
   // The current position of the mouse when mouseover is triggered on the temporal selection area
   const [temporalRangeMouseOverPosition, setTemporalRangeMouseOverPosition] = useState(null)
@@ -125,31 +116,445 @@ export const EDSCTimeline = ({
     })
   ])
 
-  let trimmedData = data
+  useEffect(() => {
+    // Anytime new time intervals are calcualted update the pixel width of their container
+    const duration = getIntervalsDuration(timeIntervals, zoomLevel)
 
-  if (data.length >= MAX_DATA_ROWS) {
-    trimmedData = data.slice(0, MAX_DATA_ROWS)
+    const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+
+    const width = determineScaledWidth(duration, zoomLevel, timelineWrapperWidth)
+
+    setIntervalListWidthInPixels(width)
+  }, [])
+
+  const updateTimeIntervals = (newIntervals) => {
+    setTimeIntervals(newIntervals)
+    const duration = getIntervalsDuration(newIntervals, zoomLevel)
+
+    const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+
+    const width = determineScaledWidth(duration, zoomLevel, timelineWrapperWidth)
+
+    setIntervalListWidthInPixels(width)
   }
 
   /**
-   * DEBUG USEEFFECTS
+   * Scroll the timeline backward (up, or to the left)
    */
+  const scrollBackward = () => {
+    let translationAdjustment = 0
 
-  // useEffect(() => {
-  //   console.log('[DEBUG]: TIME_INTERVALS.LENGTH', timeIntervals.length)
-  // }, [timeIntervals])
+    // If the underlying dataset has grown larger than desired, trim off 1 buffers
+    // worth of data from opposite of the array
+    let currentTimeIntervals = timeIntervals
 
-  // useEffect(() => {
-  //   console.log('[DEBUG]: SCROLL_DIRECTION ', scrollDirection)
-  // }, [scrollDirection])
+    if (timeIntervals.length > MAX_INTERVAL_BUFFER) {
+      currentTimeIntervals = currentTimeIntervals.slice(
+        0, (currentTimeIntervals.length - INTERVAL_BUFFER)
+      )
+    }
 
-  // useEffect(() => {
-  //   console.log('[DEBUG]: SCROLL_POSITION ', scrollPosition)
-  // }, [scrollPosition])
+    const nextIntervals = calculateTimeIntervals({
+      timeAnchor: timeIntervals[0],
+      zoomLevel,
+      numIntervals: INTERVAL_BUFFER,
+      reverse: true
+    })
+
+    const allIntervals = [
+      ...nextIntervals,
+      ...currentTimeIntervals
+    ]
+
+    updateTimeIntervals(allIntervals)
+
+    const startTime = nextIntervals[0]
+    const endTime = generateEndTime(nextIntervals, zoomLevel)
+
+    const duration = endTime - startTime
+
+    const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+
+    translationAdjustment = -determineScaledWidth(duration, zoomLevel, timelineWrapperWidth)
+
+    return {
+      left: translationAdjustment
+    }
+  }
 
   /**
-   * END DEBUG USEEFFECTS
+   * Scroll the timeline forward (down, or to the right)
    */
+  const scrollForward = () => {
+    // let shouldMove = true
+    let translationAdjustment = 0
+
+    // If the underlying dataset has grown larger than desired, trim off 1 buffers
+    // worth of data from opposite of the array
+    let currentTimeIntervals = timeIntervals
+    if (timeIntervals.length > MAX_INTERVAL_BUFFER) {
+      // shouldMove = false
+      const startTime = currentTimeIntervals[0]
+      const endTime = generateEndTime(
+        currentTimeIntervals,
+        zoomLevel,
+        currentTimeIntervals[INTERVAL_BUFFER - 1]
+      )
+
+      const duration = endTime - startTime
+
+      currentTimeIntervals = currentTimeIntervals.slice(
+        INTERVAL_BUFFER, currentTimeIntervals.length
+      )
+
+      const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+
+      translationAdjustment = determineScaledWidth(duration, zoomLevel, timelineWrapperWidth)
+    }
+
+    updateTimeIntervals([
+      ...currentTimeIntervals,
+      ...calculateTimeIntervals({
+        timeAnchor: timeIntervals[timeIntervals.length - 1],
+        zoomLevel,
+        numIntervals: INTERVAL_BUFFER,
+        reverse: false
+      })
+    ])
+
+    return {
+      left: translationAdjustment
+    }
+  }
+
+  const clearTemporalRange = () => {
+    setTemporalRange({})
+
+    if (onTemporalSet) onTemporalSet({})
+  }
+
+  const handleMoveTimeline = (newTimelinePosition) => {
+    if (onTimelineMove) {
+      const centeredDate = getCenterTimestamp({
+        intervalListWidthInPixels,
+        timeIntervals,
+        timelinePosition: newTimelinePosition || timelinePosition,
+        timelineWrapperRef,
+        zoomLevel
+      })
+
+      onTimelineMove({ center: centeredDate, interval: zoomLevel })
+    }
+  }
+
+  /**
+   * Handles panning the timeline side to side
+   * @param {Object} state useGesture state
+   */
+  const handlePanTimeline = (state) => {
+    const {
+      active,
+      delta: [deltaX],
+      direction: [directionX],
+      offset: [offsetX]
+    } = state
+
+    let positionOffset = {
+      top: 0,
+      left: 0
+    }
+
+    const newTimelinePosition = {}
+    newTimelinePosition.left = timelinePosition.left + deltaX
+
+    const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+    const timelineListWidth = timelineListRef.current.getBoundingClientRect().width
+
+    const scrollDirection = directionX !== 1 ? 'forward' : 'backward'
+
+    const loadMoreWindow = timelineWrapperWidth / 3
+
+    const originalDistanceFromLeftEdge = -newTimelinePosition.left + offsetX
+    const distanceFromLeftEdge = -newTimelinePosition.left
+
+    const originalDistanceFromRightEdge = timelineListWidth
+      - (-newTimelinePosition.left + offsetX + timelineWrapperWidth)
+    const distanceFromRightEdge = timelineListWidth
+      - (-newTimelinePosition.left + timelineWrapperWidth)
+
+    if (scrollDirection === 'backward') {
+      // If the previous scroll position is outside of the window to trigger another page and
+      // the scroll position attached to the event is within the window
+      if (
+        originalDistanceFromLeftEdge > loadMoreWindow
+        && distanceFromLeftEdge <= loadMoreWindow
+      ) {
+        positionOffset = {
+          ...positionOffset,
+          ...scrollBackward()
+        }
+      }
+    }
+
+    if (scrollDirection === 'forward') {
+      // If the previous scroll position is outside of the window to trigger another page and
+      // the scroll position attached to the event is within the window
+      if (
+        originalDistanceFromRightEdge > loadMoreWindow
+        && distanceFromRightEdge <= loadMoreWindow
+      ) {
+        positionOffset = {
+          ...positionOffset,
+          ...scrollForward()
+        }
+      }
+    }
+
+    setTimelinePosition({
+      top: 0,
+      left: newTimelinePosition.left + positionOffset.left
+    })
+
+    handleMoveTimeline({ left: newTimelinePosition.left + positionOffset.left })
+
+    setDraggingTimeline(active)
+  }
+
+  /**
+   * Handles setting a new temporal range on the timeline
+   * @param {Object} state useGesture state
+   */
+  const handleSetTemporal = (state) => {
+    const {
+      active,
+      initial: [initialMouseX],
+      movement: [movementX]
+    } = state
+    const amountDragged = movementX
+
+    const { x: listX } = timelineListRef.current.getBoundingClientRect()
+    const startPosition = initialMouseX - listX
+
+    const endPosition = startPosition + amountDragged
+
+    const start = getTimestampByPosition({
+      intervalListWidthInPixels,
+      position: startPosition,
+      timeIntervals,
+      zoomLevel
+    })
+
+    const end = getTimestampByPosition({
+      intervalListWidthInPixels,
+      position: endPosition,
+      timeIntervals,
+      zoomLevel
+    })
+
+    let range = { end, start }
+
+    if (start > end) {
+      range = {
+        start: end,
+        end: start
+      }
+    }
+
+    setTemporalRange(range)
+
+    setDraggingTemporal(active)
+
+    if (!active) {
+      if (onTemporalSet) onTemporalSet(range)
+    }
+  }
+
+  /**
+   * Handles scroll wheel behavior
+   * @param {Object} state useGesture state
+   */
+  const handleWheel = (state) => {
+    const { axis } = state
+    if (axis === 'y') {
+      // TODO: EDSC-3101: Implement zoom behavior here
+    } else {
+      handlePanTimeline(state)
+    }
+  }
+
+  const [hasReversedTemporalMarkers, setHasReversedTemporalMarkers] = useState(false)
+
+  /**
+   * Handles editing a single temporal marker
+   * @param {Object} state useGesture state
+   */
+  const handleEditTemporal = (state, markerType) => {
+    const {
+      active,
+      initial: [initialMouseX],
+      movement: [movementX]
+    } = state
+    const amountDragged = movementX
+
+    const { x: listX } = timelineListRef.current.getBoundingClientRect()
+    const startPosition = initialMouseX - listX
+
+    const newPosition = startPosition + amountDragged
+
+    const newTemporalMarkerPosition = getTimestampByPosition({
+      intervalListWidthInPixels,
+      position: newPosition,
+      timeIntervals,
+      zoomLevel
+    })
+
+    let newMarkerType = markerType
+
+    if (hasReversedTemporalMarkers) {
+      if (markerType === 'end') {
+        newMarkerType = 'start'
+      } else {
+        newMarkerType = 'end'
+      }
+    }
+
+    setDraggingTemporalMarker(newMarkerType)
+
+    let range = {
+      ...temporalRange,
+      [newMarkerType]: newTemporalMarkerPosition
+    }
+
+    const { start, end } = range
+
+    if (start > end) {
+      setHasReversedTemporalMarkers(!hasReversedTemporalMarkers)
+      range = {
+        start: end,
+        end: start
+      }
+    }
+
+    setTemporalRange(range)
+
+    if (!active) {
+      setHasReversedTemporalMarkers(false)
+      setDraggingTemporalMarker(null)
+      if (onTemporalSet) onTemporalSet(range)
+    }
+  }
+
+  /**
+   * Handles the different dragging that can happen on the timeline
+   * @param {Object} state useGesture state
+   */
+  const handlePan = (state) => {
+    const {
+      event,
+      initial: [, mouseY]
+    } = state
+
+    const { target } = event
+    const { dataset = {} } = target
+    const { markerType = '' } = dataset
+
+    const { top } = timelineWrapperRef.current.getBoundingClientRect()
+
+    const clickHeight = mouseY - top
+
+    if (markerType) {
+      handleEditTemporal(state, markerType)
+    } else if (clickHeight <= TEMPORAL_SELECTION_HEIGHT) {
+      handleSetTemporal(state)
+    } else {
+      handlePanTimeline(state)
+    }
+  }
+
+  /**
+   * Handles clicking on the timeline
+   * @param {Object} state useGesture state
+   */
+  const handleTap = (state) => {
+    const {
+      xy: [, mouseY]
+    } = state
+
+    const { top } = timelineWrapperRef.current.getBoundingClientRect()
+
+    const clickHeight = mouseY - top
+
+    if (clickHeight <= TEMPORAL_SELECTION_HEIGHT) {
+      clearTemporalRange()
+    }
+  }
+
+  /**
+   * Handles the drag gesture of useGesture
+   * @param {Object} state useGesture state
+   */
+  const handleDrag = (state) => {
+    const { tap } = state
+    if (tap) {
+      handleTap(state)
+    } else {
+      handlePan(state)
+    }
+  }
+
+  /**
+   * Handles the move gesture of useGesture
+   * @param {Object} state useGesture state
+   */
+  const handleMove = (state) => {
+    const {
+      xy: [mouseX, mouseY]
+    } = state
+
+    const {
+      end,
+      start
+    } = temporalRange
+
+    const { top } = timelineWrapperRef.current.getBoundingClientRect()
+
+    const mouseOverHeight = mouseY - top
+
+    // Sets the temporalRangeMouseOverPosition if at the correct height and no temporalRange exists
+    if (mouseOverHeight <= TEMPORAL_SELECTION_HEIGHT && !start && !end) {
+      const { x: listX } = timelineListRef.current.getBoundingClientRect()
+      const startPosition = mouseX - listX
+
+      setTemporalRangeMouseOverPosition(startPosition)
+    } else {
+      setTemporalRangeMouseOverPosition(null)
+    }
+  }
+
+  /**
+   * Handles the hover gesture of useGesture
+   * @param {Object} state useGesture state
+   */
+  const handleHover = (state) => {
+    const { hovering } = state
+
+    // If no longer hovering over the timeline, remove the temporalRangeMouseOverPosition
+    if (!hovering) setTemporalRangeMouseOverPosition(null)
+  }
+
+  /**
+   * Sets up useGesture handlers
+   */
+  const bindTimelineGestures = useGesture({
+    onDrag: handleDrag,
+    onMove: handleMove,
+    onHover: handleHover,
+    onWheel: handleWheel
+  }, {
+    drag: {
+      filterTaps: true
+    }
+  })
 
   // When the timeline position or focused interval changes, update the calculate and update
   // the visible temporal range
@@ -207,18 +612,6 @@ export const EDSCTimeline = ({
     if (onTimelineMove) onTimelineMove({ center, interval: zoom })
   }
 
-  useEffect(() => {
-    const centeredDate = getCenterTimestamp({
-      intervalListWidthInPixels,
-      timeIntervals,
-      timelinePosition,
-      timelineWrapperRef,
-      zoomLevel
-    })
-
-    if (centeredDate) moveTimeline(centeredDate)
-  }, [intervalListWidthInPixels])
-
   // If the propsTemporalRange changes, use those values as the temporalRange
   useEffect(() => {
     setTemporalRange(propsTemporalRange)
@@ -232,31 +625,6 @@ export const EDSCTimeline = ({
       setIntervalsCenterInPixels(intervalListWidthInPixels / 2)
     }
   }, [intervalListWidthInPixels, timelineWrapperRef])
-
-  const handleMove = () => {
-    if (onTimelineMove) {
-      const centeredDate = getCenterTimestamp({
-        intervalListWidthInPixels,
-        timeIntervals,
-        timelinePosition,
-        timelineWrapperRef,
-        zoomLevel
-      })
-
-      onTimelineMove({ center: centeredDate, interval: zoomLevel })
-    }
-  }
-
-  useEffect(() => {
-    // Anytime new time intervals are calcualted update the pixel width of their container
-    const duration = getIntervalsDuration(timeIntervals, zoomLevel)
-
-    const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
-
-    const width = determineScaledWidth(duration, zoomLevel, timelineWrapperWidth)
-
-    setIntervalListWidthInPixels(width)
-  }, [timeIntervals])
 
   useEffect(() => {
     if (timelineWrapperRef.current && !isLoaded && intervalsCenterInPixels) {
@@ -298,321 +666,6 @@ export const EDSCTimeline = ({
   }, [zoom])
 
   /**
-   * Set the start position for timeline dragging
-   */
-  const onTimelineDragStart = (e) => {
-    const { pageX: mouseX } = e
-    setDragging(true)
-    setTimelineStartPosition(timelinePosition)
-    setTimelineDragStartPosition(mouseX)
-  }
-
-  /**
-   * Set the start position for temporal dragging
-   */
-  const onTemporalDragStart = (e) => {
-    const { pageX: mouseX } = e
-
-    setTimelineStartPosition(timelinePosition)
-    setTimelineDragStartPosition(mouseX)
-    setTemporalRangeMouseOverPosition(null)
-
-    const { x: listX } = timelineListRef.current.getBoundingClientRect()
-    const startPosition = mouseX - listX
-    setTemporalStartPosition(startPosition)
-  }
-
-  /**
-   * Sort the start and end of the temporal range.
-   * Report the temporal range with onTemporalSet or clear the values
-   */
-  const onTimelineTemporalDragEnd = (e) => {
-    const { pageX: mouseX } = e
-    const amountDragged = mouseX - timelineDragStartPosition
-
-    const { end, start } = temporalRange
-
-    if ((start && !end) || (!start && end)) {
-      if (onTemporalSet) onTemporalSet(temporalRange)
-      return
-    }
-
-    // Only report the temporal values if start and end exist, and are different
-    if (start && end && start !== end && amountDragged !== 0) {
-      // Reverse start and end if needed
-      let range = {
-        end,
-        start
-      }
-
-      if (start > end) {
-        range = {
-          start: end,
-          end: start
-        }
-      }
-
-      if (onTemporalSet) onTemporalSet(range)
-      setTemporalRange(range)
-      return
-    }
-
-    // If start and end are equal or no dragging has happened, clear the temporal values
-    if (onTemporalSet) onTemporalSet({})
-    setTemporalRange({})
-  }
-
-  /**
-   * Scroll the timeline backward (up, or to the left)
-   */
-  const scrollBackward = (offset = 0) => {
-    // If the underlying dataset has grown larger than desired, trim off 1 buffers
-    // worth of data from opposite of the array
-    let currentTimeIntervals = timeIntervals
-    if (timeIntervals.length > MAX_INTERVAL_BUFFER) {
-      currentTimeIntervals = currentTimeIntervals.slice(
-        0, (currentTimeIntervals.length - INTERVAL_BUFFER)
-      )
-    }
-
-    const nextIntervals = calculateTimeIntervals({
-      timeAnchor: timeIntervals[0],
-      zoomLevel,
-      numIntervals: INTERVAL_BUFFER,
-      reverse: true
-    })
-
-    const allIntervals = [
-      ...nextIntervals,
-      ...currentTimeIntervals
-    ]
-
-    setTimeIntervals(allIntervals)
-
-    const startTime = nextIntervals[0]
-    const endTime = generateEndTime(nextIntervals, zoomLevel)
-
-    const duration = endTime - startTime
-
-    const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
-
-    const intervalsWidth = determineScaledWidth(duration, zoomLevel, timelineWrapperWidth)
-
-    if (timelineWrapperRef.current) {
-      // Appending data to the beginning of the underlying dataset requires us to scroll the user
-      // to back to the right, outside of the window that triggers another page to be loaded
-      // timelineListRef.current.style.transform = `translateX(${timelineStartPosition.left - intervalsWidth}px)`
-      if (timelineStartPosition) {
-        setTimelineStartPosition({
-          ...timelineStartPosition,
-          left: timelineStartPosition.left - intervalsWidth
-        })
-      }
-
-      const leftPosition = -(intervalsWidth - timelinePosition.left)
-
-      setTimelinePosition({
-        ...timelinePosition,
-        left: leftPosition + offset
-      })
-    }
-  }
-
-  /**
-   * Scroll the timeline forward (down, or to the right)
-   */
-  const scrollForward = (offset = 0) => {
-    let shouldMove = true
-    let translationAdjustment = 0
-
-    // If the underlying dataset has grown larger than desired, trim off 1 buffers
-    // worth of data from opposite of the array
-    let currentTimeIntervals = timeIntervals
-    if (timeIntervals.length > MAX_INTERVAL_BUFFER) {
-      shouldMove = false
-      const startTime = currentTimeIntervals[0]
-      const endTime = generateEndTime(
-        currentTimeIntervals,
-        zoomLevel,
-        currentTimeIntervals[INTERVAL_BUFFER - 1]
-      )
-
-      const duration = endTime - startTime
-
-      currentTimeIntervals = currentTimeIntervals.slice(
-        INTERVAL_BUFFER, currentTimeIntervals.length
-      )
-
-      const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
-
-      translationAdjustment = determineScaledWidth(duration, zoomLevel, timelineWrapperWidth)
-
-      if (timelineStartPosition) {
-        setTimelineStartPosition({
-          ...timelineStartPosition,
-          left: timelineStartPosition.left + translationAdjustment
-        })
-      }
-
-      const leftPosition = translationAdjustment + timelinePosition.left - offset
-
-      setTimelinePosition({
-        ...timelinePosition,
-        left: leftPosition
-      })
-    }
-
-    setTimeIntervals([
-      ...currentTimeIntervals,
-      ...calculateTimeIntervals({
-        timeAnchor: timeIntervals[timeIntervals.length - 1],
-        zoomLevel,
-        numIntervals: INTERVAL_BUFFER,
-        reverse: false
-      })
-    ])
-
-    return shouldMove
-  }
-
-  /**
-   * Calculate the start and end temporal of the current temporal drag
-   */
-  const onTimelineTemporalDrag = (e) => {
-    requestAnimationFrame(() => {
-      const { pageX: mouseX } = e
-      const amountDragged = mouseX - timelineDragStartPosition
-      const endPosition = temporalStartPosition + amountDragged
-
-      const start = getTimestampByPosition({
-        intervalListWidthInPixels,
-        position: temporalStartPosition,
-        timeIntervals,
-        zoomLevel
-      })
-
-      const end = getTimestampByPosition({
-        intervalListWidthInPixels,
-        position: endPosition,
-        timeIntervals,
-        zoomLevel
-      })
-
-      setTemporalRange({
-        start,
-        end
-      })
-    })
-  }
-
-  /**
-   * Calculate the temporal start position during the marker drag
-   */
-  const onTemporalMarkerStartDrag = (e) => {
-    requestAnimationFrame(() => {
-      const { pageX: mouseX } = e
-      const amountDragged = mouseX - timelineDragStartPosition
-      const newPosition = temporalStartPosition + amountDragged
-
-      const start = getTimestampByPosition({
-        intervalListWidthInPixels,
-        position: newPosition,
-        timeIntervals,
-        zoomLevel
-      })
-
-      setTemporalRange({
-        ...temporalRange,
-        start
-      })
-    })
-  }
-
-  /**
-   * Calculate the temporal end position during the marker drag
-   */
-  const onTemporalMarkerEndDrag = (e) => {
-    requestAnimationFrame(() => {
-      const { pageX: mouseX } = e
-      const amountDragged = mouseX - timelineDragStartPosition
-      const newPosition = temporalStartPosition + amountDragged
-
-      const end = getTimestampByPosition({
-        intervalListWidthInPixels,
-        position: newPosition,
-        timeIntervals,
-        zoomLevel
-      })
-
-      setTemporalRange({
-        ...temporalRange,
-        end
-      })
-    })
-  }
-
-  /**
-   * Determine if the timeline was being dragged forward or backwards and scroll that direction if needed
-   */
-  const onTimelineDrag = (e) => {
-    requestAnimationFrame(() => {
-      if (dragging) {
-        const { pageX: mouseX } = e
-        const amountDragged = mouseX - timelineDragStartPosition
-        const left = timelineStartPosition.left + amountDragged
-        setTimelinePosition({
-          ...timelinePosition,
-          left
-        })
-
-        const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
-
-        const scrollDirectionIsForward = timelineStartPosition.left - timelinePosition.left > 0
-
-        let scrollDirection
-        if (scrollDirectionIsForward && scrollDirection !== 'forward') {
-          scrollDirection = 'forward'
-        }
-
-        if (!scrollDirectionIsForward && scrollDirection !== 'backward') {
-          scrollDirection = 'backward'
-        }
-
-        const loadMoreWindow = timelineWrapperWidth / 3
-
-        if (scrollDirection === 'backward') {
-          // If the previous scroll position is outside of the window to trigger another page and
-          // the scroll position attached to the event is within the window
-          const originalDistanceFromEdge = -timelineStartPosition.left
-          const distanceFromEdge = -timelinePosition.left
-
-          if (originalDistanceFromEdge > loadMoreWindow && distanceFromEdge <= loadMoreWindow) {
-            scrollBackward()
-          }
-        }
-
-        if (scrollDirection === 'forward') {
-          const listWidth = timelineListRef.current.getBoundingClientRect().width
-
-          // Determine the previous pixel position of the right edge of the timeline
-          const originalDistanceFromEdge = -(
-            timelineWrapperWidth - (timelineStartPosition.left + listWidth)
-          )
-          const distanceFromEdge = -(timelineWrapperWidth - (timelinePosition.left + listWidth))
-
-          // If the previous scroll position is outside of the window to trigger another page and
-          // the scroll position attached to the event is within the window
-          if (originalDistanceFromEdge > loadMoreWindow && distanceFromEdge <= loadMoreWindow) {
-            scrollForward()
-          }
-        }
-
-        handleMove()
-      }
-    })
-  }
-
-  /**
    * Sets or unsets the focusedInterval as the interval where the user clicked
    */
   const onFocusedClick = (newFocusedInterval) => {
@@ -637,68 +690,6 @@ export const EDSCTimeline = ({
     // Set the selected interval as focused
     if (onFocusedSet) onFocusedSet(newFocusedInterval)
     setFocusedInterval(newFocusedInterval)
-  }
-
-  /**
-   * Mouse move event handler for the TimelineList.
-   */
-  const onTimelineMouseMove = (e) => {
-    const {
-      end,
-      start
-    } = temporalRange
-
-    const {
-      pageY: mouseY,
-      pageX: mouseX
-    } = e
-
-    const { top } = timelineWrapperRef.current.getBoundingClientRect()
-
-    const mouseOverHeight = mouseY - top
-
-    // If the user hovers on the top 20 pixels of the timeline, show the hover state
-    if (mouseOverHeight <= TEMPORAL_SELECTION_HEIGHT && !start && !end) {
-      const { x: listX } = timelineListRef.current.getBoundingClientRect()
-      const startPosition = mouseX - listX
-
-      setTemporalRangeMouseOverPosition(startPosition)
-    } else {
-      setTemporalRangeMouseOverPosition(null)
-    }
-  }
-
-  /**
-   * Mouse down event handler for the TimelineList. Depending on where the mouse down happened, different handlers are executed
-   */
-  const onTimelineMouseDown = (e) => {
-    const { pageY: mouseY } = e
-    const { top } = timelineWrapperRef.current.getBoundingClientRect()
-
-    const clickHeight = mouseY - top
-
-    // If the user clicks on the top TEMPORAL_SELECTION_HEIGHT pixels of the timeline, start a temporal drag
-    // else start a timeline drag
-    if (clickHeight <= TEMPORAL_SELECTION_HEIGHT) {
-      onTemporalDragStart(e)
-      setDraggingTemporal(true)
-    } else {
-      onTimelineDragStart(e)
-    }
-  }
-
-  /**
-   * Mouse down event handler for the temporal markers in TimelineList
-   */
-  const onTemporalMarkerMouseDown = (e, type) => {
-    if (type === 'start') {
-      setDraggingTemporalStart(true)
-    } else if (type === 'end') {
-      setDraggingTemporalEnd(true)
-    }
-    onTemporalDragStart(e)
-
-    e.stopPropagation()
   }
 
   /**
@@ -752,74 +743,37 @@ export const EDSCTimeline = ({
     })
 
     // Find the width of the new focusedInterval so the scroll methods can keep the focusedInterval in the same position
-    const offsetInPx = newEndPosition - newStartPosition
+    let offsetInPx = newEndPosition - newStartPosition
 
-    let shouldMove = true
+    let offsetPosition = {
+      top: 0,
+      left: 0
+    }
     const startIndex = timeIntervals.findIndex((interval) => interval >= newStart) - 1
+
     if (direction === 'previous' && startIndex < INTERVAL_BUFFER) {
-      scrollBackward(offsetInPx)
-      shouldMove = false
+      offsetPosition = {
+        ...offsetPosition,
+        ...scrollBackward()
+      }
     } else if (direction === 'next' && startIndex > timeIntervals.length - (INTERVAL_BUFFER)) {
-      shouldMove = scrollForward(offsetInPx)
+      offsetPosition = {
+        ...offsetPosition,
+        ...scrollForward()
+      }
     }
 
-    // Move the timeline to keep the focusedInterval in the same position it was in previously
-    // don't do this if scollBackward() happens, that method moves the timeline
-    // don't do this if scrollForward() removes extra intervals
-    if (shouldMove) {
-      // The focused interval might not be at the start, need to keep the focused interval in the same spot as the timeline scrolls
-      const currentCenterTime = getCenterTimestamp({
-        intervalListWidthInPixels,
-        timeIntervals,
-        timelinePosition,
-        timelineWrapperRef,
-        zoomLevel
-      })
-
-      // Find the offset of the current timeline center and the current focused interval start
-      const offset = currentCenterTime - currentStart
-
-      const offsetStart = newStart + offset
-      moveTimeline(offsetStart)
+    if (direction === 'next') {
+      offsetInPx = -offsetInPx
     }
-  }
 
-  /**
-   * Mouse up event handler for the whole window. If any dragging was happening, call cleanup and/or additional handlers
-   */
-  const onWindowMouseUp = (e) => {
-    if (draggingTemporal
-      || draggingTemporalEnd
-      || draggingTemporalStart
-    ) onTimelineTemporalDragEnd(e)
+    const newTimelinePosition = timelinePosition.left + offsetPosition.left + offsetInPx
+    setTimelinePosition({
+      ...timelinePosition,
+      left: newTimelinePosition
+    })
 
-    if (dragging
-      || draggingTemporal
-      || draggingTemporalEnd
-      || draggingTemporalStart
-    ) {
-      setDragging(false)
-      setDraggingTemporal(false)
-      setDraggingTemporalEnd(false)
-      setDraggingTemporalStart(false)
-      setTimelineStartPosition(null)
-      setTimelineDragStartPosition(null)
-    }
-  }
-
-  /**
-   * Move move event handler for the whole window. Handles updating the dragging state if dragging is happening
-   */
-  const onWindowMouseMove = (e) => {
-    if (dragging) onTimelineDrag(e)
-    if (draggingTemporal) onTimelineTemporalDrag(e)
-    if (draggingTemporalStart) onTemporalMarkerStartDrag(e)
-    if (draggingTemporalEnd) onTemporalMarkerEndDrag(e)
-
-    // If the mousemove happens outside of the timeline wrapper, clear the temporal selection mouseover indicator
-    if (!timelineWrapperRef.current.contains(e.target)) {
-      setTemporalRangeMouseOverPosition(null)
-    }
+    handleMoveTimeline({ left: newTimelinePosition })
   }
 
   /**
@@ -836,21 +790,15 @@ export const EDSCTimeline = ({
   }
 
   useEffect(() => {
-    window.addEventListener('mouseup', onWindowMouseUp)
-    window.addEventListener('mousemove', onWindowMouseMove)
     window.addEventListener('keydown', onWindowKeydown)
 
     return () => {
-      window.removeEventListener('mouseup', onWindowMouseUp)
-      window.removeEventListener('mousemove', onWindowMouseMove)
       window.removeEventListener('keydown', onWindowKeydown)
     }
   }, [
-    dragging,
     focusedInterval,
     timeIntervals,
     timelinePosition,
-    timelineDragStartPosition,
     temporalRange,
     temporalRangeMouseOverPosition
   ])
@@ -895,6 +843,13 @@ export const EDSCTimeline = ({
     }
   }
 
+  // Trim the data to MAX_DATA_ROWS if needed
+  let trimmedData = data
+
+  if (data.length >= MAX_DATA_ROWS) {
+    trimmedData = data.slice(0, MAX_DATA_ROWS)
+  }
+
   return (
     <div
       className="timeline"
@@ -922,10 +877,11 @@ export const EDSCTimeline = ({
             timeIntervals.length > 0 && (
               <TimelineList
                 ref={timelineListRef}
+                bindTimelineGestures={bindTimelineGestures}
                 data={trimmedData}
-                dragging={dragging}
-                draggingTemporalEnd={draggingTemporalEnd}
-                draggingTemporalStart={draggingTemporalStart}
+                draggingTimeline={draggingTimeline}
+                draggingTemporal={draggingTemporal}
+                draggingTemporalMarker={draggingTemporalMarker}
                 focusedInterval={focusedInterval}
                 intervalListWidthInPixels={intervalListWidthInPixels}
                 temporalRange={temporalRange}
@@ -935,9 +891,6 @@ export const EDSCTimeline = ({
                 timelineWrapperRef={timelineWrapperRef}
                 zoomLevel={zoomLevel}
                 onFocusedClick={onFocusedClick}
-                onTimelineMouseDown={onTimelineMouseDown}
-                onTimelineMouseMove={onTimelineMouseMove}
-                onTemporalMarkerMouseDown={onTemporalMarkerMouseDown}
               />
             )
           }
@@ -984,18 +937,6 @@ EDSCTimeline.propTypes = {
   onFocusedSet: PropTypes.func,
   onTemporalSet: PropTypes.func,
   onTimelineMove: PropTypes.func,
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string,
-      title: PropTypes.string,
-      color: PropTypes.string,
-      intervals: PropTypes.arrayOf(
-        PropTypes.arrayOf(
-          PropTypes.number
-        ) // [start, end, number of items in interval]
-      ).isRequired
-    })
-  ).isRequired,
   minZoom: PropTypes.number,
   maxZoom: PropTypes.number,
   temporalRange: PropTypes.shape({
