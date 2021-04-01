@@ -4,3 +4,7 @@ tmp/
 npm-debug.log
 dist
 coverage
+cypress-coverage
+.nyc_output
+cypress/screenshots
+cypress/videos

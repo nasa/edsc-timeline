@@ -9,6 +9,9 @@ const htmlWebpackPlugin = new HtmlWebpackPlugin({
 
 module.exports = {
   entry: path.join(__dirname, 'src/index.js'),
+  output: {
+    publicPath: '/'
+  },
   module: {
     rules: [
       {
@@ -43,6 +46,8 @@ module.exports = {
   },
   devtool: 'source-map',
   devServer: {
-    port: 3011
+    port: 3011,
+    historyApiFallback: true,
+    contentBase: path.join(__dirname, '/dist')
   }
 }
