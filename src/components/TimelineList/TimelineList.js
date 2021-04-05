@@ -15,9 +15,9 @@ import './TimelineList.scss'
  * Renders a list of TimelineIntervals
  * @param {Object} param0
  * @param {Array} param0.data An array of objects defining the data to display
- * @param {Boolean} param0.dragging Flag for if the timeline is currently in a dragging state
- * @param {Boolean} param0.draggingTemporalStart Flag for if the temporal start marker is currently in a dragging state
- * @param {Boolean} param0.draggingTemporalEnd Flag for if the temporal end marker is currently in a dragging state
+ * @param {Boolean} param0.draggingTimeline Flag for if the timeline is currently in a dragging state
+ * @param {Boolean} param0.draggingTemporal Flag for if the temporal range is currently in a dragging state
+ * @param {Boolean} param0.draggingTemporalMarker Flag for if a temporal marker is currently in a dragging state
  * @param {Object} param0.focusedInterval Focused interval set on the timeline
  * @param {Integer} param0.intervalListWidthInPixels Width (in pixels) of the DOM element that holds the timeline intervals
  * @param {Object} param0.temporalRange Temporal range set on the timeline
@@ -26,18 +26,15 @@ import './TimelineList.scss'
  * @param {Object} param0.timelinePosition Position of the left side of the timeline DOM element in pixels
  * @param {Object} param0.timelineWrapperRef Ref to the DOM element representing the timeline wrapper
  * @param {Integer} param0.zoomLevel Current zoom level of the timeline
- * @param {Function} param0.onTemporalMarkerMouseDown Callback function for onMouseDown
  * @param {Function} param0.onFocusedClick Callback function for onClick
- * @param {Function} param0.onTimelineMouseDown Callback function for onMouseDown
- * @param {Function} param0.onTimelineMouseMove Callback function for onMouseMove
  * @param {Object} timelineListRef Ref to the DOM element representing the timeline list
  */
 export const TimelineList = forwardRef(({
   data,
   bindTimelineGestures,
-  dragging,
-  draggingTemporalStart,
-  draggingTemporalEnd,
+  draggingTimeline,
+  draggingTemporal,
+  draggingTemporalMarker,
   focusedInterval,
   intervalListWidthInPixels,
   temporalRange,
@@ -46,10 +43,7 @@ export const TimelineList = forwardRef(({
   timelinePosition,
   timelineWrapperRef,
   zoomLevel,
-  onFocusedClick,
-  onTemporalMarkerMouseDown,
-  onTimelineMouseDown,
-  onTimelineMouseMove
+  onFocusedClick
 }, timelineListRef) => {
   if (!timelineWrapperRef.current) return null
 
@@ -155,8 +149,8 @@ export const TimelineList = forwardRef(({
   const timelineListClassnames = classNames([
     'timeline-list',
     {
-      'timeline-list--is-dragging': dragging,
-      'timeline-list--is-temporal-dragging': draggingTemporalStart || draggingTemporalEnd,
+      'timeline-list--is-dragging': draggingTimeline,
+      'timeline-list--is-temporal-dragging': draggingTemporal || draggingTemporalMarker,
       'timeline-list--has-focused-interval': !!focusedIntervalStart
     }
   ])
@@ -165,7 +159,7 @@ export const TimelineList = forwardRef(({
     'timeline-list__temporal-marker',
     'timeline-list__temporal-start',
     {
-      'timeline-list__temporal-marker--is-dragging': draggingTemporalStart
+      'timeline-list__temporal-marker--is-dragging': draggingTemporalMarker === 'start'
     }
   ])
 
@@ -173,7 +167,7 @@ export const TimelineList = forwardRef(({
     'timeline-list__temporal-marker',
     'timeline-list__temporal-end',
     {
-      'timeline-list__temporal-marker--is-dragging': draggingTemporalEnd
+      'timeline-list__temporal-marker--is-dragging': draggingTemporalMarker === 'end'
     }
   ])
 
@@ -189,6 +183,7 @@ export const TimelineList = forwardRef(({
       }}
       role="button"
       tabIndex="0"
+      data-test-id="timelineList"
     >
       <section
         className="timeline-list__markers"
@@ -209,11 +204,11 @@ export const TimelineList = forwardRef(({
             <button
               className={temporalStartMarkerStartClassnames}
               style={temporalStartStyle}
-              onMouseDown={(e) => onTemporalMarkerMouseDown(e, 'start')}
               label="Click and drag to edit the start of the selected temporal range"
               aria-label="Click and drag to edit the start of the selected temporal range"
               type="button"
               data-marker-type="start"
+              data-test-id="startMarker"
             />
           )
         }
@@ -222,11 +217,11 @@ export const TimelineList = forwardRef(({
             <button
               className={temporalStartMarkerEndClassnames}
               style={temporalEndStyle}
-              onMouseDown={(e) => onTemporalMarkerMouseDown(e, 'end')}
               label="Click and drag to edit the end of the selected temporal range"
               aria-label="Click and drag to edit the end of the selected temporal range"
               type="button"
               data-marker-type="end"
+              data-test-id="endMarker"
             />
           )
         }
@@ -315,6 +310,7 @@ export const TimelineList = forwardRef(({
 })
 
 TimelineList.defaultProps = {
+  draggingTemporalMarker: null,
   temporalRangeMouseOverPosition: null,
   intervalListWidthInPixels: 0
 }
@@ -333,18 +329,15 @@ TimelineList.propTypes = {
     })
   ).isRequired,
   bindTimelineGestures: PropTypes.func.isRequired,
-  dragging: PropTypes.bool.isRequired,
-  draggingTemporalStart: PropTypes.bool.isRequired,
-  draggingTemporalEnd: PropTypes.bool.isRequired,
+  draggingTimeline: PropTypes.bool.isRequired,
+  draggingTemporal: PropTypes.bool.isRequired,
+  draggingTemporalMarker: PropTypes.string,
   focusedInterval: PropTypes.shape({
     start: PropTypes.number,
     end: PropTypes.number
   }).isRequired,
   intervalListWidthInPixels: PropTypes.number,
   onFocusedClick: PropTypes.func.isRequired,
-  onTemporalMarkerMouseDown: PropTypes.func.isRequired,
-  onTimelineMouseDown: PropTypes.func.isRequired,
-  onTimelineMouseMove: PropTypes.func.isRequired,
   temporalRangeMouseOverPosition: PropTypes.number,
   temporalRange: PropTypes.shape({
     end: PropTypes.number,
