@@ -11,6 +11,11 @@ module.exports = {
     ],
     '@babel/preset-react'
   ],
+  env: {
+    test_cypress: {
+      plugins: ['istanbul']
+    }
+  },
   sourceType: 'unambiguous',
   plugins: [
     '@babel/plugin-proposal-object-rest-spread',
