@@ -91,6 +91,7 @@
     "sass-resources-loader": "^2.1.1",
     "script-loader": "^0.6.1",
     "snyk": "^1.521.0",
+    "start-server-and-test": "^1.12.1",
     "style-loader": "^0.12.4",
     "terser-webpack-plugin": "^5.1.1",
     "url-loader": "^1.1.1",
@@ -120,8 +121,12 @@
   },
   "nyc": {
     "report-dir": "cypress-coverage",
-    "include": ["src/**/*.js"],
-    "exclude": ["example"],
+    "include": [
+      "src/**/*.js"
+    ],
+    "exclude": [
+      "example"
+    ],
     "excludeAfterRemap": true
   }
 }
