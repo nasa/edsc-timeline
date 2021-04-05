@@ -35,13 +35,12 @@ jobs:
           ${{ runner.os }}-
     - name: Install dependencies
       run: npm ci
-    - name: Run tests
+    - name: Run Jest tests
       run: npm run test
+    - name: Run Cypress tests
+      run: npm run cypress:ci
     - name: Upload coverage to codecov
       uses: codecov/codecov-action@v1
-      with:
-        files: './coverage/clover.xml'
-        functionalities: fix
   deploy:
     if: success() && github.ref == 'refs/heads/master' # only run on master success
     needs: [tests] # only run after tests job completes
