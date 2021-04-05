@@ -17,7 +17,6 @@ module.exports = {
     '@babel/plugin-proposal-class-properties',
     '@babel/plugin-transform-runtime',
     '@babel/plugin-syntax-dynamic-import',
-    'transform-class-properties',
-    'istanbul'
+    'transform-class-properties'
   ]
 }
