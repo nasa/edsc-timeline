@@ -12,9 +12,9 @@ function setup(overrideProps) {
   const props = {
     bindTimelineGestures: jest.fn(),
     data: [],
-    dragging: false,
-    draggingTemporalStart: false,
-    draggingTemporalEnd: false,
+    draggingTimeline: false,
+    draggingTemporal: false,
+    draggingTemporalMarker: null,
     focusedInterval: {},
     intervalListWidthInPixels: 3,
     temporalRange: {},
@@ -35,9 +35,6 @@ function setup(overrideProps) {
     },
     zoomLevel: 3,
     onFocusedClick: jest.fn(),
-    onTimelineMouseDown: jest.fn(),
-    onTimelineMouseMove: jest.fn(),
-    onTemporalMarkerMouseDown: jest.fn(),
     ...overrideProps
   }
 
@@ -105,7 +102,7 @@ describe('TimelineList component', () => {
   describe('when the timeline is dragging', () => {
     test('renders the correct classnames', () => {
       const { enzymeWrapper } = setup({
-        dragging: true,
+        draggingTimeline: true,
         temporalRange: {
           start: new Date('2021-03').getTime(),
           end: new Date('2021-04').getTime()
@@ -215,36 +212,6 @@ describe('TimelineList component', () => {
       expect(temporalRange.props().style.width).toEqual(200.43835616438355)
     })
 
-    test('clicking on the start marker calls onTemporalStartMouseDown', () => {
-      const { enzymeWrapper, props } = setup({
-        temporalRange: {
-          start: new Date('2021-03').getTime(),
-          end: new Date('2021-04').getTime()
-        }
-      })
-
-      const marker = enzymeWrapper.find('.timeline-list__temporal-start')
-
-      marker.props().onMouseDown()
-
-      expect(props.onTemporalMarkerMouseDown).toHaveBeenCalledTimes(1)
-    })
-
-    test('clicking on the end marker calls onTemporalStartMouseDown', () => {
-      const { enzymeWrapper, props } = setup({
-        temporalRange: {
-          start: new Date('2021-03').getTime(),
-          end: new Date('2021-04').getTime()
-        }
-      })
-
-      const marker = enzymeWrapper.find('.timeline-list__temporal-end')
-
-      marker.props().onMouseDown()
-
-      expect(props.onTemporalMarkerMouseDown).toHaveBeenCalledTimes(1)
-    })
-
     describe('when the temporal markers are not dragging', () => {
       test('renders the correct classnames', () => {
         const { enzymeWrapper } = setup({
@@ -265,7 +232,7 @@ describe('TimelineList component', () => {
     describe('when the start temporal marker is dragging', () => {
       test('renders the correct classnames', () => {
         const { enzymeWrapper } = setup({
-          draggingTemporalStart: true,
+          draggingTemporalMarker: 'start',
           temporalRange: {
             start: new Date('2021-03').getTime(),
             end: new Date('2021-04').getTime()
@@ -283,7 +250,7 @@ describe('TimelineList component', () => {
     describe('when the end temporal marker is dragging', () => {
       test('renders the correct classnames', () => {
         const { enzymeWrapper } = setup({
-          draggingTemporalEnd: true,
+          draggingTemporalMarker: 'end',
           temporalRange: {
             start: new Date('2021-03').getTime(),
             end: new Date('2021-04').getTime()

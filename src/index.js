@@ -508,7 +508,6 @@ export const EDSCTimeline = ({
    */
   const handleMove = (state) => {
     const {
-      hovering,
       xy: [mouseX, mouseY]
     } = state
 
@@ -522,7 +521,7 @@ export const EDSCTimeline = ({
     const mouseOverHeight = mouseY - top
 
     // Sets the temporalRangeMouseOverPosition if at the correct height and no temporalRange exists
-    if (hovering && mouseOverHeight <= TEMPORAL_SELECTION_HEIGHT && !start && !end) {
+    if (mouseOverHeight <= TEMPORAL_SELECTION_HEIGHT && !start && !end) {
       const { x: listX } = timelineListRef.current.getBoundingClientRect()
       const startPosition = mouseX - listX
 
