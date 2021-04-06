@@ -127,13 +127,13 @@ export const EDSCTimeline = ({
     setIntervalListWidthInPixels(width)
   }, [])
 
-  const updateTimeIntervals = (newIntervals) => {
+  const updateTimeIntervals = (newIntervals, zoom = zoomLevel) => {
     setTimeIntervals(newIntervals)
-    const duration = getIntervalsDuration(newIntervals, zoomLevel)
+    const duration = getIntervalsDuration(newIntervals, zoom)
 
     const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
-    const width = determineScaledWidth(duration, zoomLevel, timelineWrapperWidth)
+    const width = determineScaledWidth(duration, zoom, timelineWrapperWidth)
 
     setIntervalListWidthInPixels(width)
   }
@@ -595,14 +595,15 @@ export const EDSCTimeline = ({
    */
   const moveTimeline = (center, intervals = timeIntervals, zoom = zoomLevel) => {
     const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
-    const left = -(
-      getPositionByTimestamp({
-        timestamp: center,
-        timeIntervals: intervals,
-        zoomLevel: zoom,
-        wrapperWidth: timelineWrapperWidth
-      }) - (timelineWrapperWidth / 2)
-    )
+
+    const centerPosition = getPositionByTimestamp({
+      timestamp: center,
+      timeIntervals: intervals,
+      zoomLevel: zoom,
+      wrapperWidth: timelineWrapperWidth
+    })
+
+    const left = -(centerPosition - (timelineWrapperWidth / 2))
 
     setTimelinePosition({
       ...timelinePosition,
@@ -834,7 +835,7 @@ export const EDSCTimeline = ({
         })
       ]
 
-      setTimeIntervals(newIntervals)
+      updateTimeIntervals(newIntervals, newZoomLevel)
       setZoomLevel(newZoomLevel)
       setFocusedInterval({})
       if (onFocusedSet) onFocusedSet({})
