@@ -14,7 +14,7 @@ describe('Temporal dragging', () => {
     })
 
     describe('when dragging backwards', () => {
-      it('the timeline center is updated', () => {
+      it('the temporal range is updated', () => {
         getByTestId('timelineList')
           .trigger('pointerdown', { pointerId: 1, clientX: 650, clientY: 10 })
           .trigger('pointermove', { pointerId: 1, clientX: 750, clientY: 10 })
@@ -26,7 +26,7 @@ describe('Temporal dragging', () => {
     })
 
     describe('when dragging forwards', () => {
-      it('the timeline center is updated', () => {
+      it('the temporal range is updated', () => {
         getByTestId('timelineList')
           .trigger('pointerdown', { pointerId: 1, clientX: 650, clientY: 10 })
           .trigger('pointermove', { pointerId: 1, clientX: 550, clientY: 10 })
@@ -41,6 +41,7 @@ describe('Temporal dragging', () => {
   describe('editing temporal range', () => {
     beforeEach(() => {
       cy.visit('/temporalRange')
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(1)
     })
 
@@ -92,6 +93,7 @@ describe('Temporal dragging', () => {
   describe('editing temporal range with only one marker', () => {
     it('dragging the start marker changes the temporal range', () => {
       cy.visit('/temporalStart')
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(1)
 
       // Grab the start marker, move it to the left
@@ -105,6 +107,7 @@ describe('Temporal dragging', () => {
 
     it('dragging the end marker changes the temporal range', () => {
       cy.visit('/temporalEnd')
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(1)
 
       // Grab the end marker, move it to the right
