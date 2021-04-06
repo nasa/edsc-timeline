@@ -28,6 +28,7 @@ function setup(overrideProps) {
     ...overrideProps
   }
 
+  // eslint-disable-next-line react/jsx-props-no-spreading
   const enzymeWrapper = mount(<EDSCTimeline {...props} />)
 
   return {
@@ -159,21 +160,14 @@ describe('EDSCTimeline component', () => {
         jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 2500)
         const getBoundingClientRectMock = jest.fn(() => ({ width: 1200 }))
 
-        const { enzymeWrapper, props } = setup()
+        const { enzymeWrapper } = setup()
 
         enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
         enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
 
         const list = enzymeWrapper.find(TimelineList).find('.timeline-list')
 
-        // expect(enzymeWrapper.find(TimelineList).props().timelinePosition).toEqual()
-
-        // console.log('list', list.debug())
-
         // Clicks on the timeline
-        // list.invoke('onTimelineMouseDown')({
-        //   pageX: 500
-        // })
         act(() => {
           list.simulate('pointerdown', {
             pointerId: 1,
@@ -315,7 +309,7 @@ describe('EDSCTimeline component', () => {
         const getBoundingClientRectMock = jest.fn(() => ({ width: 1200 }))
         const getListBoundingClientRectMock = jest.fn(() => ({ width: 4000 }))
 
-        const { enzymeWrapper, props } = setup()
+        const { enzymeWrapper } = setup()
 
         enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
         enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
@@ -342,28 +336,6 @@ describe('EDSCTimeline component', () => {
         act(() => {
           list.simulate('pointerup', { pointerId: 1 })
         })
-
-        // // Clicks on the timeline
-        // list.invoke('onTimelineMouseDown')({
-        //   pageX: 500
-        // })
-
-        // // Drags the mouse
-        // act(() => {
-        //   windowEventMap.mousemove({
-        //     pageX: 0
-        //   })
-        // })
-        // // Drag the mouse again
-        // act(() => {
-        //   windowEventMap.mousemove({
-        //     pageX: -1
-        //   })
-        // })
-        // // Let go of the mouse button
-        // act(() => {
-        //   windowEventMap.mouseup()
-        // })
 
         enzymeWrapper.update()
 
@@ -403,7 +375,7 @@ describe('EDSCTimeline component', () => {
           .mockReturnValueOnce({ width: 6500 })
         constants.MAX_INTERVAL_BUFFER = constants.INTERVAL_BUFFER * 3
 
-        const { enzymeWrapper, props } = setup()
+        const { enzymeWrapper } = setup()
 
         enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
         enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock

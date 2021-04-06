@@ -903,8 +903,8 @@ export const EDSCTimeline = ({
 EDSCTimeline.defaultProps = {
   center: new Date().getTime(),
   focusedInterval: {},
-  maxDate: new Date().getTime(),
-  minDate: 0,
+  // maxDate: new Date().getTime(),
+  // minDate: 0,
   onFocusedSet: null,
   onTemporalSet: null,
   onTimelineMove: null,
@@ -932,8 +932,8 @@ EDSCTimeline.propTypes = {
     end: PropTypes.number,
     start: PropTypes.number
   }),
-  maxDate: PropTypes.number, // maximum date timeline will allow scrolling
-  minDate: PropTypes.number, // minimum date timeline will allow scrolling
+  // maxDate: PropTypes.number, // maximum date timeline will allow scrolling
+  // minDate: PropTypes.number, // minimum date timeline will allow scrolling
   onFocusedSet: PropTypes.func,
   onTemporalSet: PropTypes.func,
   onTimelineMove: PropTypes.func,
