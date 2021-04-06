@@ -42,7 +42,7 @@ describe('Temporal dragging', () => {
     beforeEach(() => {
       cy.visit('/temporalRange')
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(1)
+      cy.wait(0)
     })
 
     it('dragging the start marker changes the temporal range', () => {
@@ -94,7 +94,7 @@ describe('Temporal dragging', () => {
     it('dragging the start marker changes the temporal range', () => {
       cy.visit('/temporalStart')
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(1)
+      cy.wait(0)
 
       // Grab the start marker, move it to the left
       getByTestId('startMarker')
@@ -108,7 +108,7 @@ describe('Temporal dragging', () => {
     it('dragging the end marker changes the temporal range', () => {
       cy.visit('/temporalEnd')
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(1)
+      cy.wait(0)
 
       // Grab the end marker, move it to the right
       getByTestId('endMarker')
