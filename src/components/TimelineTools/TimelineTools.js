@@ -62,6 +62,7 @@ export const TimelineTools = forwardRef(({
           onClick={() => onChangeZoomLevel(zoomLevel + 1)}
           title="Increase zoom level"
           label="Increase zoom level"
+          data-test-id="zoomUp"
         >
           <FaChevronUp />
         </button>
@@ -75,6 +76,7 @@ export const TimelineTools = forwardRef(({
           onClick={() => onChangeZoomLevel(zoomLevel - 1)}
           title="Decrease zoom level"
           label="Decrease zoom level"
+          data-test-id="zoomDown"
         >
           <FaChevronDown />
         </button>
