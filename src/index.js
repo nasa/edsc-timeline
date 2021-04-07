@@ -133,22 +133,35 @@ export const EDSCTimeline = ({
     end: null
   })
 
-  // Store calculated time intervals that power the display of the timeline dates
-  const [timeIntervals, setTimeIntervals] = useState(() => [
-    ...calculateTimeIntervals({
+  /**
+   * Creates a full list of new timeIntervals based on the given center and zoom
+   * @param {Integer} center Center timestamp of the new interval list
+   * @param {Integer} zoom Optional - Zoom level to create the intervals at, defaults to zoomLevel
+   */
+  const generateNewTimeIntervals = (center, zoom = zoomLevel) => {
+    const centerInterval = roundTime(center, zoom)
+    const leftIntervals = calculateTimeIntervals({
       timeAnchor: center,
-      zoomLevel,
+      zoomLevel: zoom,
       numIntervals: INTERVAL_BUFFER,
       reverse: true
-    }),
-    roundTime(center, zoomLevel),
-    ...calculateTimeIntervals({
+    })
+    const rightIntervals = calculateTimeIntervals({
       timeAnchor: center,
-      zoomLevel,
+      zoomLevel: zoom,
       numIntervals: INTERVAL_BUFFER,
       reverse: false
     })
-  ])
+
+    return [
+      ...leftIntervals,
+      centerInterval,
+      ...rightIntervals
+    ]
+  }
+
+  // Store calculated time intervals that power the display of the timeline dates
+  const [timeIntervals, setTimeIntervals] = useState(() => generateNewTimeIntervals(center))
 
   useEffect(() => {
     // Anytime new time intervals are calcualted update the pixel width of their container
@@ -225,14 +238,12 @@ export const EDSCTimeline = ({
    * Scroll the timeline forward (down, or to the right)
    */
   const scrollForward = () => {
-    // let shouldMove = true
     let translationAdjustment = 0
 
     // If the underlying dataset has grown larger than desired, trim off 1 buffers
     // worth of data from opposite of the array
     let currentTimeIntervals = timeIntervals
     if (timeIntervals.length > MAX_INTERVAL_BUFFER) {
-      // shouldMove = false
       const startTime = currentTimeIntervals[0]
       const endTime = generateEndTime(
         currentTimeIntervals,
@@ -298,25 +309,32 @@ export const EDSCTimeline = ({
    * @param {Integer} center Timestamp to move the timeline to
    * @param {Array} intervals Optional - New timeIntervals to use
    * @param {Integer} zoom Optional - New zoomLevel to use
+   * @param {Integer} offset Optional - Offset the timestamp position by this many pixels
    */
-  const moveTimeline = (center, intervals = timeIntervals, zoom = zoomLevel, offset = 0) => {
+  const centerTimelineToTimestamp = ({
+    timestamp,
+    intervals = timeIntervals,
+    zoom = zoomLevel,
+    offset = 0
+  }) => {
     const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
-    const centerPosition = getPositionByTimestamp({
-      timestamp: center,
+    const timestampPosition = getPositionByTimestamp({
+      timestamp,
       timeIntervals: intervals,
       zoomLevel: zoom,
       wrapperWidth: timelineWrapperWidth
     })
 
-    const left = -((centerPosition - offset) - (timelineWrapperWidth / 2))
+    // Move the timeline to the timestampPosition - offset, then subtract half the wrapper width to center that value in the timeline wrapper
+    const left = -((timestampPosition - offset) - (timelineWrapperWidth / 2))
 
     setTimelinePosition({
       ...timelinePosition,
       left
     })
 
-    if (onTimelineMove) onTimelineMove({ center, interval: zoom })
+    if (onTimelineMove) onTimelineMove({ center: timestamp, interval: zoom })
   }
 
   // When the zoom level changes, this useEffect will find the new center value and move the timeline to that timestamp
@@ -329,7 +347,7 @@ export const EDSCTimeline = ({
       zoomLevel
     })
 
-    if (centeredTimestamp) moveTimeline(centeredTimestamp)
+    if (centeredTimestamp) centerTimelineToTimestamp({ timestamp: centeredTimestamp })
   }, [zoomLevel])
 
   /**
@@ -340,8 +358,7 @@ export const EDSCTimeline = ({
     const {
       active,
       delta: [deltaX],
-      direction: [directionX],
-      offset: [offsetX]
+      direction: [directionX]
     } = state
 
     let positionOffset = {
@@ -358,22 +375,13 @@ export const EDSCTimeline = ({
     const scrollDirection = directionX !== 1 ? 'forward' : 'backward'
 
     const loadMoreWindow = timelineWrapperWidth / 3
-
-    const originalDistanceFromLeftEdge = -newTimelinePosition.left + offsetX
     const distanceFromLeftEdge = -newTimelinePosition.left
-
-    const originalDistanceFromRightEdge = timelineListWidth
-      - (-newTimelinePosition.left + offsetX + timelineWrapperWidth)
     const distanceFromRightEdge = timelineListWidth
       - (-newTimelinePosition.left + timelineWrapperWidth)
 
     if (scrollDirection === 'backward') {
-      // If the previous scroll position is outside of the window to trigger another page and
-      // the scroll position attached to the event is within the window
-      if (
-        originalDistanceFromLeftEdge > loadMoreWindow
-        && distanceFromLeftEdge <= loadMoreWindow
-      ) {
+      // If the scroll position is within the window to load another page
+      if (distanceFromLeftEdge <= loadMoreWindow) {
         positionOffset = {
           ...positionOffset,
           ...scrollBackward()
@@ -382,12 +390,8 @@ export const EDSCTimeline = ({
     }
 
     if (scrollDirection === 'forward') {
-      // If the previous scroll position is outside of the window to trigger another page and
-      // the scroll position attached to the event is within the window
-      if (
-        originalDistanceFromRightEdge > loadMoreWindow
-        && distanceFromRightEdge <= loadMoreWindow
-      ) {
+      // If the scroll position is within the window to load another page
+      if (distanceFromRightEdge <= loadMoreWindow) {
         positionOffset = {
           ...positionOffset,
           ...scrollForward()
@@ -463,28 +467,19 @@ export const EDSCTimeline = ({
    * @param {Integer} offset Optional: offset the timeline position by this offset value
    */
   const zoomToTimestamp = (timestamp, zoom, offset = 0) => {
-    const newIntervals = [
-      ...calculateTimeIntervals({
-        timeAnchor: timestamp,
-        zoomLevel: zoom,
-        numIntervals: INTERVAL_BUFFER,
-        reverse: true
-      }),
-      roundTime(timestamp, zoom),
-      ...calculateTimeIntervals({
-        timeAnchor: timestamp,
-        zoomLevel: zoom,
-        numIntervals: INTERVAL_BUFFER,
-        reverse: false
-      })
-    ]
+    const newIntervals = generateNewTimeIntervals(timestamp, zoom)
 
     updateTimeIntervals(newIntervals, zoom)
     setZoomLevel(zoom)
     setFocusedInterval({})
     if (onFocusedSet) onFocusedSet({})
 
-    moveTimeline(timestamp, newIntervals, zoom, offset)
+    centerTimelineToTimestamp({
+      timestamp,
+      intervals: newIntervals,
+      zoom,
+      offset
+    })
   }
 
   /**
@@ -805,6 +800,8 @@ export const EDSCTimeline = ({
     if (timelineWrapperRef.current && !isLoaded && intervalsCenterInPixels) {
       // Center the timeline on load
       const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+
+      // Move the timeline to the center's position, then subtract half the wrapper width to center that value in the timeline wrapper
       const left = -(
         getPositionByTimestamp({
           timestamp: center,
