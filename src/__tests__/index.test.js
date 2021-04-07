@@ -111,48 +111,6 @@ describe('EDSCTimeline component', () => {
 
       expect(props.onTimelineMove).toHaveBeenCalledTimes(0)
     })
-
-    // This test shows that zooming does not change the center point, but the center point (and intervals)
-    // tested are non what we expect because the timelineWrapperRef doesn't play nice in jest/enzyme.
-    // Ideally both values used as `center` in the onTimelineMove check should be `new Date('2021').getTime()`
-    // because that matches the `center` prop used in setup
-    test('calls onTimelineMove', () => {
-      jest.spyOn(getPositionByTimestamp, 'getPositionByTimestamp').mockImplementation(() => 2073.0753424657532)
-      jest.spyOn(determineScaledWidth, 'determineScaledWidth').mockImplementation(() => 5255.564383561644)
-
-      const { enzymeWrapper, props } = setup()
-
-      const tools = enzymeWrapper.find(TimelineTools)
-
-      tools.invoke('onChangeZoomLevel')(2)
-
-      expect(props.onTimelineMove).toHaveBeenCalledTimes(2)
-      expect(props.onTimelineMove.mock.calls).toEqual([
-        [{ center: 1593691200000, interval: 3 }],
-        [{ center: 1593691200000, interval: 2 }]
-      ])
-      expect(enzymeWrapper.find(TimelineList).props().zoomLevel).toEqual(2)
-
-      // New intervals get passed into TimelineList
-      expect(enzymeWrapper.find(TimelineList).props().timeIntervals).toEqual([
-        1591056000000, 1591142400000, 1591228800000, 1591315200000,
-        1591401600000, 1591488000000, 1591574400000, 1591660800000,
-        1591747200000, 1591833600000, 1591920000000, 1592006400000,
-        1592092800000, 1592179200000, 1592265600000, 1592352000000,
-        1592438400000, 1592524800000, 1592611200000, 1592697600000,
-        1592784000000, 1592870400000, 1592956800000, 1593043200000,
-        1593129600000, 1593216000000, 1593302400000, 1593388800000,
-        1593475200000, 1593561600000, 1593648000000, 1593734400000,
-        1593820800000, 1593907200000, 1593993600000, 1594080000000,
-        1594166400000, 1594252800000, 1594339200000, 1594425600000,
-        1594512000000, 1594598400000, 1594684800000, 1594771200000,
-        1594857600000, 1594944000000, 1595030400000, 1595116800000,
-        1595203200000, 1595289600000, 1595376000000, 1595462400000,
-        1595548800000, 1595635200000, 1595721600000, 1595808000000,
-        1595894400000, 1595980800000, 1596067200000, 1596153600000,
-        1596240000000
-      ])
-    })
   })
 
   describe('onTimelineDrag', () => {

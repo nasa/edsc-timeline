@@ -72,6 +72,11 @@ export const EDSCTimeline = ({
   // Store the zoom level and allow for changing props to modify the state
   const [zoomLevel, setZoomLevel] = useState(zoom)
 
+  // Update the internal state when/if the prop changes
+  useEffect(() => {
+    setZoomLevel(zoom)
+  }, [zoom])
+
   // Store the pixel width of the list of intervals
   const [intervalListWidthInPixels, setIntervalListWidthInPixels] = useState(null)
 
@@ -95,6 +100,11 @@ export const EDSCTimeline = ({
 
   // The temporal range (markers) displayed on the timeline
   const [temporalRange, setTemporalRange] = useState(propsTemporalRange)
+
+  // If the propsTemporalRange changes, use those values as the temporalRange
+  useEffect(() => {
+    setTemporalRange(propsTemporalRange)
+  }, [propsTemporalRange])
 
   // The focused interval
   const [focusedInterval, setFocusedInterval] = useState(propsFocusedInterval)
@@ -151,6 +161,11 @@ export const EDSCTimeline = ({
     setIntervalListWidthInPixels(width)
   }, [])
 
+  /**
+   * Sets new timeIntervals, and determines the new width of the interval list
+   * @param {Object} newIntervals New timeIntervals to set
+   * @param {Integer} zoom Zoom level used in the newIntervals
+   */
   const updateTimeIntervals = (newIntervals, zoom = zoomLevel) => {
     setTimeIntervals(newIntervals)
     const duration = getIntervalsDuration(newIntervals, zoom)
@@ -251,25 +266,71 @@ export const EDSCTimeline = ({
     }
   }
 
+  /**
+   * Clear the current temporalRange value
+   */
   const clearTemporalRange = () => {
     setTemporalRange({})
 
     if (onTemporalSet) onTemporalSet({})
   }
 
-  const handleMoveTimeline = (newTimelinePosition) => {
+  /**
+   * Moves the timeline to the given position
+   * @param {Object} position Position to move the timeline to
+   */
+  const handleMoveTimeline = (position) => {
     if (onTimelineMove) {
-      const centeredDate = getCenterTimestamp({
+      const centeredTimestamp = getCenterTimestamp({
         intervalListWidthInPixels,
         timeIntervals,
-        timelinePosition: newTimelinePosition || timelinePosition,
+        timelinePosition: position || timelinePosition,
         timelineWrapperRef,
         zoomLevel
       })
 
-      onTimelineMove({ center: centeredDate, interval: zoomLevel })
+      onTimelineMove({ center: centeredTimestamp, interval: zoomLevel })
     }
   }
+
+  /**
+   * Move the timeline to the new center position
+   * @param {Integer} center Timestamp to move the timeline to
+   * @param {Array} intervals Optional - New timeIntervals to use
+   * @param {Integer} zoom Optional - New zoomLevel to use
+   */
+  const moveTimeline = (center, intervals = timeIntervals, zoom = zoomLevel, offset = 0) => {
+    const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+
+    const centerPosition = getPositionByTimestamp({
+      timestamp: center,
+      timeIntervals: intervals,
+      zoomLevel: zoom,
+      wrapperWidth: timelineWrapperWidth
+    })
+
+    const left = -((centerPosition - offset) - (timelineWrapperWidth / 2))
+
+    setTimelinePosition({
+      ...timelinePosition,
+      left
+    })
+
+    if (onTimelineMove) onTimelineMove({ center, interval: zoom })
+  }
+
+  // When the zoom level changes, this useEffect will find the new center value and move the timeline to that timestamp
+  useEffect(() => {
+    const centeredTimestamp = getCenterTimestamp({
+      intervalListWidthInPixels,
+      timeIntervals,
+      timelinePosition,
+      timelineWrapperRef,
+      zoomLevel
+    })
+
+    if (centeredTimestamp) moveTimeline(centeredTimestamp)
+  }, [zoomLevel])
 
   /**
    * Handles panning the timeline side to side
@@ -396,13 +457,99 @@ export const EDSCTimeline = ({
   }
 
   /**
+   * Generates new timeIntervals at the given zoom and moves the timeline to the given timestamp
+   * @param {Integer} timestamp Timestamp to zoom to
+   * @param {Integer} zoom Zoom level to zoom to
+   * @param {Integer} offset Optional: offset the timeline position by this offset value
+   */
+  const zoomToTimestamp = (timestamp, zoom, offset = 0) => {
+    const newIntervals = [
+      ...calculateTimeIntervals({
+        timeAnchor: timestamp,
+        zoomLevel: zoom,
+        numIntervals: INTERVAL_BUFFER,
+        reverse: true
+      }),
+      roundTime(timestamp, zoom),
+      ...calculateTimeIntervals({
+        timeAnchor: timestamp,
+        zoomLevel: zoom,
+        numIntervals: INTERVAL_BUFFER,
+        reverse: false
+      })
+    ]
+
+    updateTimeIntervals(newIntervals, zoom)
+    setZoomLevel(zoom)
+    setFocusedInterval({})
+    if (onFocusedSet) onFocusedSet({})
+
+    moveTimeline(timestamp, newIntervals, zoom, offset)
+  }
+
+  /**
+   * Handles wheel zooming
+   * @param {Object} state useGesture state
+   */
+  const handleWheelZoom = (state) => {
+    const {
+      direction: [, zoomDirection],
+      wheeling,
+      event
+    } = state
+
+    // useGesture gives one last event on a scroll with wheeling set to false. When that happens return
+    if (!wheeling) return
+
+    // zoomDirection is inversed from what we want, so subtract from the current zoomLevel
+    const newZoomLevel = zoomLevel - zoomDirection
+
+    if (newZoomLevel >= minZoom && newZoomLevel <= maxZoom) {
+      const { x: listX } = timelineListRef.current.getBoundingClientRect()
+      const { clientX: mouseX } = event
+
+      // Find the position of the mouse within the list
+      const mousePosition = mouseX - listX
+
+      // Find the current center position of the timeline
+      const currentCenterTimestamp = getCenterTimestamp({
+        intervalListWidthInPixels,
+        timeIntervals,
+        timelinePosition,
+        timelineWrapperRef,
+        zoomLevel
+      })
+      const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+      const currentCenterPosition = getPositionByTimestamp({
+        timestamp: currentCenterTimestamp,
+        timeIntervals,
+        zoomLevel,
+        wrapperWidth: timelineWrapperWidth
+      })
+
+      // Determine the offset of the mouse position and the current center
+      const offset = mousePosition - currentCenterPosition
+
+      // Find the new center based on the mousePosition
+      const newCenteredTimestamp = getTimestampByPosition({
+        intervalListWidthInPixels,
+        position: mousePosition,
+        timeIntervals,
+        zoomLevel
+      })
+
+      zoomToTimestamp(newCenteredTimestamp, newZoomLevel, offset)
+    }
+  }
+
+  /**
    * Handles scroll wheel behavior
    * @param {Object} state useGesture state
    */
   const handleWheel = (state) => {
     const { axis } = state
     if (axis === 'y') {
-      // TODO: EDSC-3101: Implement zoom behavior here
+      handleWheelZoom(state)
     } else {
       handlePanTimeline(state)
     }
@@ -645,37 +792,6 @@ export const EDSCTimeline = ({
     })
   }, [timelinePosition, focusedInterval.start])
 
-  /**
-   * Move the timeline to the new center position
-   * @param {Integer} center Timestamp to move the timeline to
-   * @param {Array} intervals Optional - New timeIntervals to use
-   * @param {Integer} zoom Optional - New zoomLevel to use
-   */
-  const moveTimeline = (center, intervals = timeIntervals, zoom = zoomLevel) => {
-    const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
-
-    const centerPosition = getPositionByTimestamp({
-      timestamp: center,
-      timeIntervals: intervals,
-      zoomLevel: zoom,
-      wrapperWidth: timelineWrapperWidth
-    })
-
-    const left = -(centerPosition - (timelineWrapperWidth / 2))
-
-    setTimelinePosition({
-      ...timelinePosition,
-      left
-    })
-
-    if (onTimelineMove) onTimelineMove({ center, interval: zoom })
-  }
-
-  // If the propsTemporalRange changes, use those values as the temporalRange
-  useEffect(() => {
-    setTemporalRange(propsTemporalRange)
-  }, [propsTemporalRange])
-
   useEffect(() => {
     const newWidth = intervalListWidthInPixels / 2
     if (timelineWrapperRef.current && intervalsCenterInPixels !== newWidth) {
@@ -703,7 +819,7 @@ export const EDSCTimeline = ({
         left
       })
 
-      const centeredDate = getCenterTimestamp({
+      const centeredTimestamp = getCenterTimestamp({
         intervalListWidthInPixels,
         timeIntervals,
         timelinePosition: {
@@ -713,16 +829,11 @@ export const EDSCTimeline = ({
         zoomLevel
       })
 
-      onTimelineMove({ center: centeredDate, interval: zoomLevel })
+      onTimelineMove({ center: centeredTimestamp, interval: zoomLevel })
 
       setIsLoaded(true)
     }
   }, [intervalsCenterInPixels, center])
-
-  // Update the internal state when/if the prop changes
-  useEffect(() => {
-    setZoomLevel(zoom)
-  }, [zoom])
 
   /**
    * Sets or unsets the focusedInterval as the interval where the user clicked
@@ -890,7 +1001,7 @@ export const EDSCTimeline = ({
   const onChangeZoomLevel = (newZoomLevel) => {
     if (newZoomLevel >= minZoom && newZoomLevel <= maxZoom) {
       // Get the current (zoomLevel) centeredDate to use as the new center with the newZoomLevel
-      const centeredDate = getCenterTimestamp({
+      const centeredTimestamp = getCenterTimestamp({
         intervalListWidthInPixels,
         timeIntervals,
         timelinePosition,
@@ -898,28 +1009,7 @@ export const EDSCTimeline = ({
         zoomLevel
       })
 
-      const newIntervals = [
-        ...calculateTimeIntervals({
-          timeAnchor: centeredDate,
-          zoomLevel: newZoomLevel,
-          numIntervals: INTERVAL_BUFFER,
-          reverse: true
-        }),
-        roundTime(centeredDate, newZoomLevel),
-        ...calculateTimeIntervals({
-          timeAnchor: centeredDate,
-          zoomLevel: newZoomLevel,
-          numIntervals: INTERVAL_BUFFER,
-          reverse: false
-        })
-      ]
-
-      updateTimeIntervals(newIntervals, newZoomLevel)
-      setZoomLevel(newZoomLevel)
-      setFocusedInterval({})
-      if (onFocusedSet) onFocusedSet({})
-
-      moveTimeline(centeredDate, newIntervals, newZoomLevel)
+      zoomToTimestamp(centeredTimestamp, newZoomLevel)
     }
   }
 
