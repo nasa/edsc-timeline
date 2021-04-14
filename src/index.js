@@ -6,6 +6,7 @@ import React, {
 import PropTypes from 'prop-types'
 import { useGesture } from 'react-use-gesture'
 import { animated, useSpring } from 'react-spring'
+import { Lethargy } from 'lethargy'
 
 import { TimelineList } from './components/TimelineList/TimelineList'
 import { TimelinePrimarySection } from './components/TimelinePrimarySection/TimelinePrimarySection'
@@ -31,6 +32,8 @@ import {
 } from './constants'
 
 import './index.scss'
+
+const lethargy = new Lethargy()
 
 /**
  * Renders the EDSC Timeline
@@ -488,16 +491,18 @@ export const EDSCTimeline = ({
    */
   const handleWheelZoom = (state) => {
     const {
-      direction: [, zoomDirection],
-      wheeling,
+      first,
       event
     } = state
 
-    // useGesture gives one last event on a scroll with wheeling set to false. When that happens return
-    if (!wheeling) return
+    // Only continue if this is the first event of the wheel gesture
+    if (!first) return
 
-    // zoomDirection is inversed from what we want, so subtract from the current zoomLevel
-    const newZoomLevel = zoomLevel - zoomDirection
+    const wheelDirection = lethargy.check(event)
+    if (!wheelDirection) return
+
+    // wheelDirection is inversed from what we want, so subtract from the current zoomLevel
+    const newZoomLevel = zoomLevel + wheelDirection
 
     if (newZoomLevel >= minZoom && newZoomLevel <= maxZoom) {
       const { x: listX } = timelineListRef.current.getBoundingClientRect()
