@@ -7,6 +7,15 @@ const zoom3Center = 'Center: Fri, 01 Jan 2021 00:00:01 GMT'
 const zoom4Center = 'Center: Sat, 22 Dec 2018 11:01:45 GMT'
 const zoom5Center = 'Center: Sat, 19 Dec 2009 03:29:37 GMT'
 
+const scrollWheel = (direction) => {
+  getByTestId('timelineList')
+    .trigger('wheel', { deltaY: direction, clientX: 950 })
+
+  // Wait for an event to finish before starting the a new event
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.wait(75)
+}
+
 describe('Timeline zooming', () => {
   beforeEach(() => {
     cy.visit('/empty')
@@ -55,21 +64,15 @@ describe('Timeline zooming', () => {
       getByTestId('interval').should('have.text', 'Interval: Month (3)')
 
       // Scroll down to zoom 2
-      getByTestId('timelineList')
-        .trigger('wheel', { deltaY: 1, clientX: 950 })
-
+      scrollWheel(1)
       getByTestId('interval').should('have.text', 'Interval: Day (2)')
 
       // Scroll down to zoom 1
-      getByTestId('timelineList')
-        .trigger('wheel', { deltaY: 1, clientX: 950 })
-
+      scrollWheel(1)
       getByTestId('interval').should('have.text', 'Interval: Hour (1)')
 
       // Scroll down again
-      getByTestId('timelineList')
-        .trigger('wheel', { deltaY: 1, clientX: 950 })
-
+      scrollWheel(1)
       getByTestId('interval').should('have.text', 'Interval: Hour (1)')
     })
 
@@ -77,21 +80,15 @@ describe('Timeline zooming', () => {
       getByTestId('interval').should('have.text', 'Interval: Month (3)')
 
       // Scroll up to zoom 4
-      getByTestId('timelineList')
-        .trigger('wheel', { deltaY: -1, clientX: 950 })
-
+      scrollWheel(-1)
       getByTestId('interval').should('have.text', 'Interval: Year (4)')
 
       // Scroll up to zoom 5
-      getByTestId('timelineList')
-        .trigger('wheel', { deltaY: -1, clientX: 950 })
-
+      scrollWheel(-1)
       getByTestId('interval').should('have.text', 'Interval: Year (5)')
 
       // Scroll up again
-      getByTestId('timelineList')
-        .trigger('wheel', { deltaY: -1, clientX: 950 })
-
+      scrollWheel(-1)
       getByTestId('interval').should('have.text', 'Interval: Year (5)')
     })
 
@@ -99,39 +96,27 @@ describe('Timeline zooming', () => {
       getByTestId('center').should('have.text', startCenter)
 
       // Scroll down to zoom 2
-      getByTestId('timelineList')
-        .trigger('wheel', { deltaY: 1, clientX: 950 })
-
+      scrollWheel(1)
       getByTestId('center').should('have.text', zoom2Center)
 
       // Scroll down to zoom 1
-      getByTestId('timelineList')
-        .trigger('wheel', { deltaY: 1, clientX: 950 })
-
+      scrollWheel(1)
       getByTestId('center').should('have.text', zoom1Center)
 
       // Scroll up to zoom 2
-      getByTestId('timelineList')
-        .trigger('wheel', { deltaY: -1, clientX: 950 })
-
+      scrollWheel(-1)
       getByTestId('center').should('have.text', zoom2Center)
 
       // Scroll up to zoom 3
-      getByTestId('timelineList')
-        .trigger('wheel', { deltaY: -1, clientX: 950 })
-
+      scrollWheel(-1)
       getByTestId('center').should('have.text', zoom3Center)
 
       // Scroll up to zoom 4
-      getByTestId('timelineList')
-        .trigger('wheel', { deltaY: -1, clientX: 950 })
-
+      scrollWheel(-1)
       getByTestId('center').should('have.text', zoom4Center)
 
       // Scroll up to zoom 5
-      getByTestId('timelineList')
-        .trigger('wheel', { deltaY: -1, clientX: 950 })
-
+      scrollWheel(-1)
       getByTestId('center').should('have.text', zoom5Center)
     })
   })
