@@ -6,7 +6,7 @@
   "version": "1.0.1",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nasa/edsc-timeline.git.git"
+    "url": "git+https://github.com/nasa/edsc-timeline.git"
   },
   "copyright": {
     "year": "© 2007-2020",
@@ -47,7 +47,6 @@
     "@babel/register": "^7.12.10",
     "@cypress/code-coverage": "^3.9.4",
     "@cypress/webpack-preprocessor": "^5.6.0",
-    "ajv": "^6.5.3",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.6.3",
     "babel-loader": "^8.2.2",
@@ -56,13 +55,10 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
     "bootstrap": "^4.6.0",
-    "coffee-loader": "^0.7.3",
-    "coffee-script": "^1.12.7",
     "css-loader": "^0.17.0",
-    "cypress": "^6.8.0",
+    "cypress": "^7.1.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.6",
-    "es5-shim": "^4.5.10",
     "eslint": "^7.18.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-loader": "^4.0.2",
@@ -71,12 +67,8 @@
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "expose-loader": "^0.7.5",
-    "file-loader": "^0.8.5",
     "gh-pages": "^3.1.0",
-    "handlebars": "^4.7.6",
-    "handlebars-loader": "^1.7.0",
-    "html-webpack-plugin": "^4.5.1",
+    "html-webpack-plugin": "^4.5.2",
     "jest": "^26.6.3",
     "mockdate": "^3.0.2",
     "node-sass": "^5.0.0",
@@ -93,10 +85,10 @@
     "snyk": "^1.521.0",
     "start-server-and-test": "^1.12.1",
     "style-loader": "^0.12.4",
-    "terser-webpack-plugin": "^5.1.1",
+    "terser-webpack-plugin": "^3.1.0",
     "url-loader": "^1.1.1",
-    "webpack": "^5.17.0",
-    "webpack-cli": "^4.4.0",
+    "webpack": "^4.46.0",
+    "webpack-cli": "^4.6.0",
     "webpack-dev-server": "^3.11.2"
   },
   "scripts": {
@@ -115,6 +107,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.6",
+    "lethargy": "^1.0.9",
     "lodash": "^4.17.21",
     "react-icons": "^4.2.0",
     "react-spring": "^9.1.0",
