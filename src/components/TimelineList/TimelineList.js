@@ -1,12 +1,13 @@
 import React, { forwardRef } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
-
-import { TimelineInterval } from '../TimelineInterval/TimelineInterval'
+import { useGesture } from 'react-use-gesture'
 
 import { determineScaledWidth } from '../../utils/determineScaledWidth'
 import { generateEndTime } from '../../utils/generateEndTime'
 import { getPositionByTimestamp } from '../../utils/getPositionByTimestamp'
+
+import { TimelineInterval } from '../TimelineInterval/TimelineInterval'
 import { TimelineDataSection } from '../TimelineDataSection/TimelineDataSection'
 
 import './TimelineList.scss'
@@ -16,35 +17,80 @@ import './TimelineList.scss'
  * @param {Object} param0
  * @param {Array} param0.data An array of objects defining the data to display
  * @param {Boolean} param0.draggingTimeline Flag for if the timeline is currently in a dragging state
- * @param {Boolean} param0.draggingTemporal Flag for if the temporal range is currently in a dragging state
- * @param {Boolean} param0.draggingTemporalMarker Flag for if a temporal marker is currently in a dragging state
+ * @param {Boolean} param0.draggingTemporalMarkerStart Flag for if the temporal start marker is currently in a dragging state
+ * @param {Boolean} param0.draggingTemporalMarkerEnd Flag for if the temporal end marker is currently in a dragging state
  * @param {Object} param0.focusedInterval Focused interval set on the timeline
  * @param {Integer} param0.intervalListWidthInPixels Width (in pixels) of the DOM element that holds the timeline intervals
+ * @param {Boolean} param0.preventTemporalSelectionHover Designates whether or not the temporal selection can be hovered
  * @param {Object} param0.temporalRange Temporal range set on the timeline
  * @param {Array} param0.timeIntervals Array of dates representing intervals at the provided zoom level
  * @param {Number} param0.temporalRangeMouseOverPosition Position of the temporal selection mouse over indicator
  * @param {Object} param0.timelinePosition Position of the left side of the timeline DOM element in pixels
  * @param {Object} param0.timelineWrapperRef Ref to the DOM element representing the timeline wrapper
+ * @param {Object} param0.timelineWrapperRef Ref to the DOM element representing the timeline wrapper
  * @param {Integer} param0.zoomLevel Current zoom level of the timeline
+ * @param {Function} param0.onTemporalMarkerMouseDown Callback function for onMouseDown
  * @param {Function} param0.onFocusedClick Callback function for onClick
+ * @param {Function} param0.onTemporalRangeHover Callback function for when the temporal range is hovered
+ * @param {Function} param0.onTemporalMarkerHover Callback function for when a temporal marker is hovered
+ * @param {Boolean} param0.willCancelTemporalSelection Designates if the current action will cancel the temporal selection
+ * @param {Function} param0.onTimelineMouseMove Callback function for onMouseMove
  * @param {Object} timelineListRef Ref to the DOM element representing the timeline list
  */
 export const TimelineList = forwardRef(({
   data,
   bindTimelineGestures,
   draggingTimeline,
-  draggingTemporal,
   draggingTemporalMarker,
   focusedInterval,
   intervalListWidthInPixels,
+  preventTemporalSelectionHover,
   temporalRange,
   temporalRangeMouseOverPosition,
   timeIntervals,
   timelinePosition,
   timelineWrapperRef,
+  willCancelTemporalSelection,
   zoomLevel,
-  onFocusedClick
+  onFocusedClick,
+  onTemporalRangeHover,
+  onTemporalMarkerHover
 }, timelineListRef) => {
+  /**
+   * Sets up handler for the temporal range hover
+   */
+  const handleTemporalRangeHover = ({ hovering }) => {
+    onTemporalRangeHover({ hovering })
+  }
+
+  /**
+   * Sets up handler for the temporal marker hover
+   */
+  const handleTemporalMarkerHover = (marker, { hovering }) => {
+    onTemporalMarkerHover({ hovering, marker })
+  }
+
+  /**
+   * Sets up useGesture handlers for the temporal range
+   */
+  const bindTemporalRangeGestures = useGesture({
+    onHover: handleTemporalRangeHover
+  })
+
+  /**
+   * Sets up useGesture handlers for the temporal start selection handle
+   */
+  const bindTemporalStartGestures = useGesture({
+    onHover: (state) => handleTemporalMarkerHover('start', state)
+  })
+
+  /**
+   * Sets up useGesture handlers for the temporal end selection handle
+   */
+  const bindTemporalEndGestures = useGesture({
+    onHover: (state) => handleTemporalMarkerHover('end', state)
+  })
+
   if (!timelineWrapperRef.current) return null
 
   const focusedRangeStyle = {}
@@ -150,8 +196,10 @@ export const TimelineList = forwardRef(({
     'timeline-list',
     {
       'timeline-list--is-dragging': draggingTimeline,
-      'timeline-list--is-temporal-dragging': draggingTemporal || draggingTemporalMarker,
-      'timeline-list--has-focused-interval': !!focusedIntervalStart
+      'timeline-list--is-temporal-dragging': draggingTemporalMarker,
+      'timeline-list--has-focused-interval': !!focusedIntervalStart,
+      'timeline-list--will-cancel-temporal': willCancelTemporalSelection,
+      'timeline-list--prevent-temporal-selection-hover': preventTemporalSelectionHover
     }
   ])
 
@@ -183,7 +231,6 @@ export const TimelineList = forwardRef(({
       }}
       role="button"
       tabIndex="0"
-      data-test-id="timelineList"
     >
       <section
         className="timeline-list__markers"
@@ -202,32 +249,36 @@ export const TimelineList = forwardRef(({
         {
           start && (
             <button
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...bindTemporalStartGestures()}
               className={temporalStartMarkerStartClassnames}
               style={temporalStartStyle}
               label="Click and drag to edit the start of the selected temporal range"
               aria-label="Click and drag to edit the start of the selected temporal range"
               type="button"
               data-marker-type="start"
-              data-test-id="startMarker"
             />
           )
         }
         {
           end && (
             <button
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...bindTemporalEndGestures()}
               className={temporalStartMarkerEndClassnames}
               style={temporalEndStyle}
               label="Click and drag to edit the end of the selected temporal range"
               aria-label="Click and drag to edit the end of the selected temporal range"
               type="button"
               data-marker-type="end"
-              data-test-id="endMarker"
             />
           )
         }
         {
           (start || end) && (
             <div
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...bindTemporalRangeGestures()}
               className="timeline-list__temporal-range"
               style={temporalRangeStyle}
             />
@@ -310,7 +361,6 @@ export const TimelineList = forwardRef(({
 })
 
 TimelineList.defaultProps = {
-  draggingTemporalMarker: null,
   temporalRangeMouseOverPosition: null,
   intervalListWidthInPixels: 0
 }
@@ -330,14 +380,16 @@ TimelineList.propTypes = {
   ).isRequired,
   bindTimelineGestures: PropTypes.func.isRequired,
   draggingTimeline: PropTypes.bool.isRequired,
-  draggingTemporal: PropTypes.bool.isRequired,
-  draggingTemporalMarker: PropTypes.string,
+  draggingTemporalMarker: PropTypes.string.isRequired,
   focusedInterval: PropTypes.shape({
     start: PropTypes.number,
     end: PropTypes.number
   }).isRequired,
   intervalListWidthInPixels: PropTypes.number,
   onFocusedClick: PropTypes.func.isRequired,
+  onTemporalRangeHover: PropTypes.func.isRequired,
+  onTemporalMarkerHover: PropTypes.func.isRequired,
+  preventTemporalSelectionHover: PropTypes.bool.isRequired,
   temporalRangeMouseOverPosition: PropTypes.number,
   temporalRange: PropTypes.shape({
     end: PropTypes.number,
@@ -352,5 +404,6 @@ TimelineList.propTypes = {
       getBoundingClientRect: PropTypes.func
     })
   }).isRequired,
+  willCancelTemporalSelection: PropTypes.bool.isRequired,
   zoomLevel: PropTypes.number.isRequired
 }
