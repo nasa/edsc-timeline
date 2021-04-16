@@ -146,7 +146,7 @@ export const Playground = () => {
           EDSC Timeline React Plugin Demo
         </h1>
 
-        <div className="timeline-example timeline-example--one timeline-example--fixed">
+        <div className="timeline-example timeline-example--one">
           <EDSCTimeline
             data={data}
             center={center}
