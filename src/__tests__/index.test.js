@@ -46,6 +46,7 @@ beforeEach(() => {
     windowEventMap[event] = cb
   })
   window.removeEventListener = jest.fn()
+  document.elementsFromPoint = jest.fn()
 
   jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => cb())
 })

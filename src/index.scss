@@ -8,6 +8,27 @@
   user-select: none;
   position: relative;
 
+  &__tooltips {
+    position: absolute;
+    right: 0;
+    left: 0;
+    bottom: 100%;
+    background-color: red;
+  }
+
+  &__tooltip {
+    position: absolute;
+    bottom: -0.125rem;
+    padding: 0.025rem 0.5rem;
+    white-space: nowrap;
+    color: $color__white;
+    font-size: 0.775rem;
+    background-color: rgba($color__black, 0.7);
+    border-radius: 0.25rem;
+    transform: translateX(-50%);
+    text-align: center;
+  }
+
   &__outer-wrapper {
     flex-grow: 1;
     position: absolute;

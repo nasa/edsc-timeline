@@ -18,6 +18,10 @@
     cursor: grabbing !important;
   }
 
+  &--will-cancel-temporal {
+    cursor: default !important;
+  }
+
   &__intervals {
     position: absolute;
     top: 0;
@@ -70,7 +74,7 @@
     outline: none;
     border: 0;
     box-shadow: 0 0 3px 3px rgba($color__black--050, 0.1);
-    transition: background-color 0.2s ease-in-out;
+    transition: background-color opacity 0.2s ease-in-out;
 
     &:after {
       content: '';
@@ -83,7 +87,7 @@
       top: -5px;
       background-color: $color__red-orange;
       transform: translateX(0.5px) rotate(45deg);
-      transition: background-color 0.2s ease-in-out;
+      transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
     }
 
     &:hover {
@@ -110,10 +114,14 @@
         }
       }
     }
+
+    .timeline-list--will-cancel-temporal & {
+      opacity: 0.5;
+    }
   }
 
   &__temporal-range {
-    pointer-events: none;
+    pointer-events: all;
     display: block;
     height: 100%;
     background-color: rgba($color__red-orange, 0.25);
@@ -124,7 +132,15 @@
     outline: none;
     border: 0;
     box-shadow: 0 0 3px 3px rgba($color__black--050, 0.1);
-    transition: background-color 0.2s ease-in-out;
+    transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+
+    .timeline-list--prevent-temporal-selection-hover & {
+      pointer-events: none;
+    }
+
+    .timeline-list--will-cancel-temporal & {
+      opacity: 0.8;
+    }
   }
 
   &__focused-range {
