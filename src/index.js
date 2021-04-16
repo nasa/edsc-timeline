@@ -1060,13 +1060,16 @@ export const EDSCTimeline = ({
       className="timeline"
       ref={timelineWrapperRef}
     >
-      <div className="timeline__tooltips">
+      <div
+        className="timeline__tooltips"
+      >
         <animated.div
           className="timeline__tooltip"
           ref={temporalRangeTooltipRef}
           style={{
             ...tooltipSpringStyle
           }}
+          data-test-id="tooltip"
         >
           {temporalTooltipText}
         </animated.div>

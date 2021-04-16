@@ -231,6 +231,7 @@ export const TimelineList = forwardRef(({
       }}
       role="button"
       tabIndex="0"
+      data-test-id="timelineList"
     >
       <section
         className="timeline-list__markers"
@@ -257,6 +258,7 @@ export const TimelineList = forwardRef(({
               aria-label="Click and drag to edit the start of the selected temporal range"
               type="button"
               data-marker-type="start"
+              data-test-id="startMarker"
             />
           )
         }
@@ -271,6 +273,7 @@ export const TimelineList = forwardRef(({
               aria-label="Click and drag to edit the end of the selected temporal range"
               type="button"
               data-marker-type="end"
+              data-test-id="endMarker"
             />
           )
         }
