@@ -529,7 +529,6 @@ export const EDSCTimeline = ({
     const {
       xy: [mouseX, mouseY]
     } = state
-
     // Get a list of all elements currently under the cursor
     const elements = document.elementsFromPoint(mouseX, mouseY) || []
 
