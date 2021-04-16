@@ -6,12 +6,15 @@ import React, {
 } from 'react'
 import PropTypes from 'prop-types'
 import { useGesture } from 'react-use-gesture'
+import { animated, useSpring } from 'react-spring'
 
 import { TimelineList } from './components/TimelineList/TimelineList'
 import { TimelinePrimarySection } from './components/TimelinePrimarySection/TimelinePrimarySection'
 import { TimelineTools } from './components/TimelineTools/TimelineTools'
 
 import { calculateTimeIntervals } from './utils/calculateTimeIntervals'
+import { determineTemporalLabel } from './utils/determineTemporalLabel'
+import { determineTooltipPosition } from './utils/determineTooltipPosition'
 import { determineScaledWidth } from './utils/determineScaledWidth'
 import { generateEndTime } from './utils/generateEndTime'
 import { getCenterTimestamp } from './utils/getCenterTimestamp'
@@ -61,8 +64,11 @@ export const EDSCTimeline = ({
   // Ref for the timeline to access the wrapper DOM element
   const timelineWrapperRef = useRef(null)
 
-  // Ref for the timeline to access the wrapper DOM element
+  // Ref for the timeline to access the timeline tools DOM element
   const timelineToolsRef = useRef(null)
+
+  // Ref for the timeline to access the temporal range DOM element
+  const temporalRangeTooltipRef = useRef(null)
 
   // Store the zoom level and allow for changing props to modify the state
   const [zoomLevel, setZoomLevel] = useState(zoom)
@@ -78,8 +84,7 @@ export const EDSCTimeline = ({
 
   // Flag for if the timeline is currently in a dragging state
   const [draggingTimeline, setDraggingTimeline] = useState(false)
-  const [draggingTemporal, setDraggingTemporal] = useState(false)
-  const [draggingTemporalMarker, setDraggingTemporalMarker] = useState(null)
+  const [draggingTemporalMarker, setDraggingTemporalMarker] = useState('')
 
   // The current position of the timeline
   const [timelinePosition, setTimelinePosition] = useState({ top: 0, left: 0 })
@@ -92,6 +97,18 @@ export const EDSCTimeline = ({
 
   // The focused interval
   const [focusedInterval, setFocusedInterval] = useState(propsFocusedInterval)
+
+  // Tracks when the temporal range is hovered
+  const [hoveringTemporalRange, setHoveringTemporalRange] = useState(false)
+
+  // Tracks when a temporal marker is hovered
+  const [hoveringTemporalMarker, setHoveringTemporalMarker] = useState(false)
+
+  // Tracks when an action will cancel the current temporal selection
+  const [willCancelTemporalSelection, setWillCancelTemporalSelection] = useState(false)
+
+  // Tracks when hovering the temporal selection should be prevented
+  const [preventTemporalSelectionHover, setPreventTemporalSelectionHover] = useState(false)
 
   // The visible start and end time for the current timeline position
   const [visibleTemporalRange, setVisibleTemporalRange] = useState({
@@ -330,12 +347,14 @@ export const EDSCTimeline = ({
       initial: [initialMouseX],
       movement: [movementX]
     } = state
-    const amountDragged = movementX
+
+    // If the movementX is positive, we can assume the user has moved the end marker
+    const markerType = movementX > 0 ? 'end' : 'start'
 
     const { x: listX } = timelineListRef.current.getBoundingClientRect()
     const startPosition = initialMouseX - listX
 
-    const endPosition = startPosition + amountDragged
+    const endPosition = startPosition + movementX
 
     const start = getTimestampByPosition({
       intervalListWidthInPixels,
@@ -361,11 +380,11 @@ export const EDSCTimeline = ({
     }
 
     setTemporalRange(range)
-
-    setDraggingTemporal(active)
+    setDraggingTemporalMarker(markerType)
 
     if (!active) {
       if (onTemporalSet) onTemporalSet(range)
+      setDraggingTemporalMarker('')
     }
   }
 
@@ -439,7 +458,7 @@ export const EDSCTimeline = ({
 
     if (!active) {
       setHasReversedTemporalMarkers(false)
-      setDraggingTemporalMarker(null)
+      setDraggingTemporalMarker('')
       if (onTemporalSet) onTemporalSet(range)
     }
   }
@@ -511,35 +530,57 @@ export const EDSCTimeline = ({
       xy: [mouseX, mouseY]
     } = state
 
-    const {
-      end,
-      start
-    } = temporalRange
+    // Get a list of all elements currently under the cursor
+    const elements = document.elementsFromPoint(mouseX, mouseY) || []
+
+    // Check to see if the user is hovering an interval bottom div. We cant use hover/mouseover
+    // due to the fact that in its default state, the temporal selection div captures the hover/mouseover.
+    const intervalBottomHovered = !!elements.find((element) => element.classList.contains('timeline-interval__interval-bottom'))
 
     const { top } = timelineWrapperRef.current.getBoundingClientRect()
 
     const mouseOverHeight = mouseY - top
 
-    // Sets the temporalRangeMouseOverPosition if at the correct height and no temporalRange exists
-    if (mouseOverHeight <= TEMPORAL_SELECTION_HEIGHT && !start && !end) {
+    // Sets the temporalRangeMouseOverPosition when following conditions are met
+    //  - users cursor is at the correct height
+    //  - user is not dragging the timeline
+    //  - user is not dragging a temporal marker
+    //  - user is not hovering a temporal marker
+    if (
+      mouseOverHeight <= TEMPORAL_SELECTION_HEIGHT
+      && !draggingTimeline
+      && !draggingTemporalMarker
+      && !hoveringTemporalMarker
+    ) {
       const { x: listX } = timelineListRef.current.getBoundingClientRect()
       const startPosition = mouseX - listX
 
       setTemporalRangeMouseOverPosition(startPosition)
+      setWillCancelTemporalSelection(true)
     } else {
       setTemporalRangeMouseOverPosition(null)
+      setWillCancelTemporalSelection(false)
+    }
+
+    // If the users cursor is over an interval bottom div, we prevent pointer events on
+    // the temporal selection element via a conditional classname.
+    if (intervalBottomHovered) {
+      setPreventTemporalSelectionHover(true)
+    } else {
+      setPreventTemporalSelectionHover(false)
     }
   }
 
   /**
    * Handles the hover gesture of useGesture
-   * @param {Object} state useGesture state
+   * @param {Object} param0.hovering useGesture hovering state
    */
-  const handleHover = (state) => {
-    const { hovering } = state
-
+  const handleHover = ({ hovering }) => {
     // If no longer hovering over the timeline, remove the temporalRangeMouseOverPosition
-    if (!hovering) setTemporalRangeMouseOverPosition(null)
+    if (!hovering) {
+      setWillCancelTemporalSelection(false)
+      setTemporalRangeMouseOverPosition(null)
+    }
   }
 
   /**
@@ -778,6 +819,27 @@ export const EDSCTimeline = ({
   }
 
   /**
+   * Handles the temporal range hover for useGesture
+   * @param {Object} param0.hovering useGesture hovering state
+   */
+  const onTemporalRangeHover = ({ hovering }) => {
+    setHoveringTemporalRange(hovering)
+  }
+
+  /**
+   * Handles the temporal range hover for useGesture
+   * @param {Object} param0.marker The marker being hovered
+   * @param {Object} param1.hovering useGesture hovering state
+   */
+  const onTemporalMarkerHover = ({ marker, hovering }) => {
+    if (hovering) {
+      setHoveringTemporalMarker(marker)
+    } else {
+      setHoveringTemporalMarker(false)
+    }
+  }
+
+  /**
    * Key down event handler to handle arrow keys for the focusedInterval
    */
   const onWindowKeydown = (e) => {
@@ -851,11 +913,164 @@ export const EDSCTimeline = ({
     trimmedData = data.slice(0, MAX_DATA_ROWS)
   }
 
+  const { end: endTemporal, start: startTemporal } = temporalRange
+
+  const [timelineWrapperWidth, setTimelineWrapperWidth] = useState(null)
+  const [temporalRangeTooltipWidth, setTemporalRangeTooltipWidth] = useState(null)
+  const [temporalTooltipStyle, setTemporalTooltipStyle] = useState({ left: 'auto', right: 'auto' })
+  const [temporalTooltipText, setTemporalTooltipText] = useState(null)
+
+  // Set the tooltip text based on the current state
+  useEffect(() => {
+    let text = ''
+    if (startTemporal && !endTemporal) {
+      text = `${determineTemporalLabel(startTemporal, 1)} ongoing`
+    }
+
+    if (endTemporal && !startTemporal) {
+      text = `Up to ${determineTemporalLabel(endTemporal, 1)}`
+    }
+
+    if (startTemporal && endTemporal && hoveringTemporalRange) {
+      text = `${determineTemporalLabel(startTemporal, 1)} to ${determineTemporalLabel(endTemporal, 1)}`
+    }
+
+    if (hoveringTemporalMarker === 'start' || draggingTemporalMarker === 'start') {
+      text = determineTemporalLabel(startTemporal, 1)
+    }
+
+    if (hoveringTemporalMarker === 'end' || draggingTemporalMarker === 'end') {
+      text = determineTemporalLabel(endTemporal, 1)
+    }
+
+    setTemporalTooltipText(text)
+  }, [
+    hoveringTemporalRange,
+    hoveringTemporalMarker,
+    draggingTemporalMarker,
+    startTemporal,
+    endTemporal
+  ])
+
+  // Track the width of the timeline wrapper
+  useEffect(() => {
+    if (timelineWrapperRef.current) {
+      setTimelineWrapperWidth(timelineWrapperRef.current.getBoundingClientRect().width)
+    }
+  }, [timelineWrapperRef.current])
+
+  // Track the width of the timeline tooltip
+  useEffect(() => {
+    if (temporalRangeTooltipRef.current) {
+      setTemporalRangeTooltipWidth(temporalRangeTooltipRef.current.getBoundingClientRect().width)
+    }
+  }, [temporalRangeTooltipRef.current, temporalTooltipText, hoveringTemporalRange])
+
+  // Set the position of the tooltip
+  useEffect(() => {
+    if (startTemporal && (draggingTemporalMarker === 'start' || hoveringTemporalMarker === 'start')) {
+      // Set the tooltip position to the start
+      setTemporalTooltipStyle(
+        determineTooltipPosition({
+          timestamp: startTemporal,
+          timeIntervals,
+          timelinePosition,
+          tooltipWidth: temporalRangeTooltipWidth,
+          zoomLevel,
+          wrapperWidth: timelineWrapperWidth
+        })
+      )
+    }
+
+    if (endTemporal && (draggingTemporalMarker === 'end' || hoveringTemporalMarker === 'end')) {
+      // Set the tooltip position to the end
+      setTemporalTooltipStyle(
+        determineTooltipPosition({
+          timestamp: endTemporal,
+          timeIntervals,
+          timelinePosition,
+          tooltipWidth: temporalRangeTooltipWidth,
+          zoomLevel,
+          wrapperWidth: timelineWrapperWidth
+        })
+      )
+    }
+
+    if ((startTemporal || endTemporal) && (hoveringTemporalRange && !draggingTemporalMarker)) {
+      // If the start time is undefined or outside the current visible area, use the visible start time
+      const start = Math.max(
+        visibleTemporalRange.start,
+        startTemporal || timeIntervals[0]
+      )
+
+      // If the end time is undefined or outside the current visible area, use the visible end time
+      const end = Math.min(
+        visibleTemporalRange.end,
+        endTemporal || timeIntervals[timeIntervals.length - 1]
+      )
+
+      // Find the middle temporal value of the range
+      const middleTemporal = start + ((end - start) / 2)
+
+      // Set the tooltip position to the middle value
+      setTemporalTooltipStyle(
+        determineTooltipPosition({
+          timestamp: middleTemporal,
+          timeIntervals,
+          timelinePosition,
+          tooltipWidth: temporalRangeTooltipWidth,
+          zoomLevel,
+          wrapperWidth: timelineWrapperWidth
+        })
+      )
+    }
+  }, [hoveringTemporalRange, hoveringTemporalMarker, startTemporal, endTemporal, timelinePosition])
+
+  // Show the tooltip in the following cases
+  //  - when the user is dragging a temporal marker
+  //  - when the user is hovering a temporal marker
+  //  - when the user is hovering the temporal range
+  //  - when the temporal selection will not be canceled
+  const temporalTooltipVisible = (
+    ((draggingTemporalMarker === 'start' || draggingTemporalMarker === 'end')
+    || (hoveringTemporalMarker === 'start' || hoveringTemporalMarker === 'end')
+    || hoveringTemporalRange)
+  ) && !willCancelTemporalSelection
+
+  const tooltipSpringStyle = useSpring(
+    {
+      config: (property) => {
+        // Set the opacity to fade out
+        if (property === 'opacity') return { duration: 100 }
+        return {}
+      },
+      // Prevent spring animation when dragging a marker or the timeline
+      immediate: () => !!draggingTemporalMarker || draggingTimeline,
+      // Animate the opacity when the tooltip is visible and not dragging the timeline
+      opacity: temporalTooltipVisible && !draggingTimeline ? 1 : 0,
+      // Animate the bottom when the tooltip is visible
+      bottom: temporalTooltipVisible ? '0.125rem' : '-0.125rem',
+      // Animate the tooltip position
+      ...temporalTooltipStyle
+    }
+  )
+
   return (
     <div
       className="timeline"
       ref={timelineWrapperRef}
     >
+      <div className="timeline__tooltips">
+        <animated.div
+          className="timeline__tooltip"
+          ref={temporalRangeTooltipRef}
+          style={{
+            ...tooltipSpringStyle
+          }}
+        >
+          {temporalTooltipText}
+        </animated.div>
+      </div>
       <TimelineTools
         ref={timelineToolsRef}
         focusedInterval={focusedInterval}
@@ -881,7 +1096,6 @@ export const EDSCTimeline = ({
                 bindTimelineGestures={bindTimelineGestures}
                 data={trimmedData}
                 draggingTimeline={draggingTimeline}
-                draggingTemporal={draggingTemporal}
                 draggingTemporalMarker={draggingTemporalMarker}
                 focusedInterval={focusedInterval}
                 intervalListWidthInPixels={intervalListWidthInPixels}
@@ -892,6 +1106,10 @@ export const EDSCTimeline = ({
                 timelineWrapperRef={timelineWrapperRef}
                 zoomLevel={zoomLevel}
                 onFocusedClick={onFocusedClick}
+                onTemporalMarkerHover={onTemporalMarkerHover}
+                onTemporalRangeHover={onTemporalRangeHover}
+                willCancelTemporalSelection={willCancelTemporalSelection}
+                preventTemporalSelectionHover={preventTemporalSelectionHover}
               />
             )
           }

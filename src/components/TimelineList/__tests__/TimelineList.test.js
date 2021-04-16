@@ -14,9 +14,10 @@ function setup(overrideProps) {
     data: [],
     draggingTimeline: false,
     draggingTemporal: false,
-    draggingTemporalMarker: null,
+    draggingTemporalMarker: '',
     focusedInterval: {},
     intervalListWidthInPixels: 3,
+    preventTemporalSelectionHover: false,
     temporalRange: {},
     temporalRangeMouseOverPosition: null,
     timeIntervals: [
@@ -33,8 +34,11 @@ function setup(overrideProps) {
         getBoundingClientRect: jest.fn(() => ({ width: 1240 }))
       }
     },
+    willCancelTemporalSelection: false,
     zoomLevel: 3,
     onFocusedClick: jest.fn(),
+    onTemporalRangeHover: jest.fn(),
+    onTemporalMarkerHover: jest.fn(),
     ...overrideProps
   }
 
