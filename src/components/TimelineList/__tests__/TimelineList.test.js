@@ -1,6 +1,7 @@
 import React from 'react'
 import Enzyme, { shallow } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
+import { act } from 'react-dom/test-utils'
 
 import { TimelineList } from '../TimelineList'
 import { TimelineDataSection } from '../../TimelineDataSection/TimelineDataSection'
@@ -267,6 +268,103 @@ describe('TimelineList component', () => {
         expect(startMarker.props().className).not.toContain('timeline-list__temporal-marker--is-dragging')
         expect(endMarker.props().className).toContain('timeline-list__temporal-marker--is-dragging')
       })
+    })
+
+    test('start marker triggers the hover handler', () => {
+      const { enzymeWrapper, props } = setup({
+        temporalRange: {
+          start: new Date('2021-03').getTime(),
+          end: new Date('2021-04').getTime()
+        }
+      })
+
+      const startMarker = enzymeWrapper.find('.timeline-list__temporal-start')
+
+      act(() => {
+        startMarker.simulate('pointerEnter', { pointerId: 1 })
+      })
+
+      enzymeWrapper.update()
+
+      expect(props.onTemporalMarkerHover).toHaveBeenCalledTimes(1)
+      expect(props.onTemporalMarkerHover).toHaveBeenCalledWith(
+        {
+          hovering: true,
+          marker: 'start'
+        }
+      )
+    })
+
+    test('end marker triggers the hover handler', () => {
+      const { enzymeWrapper, props } = setup({
+        temporalRange: {
+          start: new Date('2021-03').getTime(),
+          end: new Date('2021-04').getTime()
+        }
+      })
+
+      const endMarker = enzymeWrapper.find('.timeline-list__temporal-end')
+
+      act(() => {
+        endMarker.simulate('pointerEnter', { pointerId: 1 })
+      })
+
+      enzymeWrapper.update()
+
+      expect(props.onTemporalMarkerHover).toHaveBeenCalledTimes(1)
+      expect(props.onTemporalMarkerHover).toHaveBeenCalledWith(
+        {
+          hovering: true,
+          marker: 'end'
+        }
+      )
+    })
+
+    test('end marker triggers the hover handler', () => {
+      const { enzymeWrapper, props } = setup({
+        temporalRange: {
+          start: new Date('2021-03').getTime(),
+          end: new Date('2021-04').getTime()
+        }
+      })
+
+      const endMarker = enzymeWrapper.find('.timeline-list__temporal-end')
+
+      act(() => {
+        endMarker.simulate('pointerEnter', { pointerId: 1 })
+      })
+
+      enzymeWrapper.update()
+
+      expect(props.onTemporalMarkerHover).toHaveBeenCalledTimes(1)
+      expect(props.onTemporalMarkerHover).toHaveBeenCalledWith(
+        {
+          hovering: true,
+          marker: 'end'
+        }
+      )
+    })
+  })
+
+  describe('Temporal range', () => {
+    test('triggers the hover handler', () => {
+      const { enzymeWrapper, props } = setup({
+        temporalRange: {
+          start: new Date('2021-03').getTime(),
+          end: new Date('2021-04').getTime()
+        }
+      })
+
+      const temporalRange = enzymeWrapper.find('.timeline-list__temporal-range')
+
+      act(() => {
+        temporalRange.simulate('pointerEnter', { pointerId: 1 })
+      })
+
+      enzymeWrapper.update()
+
+      expect(props.onTemporalRangeHover).toHaveBeenCalledTimes(1)
+      expect(props.onTemporalRangeHover).toHaveBeenCalledWith({ hovering: true })
     })
   })
 
