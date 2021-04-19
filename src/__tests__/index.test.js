@@ -758,11 +758,6 @@ describe('EDSCTimeline component', () => {
       })
 
       expect(enzymeWrapper.find('.timeline__tooltip').at(0).childAt(0).text()).toEqual('19 Jul 2021 04:48:00')
-
-      // expect(enzymeWrapper.find(TimelineList).props().temporalRange).toEqual({
-      //   end: 1630681200000,
-      //   start: 1626670080000
-      // })
     })
 
     test('hovering the start marker displays the tooltip', () => {
