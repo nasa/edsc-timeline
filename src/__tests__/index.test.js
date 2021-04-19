@@ -1,7 +1,7 @@
 import React from 'react'
 import Enzyme, { mount } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
-import { act, isCompositeComponent } from 'react-dom/test-utils'
+import { act } from 'react-dom/test-utils'
 
 import EDSCTimeline from '../index'
 import { TimelinePrimarySection } from '../components/TimelinePrimarySection/TimelinePrimarySection'
@@ -794,11 +794,6 @@ describe('EDSCTimeline component', () => {
       })
 
       expect(enzymeWrapper.find('.timeline__tooltip').at(0).childAt(0).text()).toEqual('03 Sep 2021 15:00:00')
-
-      // expect(enzymeWrapper.find(TimelineList).props().temporalRange).toEqual({
-      //   end: 1630681200000,
-      //   start: 1626670080000
-      // })
     })
 
     test('mousing out hides the tooltip', () => {
@@ -834,11 +829,6 @@ describe('EDSCTimeline component', () => {
       })
 
       expect(enzymeWrapper.find('.timeline__tooltip').at(0).childAt(0).text()).toEqual('')
-
-      // expect(enzymeWrapper.find(TimelineList).props().temporalRange).toEqual({
-      //   end: 1630681200000,
-      //   start: 1626670080000
-      // })
     })
   })
 

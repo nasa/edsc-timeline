@@ -1031,10 +1031,14 @@ export const EDSCTimeline = ({
   //  - when the user is hovering the temporal range
   //  - when the temporal selection will not be canceled
   const temporalTooltipVisible = (
-    ((draggingTemporalMarker === 'start' || draggingTemporalMarker === 'end')
-    || (hoveringTemporalMarker === 'start' || hoveringTemporalMarker === 'end')
-    || hoveringTemporalRange)
-  ) && !willCancelTemporalSelection
+    (
+      (draggingTemporalMarker === 'start' || draggingTemporalMarker === 'end')
+      || (hoveringTemporalMarker === 'start' || hoveringTemporalMarker === 'end')
+      || hoveringTemporalRange
+    )
+  )
+  && temporalTooltipText
+  && !willCancelTemporalSelection
 
   const tooltipSpringStyle = useSpring(
     {
