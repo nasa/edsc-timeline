@@ -13,7 +13,7 @@ const scrollWheel = (direction) => {
 
   // Wait for an event to finish before starting the a new event
   // eslint-disable-next-line cypress/no-unnecessary-waiting
-  cy.wait(75)
+  cy.wait(350)
 }
 
 describe('Timeline zooming', () => {

@@ -485,21 +485,32 @@ export const EDSCTimeline = ({
     })
   }
 
+  // Flag to allow for a cooldown period when wheel zooming
+  const [isWheelZooming, setIsWheelZooming] = useState(false)
+  useEffect(() => {
+    // If isWheelZooming is true, turn it back to false after a short period
+    if (isWheelZooming) {
+      setTimeout(() => {
+        setIsWheelZooming(false)
+      }, 300)
+    }
+  }, [isWheelZooming])
+
   /**
    * Handles wheel zooming
    * @param {Object} state useGesture state
    */
   const handleWheelZoom = (state) => {
-    const {
-      first,
-      event
-    } = state
+    const { event } = state
+    event.persist()
 
-    // Only continue if this is the first event of the wheel gesture
-    if (!first) return
+    // If the timeline from the last zoom hasn't ended yet, don't continue zooming
+    if (isWheelZooming) return
 
     const wheelDirection = lethargy.check(event)
     if (!wheelDirection) return
+
+    setIsWheelZooming(true)
 
     const newZoomLevel = zoomLevel + wheelDirection
 
