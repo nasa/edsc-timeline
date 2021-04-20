@@ -8,7 +8,7 @@ describe('Temporal tooltips', () => {
   describe('when there is a temporal range', () => {
     beforeEach(() => {
       cy.visit('/temporalRange')
-      cy.wait(100)
+      cy.wait(200)
     })
 
     it('displays a tooltip over the temporal range', () => {
@@ -42,7 +42,7 @@ describe('Temporal tooltips', () => {
   describe('when there is only a temporal start marker', () => {
     beforeEach(() => {
       cy.visit('/temporalStart')
-      cy.wait(100)
+      cy.wait(200)
     })
 
     it('displays a tooltip over the temporal range', () => {
@@ -67,7 +67,7 @@ describe('Temporal tooltips', () => {
   describe('when there is only a temporal end marker', () => {
     beforeEach(() => {
       cy.visit('/temporalEnd')
-      cy.wait(100)
+      cy.wait(200)
     })
 
     it('displays a tooltip over the temporal range', () => {
