@@ -501,7 +501,6 @@ export const EDSCTimeline = ({
     const wheelDirection = lethargy.check(event)
     if (!wheelDirection) return
 
-    // wheelDirection is inversed from what we want, so subtract from the current zoomLevel
     const newZoomLevel = zoomLevel + wheelDirection
 
     if (newZoomLevel >= minZoom && newZoomLevel <= maxZoom) {
