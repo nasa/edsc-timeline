@@ -14,12 +14,19 @@ export const TemporalStart = () => {
   const [focusedInterval, setFocusedInterval] = useState({})
 
   const [displayedCenter, setDisplayedCenter] = useState()
+  const [timelineRange, setTimelineRange] = useState({})
   const [displayedInterval, setDisplayedInterval] = useState()
 
   const handleTimelineMove = (values) => {
-    const { center, interval } = values
+    const {
+      center,
+      end,
+      interval,
+      start
+    } = values
 
     setDisplayedCenter(center)
+    setTimelineRange({ end, start })
     setDisplayedInterval(interval)
   }
 
@@ -66,6 +73,7 @@ export const TemporalStart = () => {
             maxZoom={5}
             temporalRange={temporal}
             onTimelineMove={handleTimelineMove}
+            onTimelineMoveEnd={handleTimelineMove}
             onTemporalSet={handleTemporalSet}
             onFocusedSet={handleFocusedSet}
           />
@@ -74,6 +82,7 @@ export const TemporalStart = () => {
         <Output
           displayedCenter={displayedCenter}
           interval={displayedInterval}
+          timelineRange={timelineRange}
           temporalStart={temporalStart}
           temporalEnd={temporalEnd}
           focusedStart={focusedStart}

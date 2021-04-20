@@ -6,12 +6,9 @@ import { Output } from '../Output/Output'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '../../styles.scss'
 
-export const TemporalRange = () => {
+export const Callbacks = () => {
   const [center] = useState(new Date('2021').getTime())
-  const [temporal, setTemporal] = useState({
-    start: new Date('2020-12-15T13:24:20.695Z').getTime(),
-    end: new Date('2021-01-16T10:55:09.343Z').getTime()
-  })
+  const [temporal, setTemporal] = useState({})
   const [focusedInterval, setFocusedInterval] = useState({})
 
   const [displayedCenter, setDisplayedCenter] = useState()
@@ -57,6 +54,15 @@ export const TemporalRange = () => {
     }
   ]
 
+  const handleArrowKeyPan = () => console.log('handleArrowKeyPan called')
+  const handleButtonPan = () => console.log('handleButtonPan called')
+  const handleButtonZoom = () => console.log('handleButtonZoom called')
+  const handleCreatedTemporal = () => console.log('handleCreatedTemporal called')
+  const handleDragPan = () => console.log('handleDragPan called')
+  const handleFocusedClick = () => console.log('handleFocusedClick called')
+  const handleScrollPan = () => console.log('handleScrollPan called')
+  const handleScrollZoom = () => console.log('handleScrollZoom called')
+
   return (
     <>
       <section className="container">
@@ -73,10 +79,17 @@ export const TemporalRange = () => {
             minZoom={1}
             maxZoom={5}
             temporalRange={temporal}
-            onTimelineMove={handleTimelineMove}
-            onTimelineMoveEnd={handleTimelineMove}
-            onTemporalSet={handleTemporalSet}
+            onArrowKeyPan={handleArrowKeyPan}
+            onButtonPan={handleButtonPan}
+            onButtonZoom={handleButtonZoom}
+            onCreatedTemporal={handleCreatedTemporal}
+            onDragPan={handleDragPan}
+            onFocusedClick={handleFocusedClick}
             onFocusedSet={handleFocusedSet}
+            onScrollPan={handleScrollPan}
+            onScrollZoom={handleScrollZoom}
+            onTemporalSet={handleTemporalSet}
+            onTimelineMoveEnd={handleTimelineMove}
           />
         </div>
 
