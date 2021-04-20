@@ -43,7 +43,9 @@ module.exports = {
   },
   externals: {
     react: 'commonjs react',
-    'react-dom': 'commonjs react-dom'
+    'react-dom': 'commonjs react-dom',
+    lodash: 'commonjs lodash',
+    classnames: 'commonjs classnames'
   },
   optimization: {
     minimize: true,

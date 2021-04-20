@@ -6,6 +6,7 @@ import {
   useRouteMatch
 } from 'react-router-dom'
 
+import { Callbacks } from './Callbacks'
 import { EmptyTimeline } from './EmptyTimeline'
 import { TemporalRange } from './TemporalRange'
 import { TemporalStart } from './TemporalStart'
@@ -39,6 +40,7 @@ export const ExamplesIndex = () => {
         <Route path={`${path}/temporalRange`} component={TemporalRange} />
         <Route path={`${path}/temporalStart`} component={TemporalStart} />
         <Route path={`${path}/temporalEnd`} component={TemporalEnd} />
+        <Route path={`${path}/callbacks`} component={Callbacks} />
       </Switch>
     </div>
   )
