@@ -5,6 +5,10 @@ import {
   formatYear
 } from './formatters'
 
+/**
+ * Determine the label, down to the second, for a given timestamp
+ * @param {Integer} timestamp Timestamp to label
+ */
 export const determineTemporalLabel = (timestamp) => {
   const date = new Date(timestamp)
 
