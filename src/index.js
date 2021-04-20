@@ -6,6 +6,7 @@ import React, {
 import PropTypes from 'prop-types'
 import { useGesture } from 'react-use-gesture'
 import { animated, useSpring } from 'react-spring'
+import { isEmpty } from 'lodash'
 import { Lethargy } from 'lethargy'
 
 import { TimelineList } from './components/TimelineList/TimelineList'
@@ -56,9 +57,18 @@ export const EDSCTimeline = ({
   maxZoom,
   temporalRange: propsTemporalRange,
   zoom,
+  onArrowKeyPan,
+  onButtonPan,
+  onButtonZoom,
+  onCreatedTemporal,
+  onDragPan,
+  onFocusedClick,
   onFocusedSet,
+  onScrollPan,
+  onScrollZoom,
+  onTemporalSet,
   onTimelineMove,
-  onTemporalSet
+  onTimelineMoveEnd
 }) => {
   // Ref for the timeline to access the list DOM element
   const timelineListRef = useRef(null)
@@ -284,16 +294,18 @@ export const EDSCTimeline = ({
    * Clear the current temporalRange value
    */
   const clearTemporalRange = () => {
-    setTemporalRange({})
+    if (!isEmpty(temporalRange)) {
+      setTemporalRange({})
 
-    if (onTemporalSet) onTemporalSet({})
+      if (onTemporalSet) onTemporalSet({})
+    }
   }
 
   /**
    * Moves the timeline to the given position
    * @param {Object} position Position to move the timeline to
    */
-  const handleMoveTimeline = (position) => {
+  const handleMoveTimeline = (position, active) => {
     if (onTimelineMove) {
       const centeredTimestamp = getCenterTimestamp({
         intervalListWidthInPixels,
@@ -303,7 +315,29 @@ export const EDSCTimeline = ({
         zoomLevel
       })
 
-      onTimelineMove({ center: centeredTimestamp, interval: zoomLevel })
+      onTimelineMove({
+        center: centeredTimestamp,
+        start: timeIntervals[0],
+        end: timeIntervals[timeIntervals.length - 1],
+        interval: zoomLevel
+      })
+    }
+
+    if (!active && onTimelineMoveEnd) {
+      const centeredTimestamp = getCenterTimestamp({
+        intervalListWidthInPixels,
+        timeIntervals,
+        timelinePosition: position || timelinePosition,
+        timelineWrapperRef,
+        zoomLevel
+      })
+
+      onTimelineMoveEnd({
+        center: centeredTimestamp,
+        start: timeIntervals[0],
+        end: timeIntervals[timeIntervals.length - 1],
+        interval: zoomLevel
+      })
     }
   }
 
@@ -337,7 +371,23 @@ export const EDSCTimeline = ({
       left
     })
 
-    if (onTimelineMove) onTimelineMove({ center: timestamp, interval: zoom })
+    if (onTimelineMove) {
+      onTimelineMove({
+        center: timestamp,
+        start: timeIntervals[0],
+        end: timeIntervals[timeIntervals.length - 1],
+        interval: zoom
+      })
+    }
+
+    if (onTimelineMoveEnd) {
+      onTimelineMoveEnd({
+        center: timestamp,
+        start: timeIntervals[0],
+        end: timeIntervals[timeIntervals.length - 1],
+        interval: zoom
+      })
+    }
   }
 
   // When the zoom level changes, this useEffect will find the new center value and move the timeline to that timestamp
@@ -407,7 +457,7 @@ export const EDSCTimeline = ({
       left: newTimelinePosition.left + positionOffset.left
     })
 
-    handleMoveTimeline({ left: newTimelinePosition.left + positionOffset.left })
+    handleMoveTimeline({ left: newTimelinePosition.left + positionOffset.left }, active)
 
     setDraggingTimeline(active)
   }
@@ -458,6 +508,7 @@ export const EDSCTimeline = ({
     setDraggingTemporalMarker(markerType)
 
     if (!active) {
+      if (onCreatedTemporal) onCreatedTemporal()
       if (onTemporalSet) onTemporalSet(range)
       setDraggingTemporalMarker('')
     }
@@ -549,6 +600,7 @@ export const EDSCTimeline = ({
       })
 
       zoomToTimestamp(newCenteredTimestamp, newZoomLevel, offset)
+      if (onScrollZoom) onScrollZoom()
     }
   }
 
@@ -562,6 +614,7 @@ export const EDSCTimeline = ({
       handleWheelZoom(state)
     } else {
       handlePanTimeline(state)
+      if (onScrollPan) onScrollPan()
     }
   }
 
@@ -651,6 +704,7 @@ export const EDSCTimeline = ({
       handleSetTemporal(state)
     } else {
       handlePanTimeline(state)
+      if (onDragPan) onDragPan()
     }
   }
 
@@ -841,7 +895,23 @@ export const EDSCTimeline = ({
         zoomLevel
       })
 
-      onTimelineMove({ center: centeredTimestamp, interval: zoomLevel })
+      if (onTimelineMove) {
+        onTimelineMove({
+          center: centeredTimestamp,
+          start: timeIntervals[0],
+          end: timeIntervals[timeIntervals.length - 1],
+          interval: zoomLevel
+        })
+      }
+
+      if (onTimelineMoveEnd) {
+        onTimelineMoveEnd({
+          center: centeredTimestamp,
+          start: timeIntervals[0],
+          end: timeIntervals[timeIntervals.length - 1],
+          interval: zoomLevel
+        })
+      }
 
       setIsLoaded(true)
     }
@@ -850,7 +920,9 @@ export const EDSCTimeline = ({
   /**
    * Sets or unsets the focusedInterval as the interval where the user clicked
    */
-  const onFocusedClick = (newFocusedInterval) => {
+  const handleFocusedClick = (newFocusedInterval) => {
+    if (onFocusedClick) onFocusedClick()
+
     const {
       end: newEnd,
       start: newStart
@@ -862,7 +934,12 @@ export const EDSCTimeline = ({
     } = focusedInterval
 
     // If the selected interval is already focused, remove the focus
-    if (start === newStart && end === newEnd) {
+    // Trim the last 3 digits off of the number because EDSC keeps track of seconds instead of milliseconds
+    const startRounded = Math.floor(start / 1000)
+    const newStartRounded = Math.floor(newStart / 1000)
+    const endRounded = Math.floor(end / 1000)
+    const newEndRounded = Math.floor(newEnd / 1000)
+    if (startRounded === newStartRounded && endRounded === newEndRounded) {
       if (onFocusedSet) onFocusedSet({})
       setFocusedInterval({})
 
@@ -878,7 +955,7 @@ export const EDSCTimeline = ({
    * Moves the focusedInterval to the next or previous interval in timeIntervals
    * @param {String} direction 'next' or 'previous' interval to change the focusedInterval to
    */
-  const onChangeFocusedInterval = (direction) => {
+  const onChangeFocusedInterval = (direction, withArrowKeys) => {
     // Change the focused interval
     let delta = 1
     if (direction === 'previous') delta = -1
@@ -955,7 +1032,9 @@ export const EDSCTimeline = ({
       left: newTimelinePosition
     })
 
-    handleMoveTimeline({ left: newTimelinePosition })
+    handleMoveTimeline({ left: newTimelinePosition }, false)
+    if (onArrowKeyPan && withArrowKeys) onArrowKeyPan(direction)
+    if (onButtonPan && !withArrowKeys) onButtonPan(direction)
   }
 
   /**
@@ -988,8 +1067,8 @@ export const EDSCTimeline = ({
 
     const { key } = e
 
-    if (key === 'ArrowLeft') onChangeFocusedInterval('previous')
-    if (key === 'ArrowRight') onChangeFocusedInterval('next')
+    if (key === 'ArrowLeft') onChangeFocusedInterval('previous', true)
+    if (key === 'ArrowRight') onChangeFocusedInterval('next', true)
   }
 
   useEffect(() => {
@@ -1022,6 +1101,7 @@ export const EDSCTimeline = ({
       })
 
       zoomToTimestamp(centeredTimestamp, newZoomLevel)
+      if (onButtonZoom) onButtonZoom()
     }
   }
 
@@ -1283,11 +1363,11 @@ export const EDSCTimeline = ({
                 timelinePosition={timelinePosition}
                 timelineWrapperRef={timelineWrapperRef}
                 zoomLevel={zoomLevel}
-                onFocusedClick={onFocusedClick}
                 onTemporalMarkerHover={onTemporalMarkerHover}
                 onTemporalRangeHover={onTemporalRangeHover}
                 willCancelTemporalSelection={willCancelTemporalSelection}
                 preventTemporalSelectionHover={preventTemporalSelectionHover}
+                onFocusedClick={handleFocusedClick}
               />
             )
           }
@@ -1302,9 +1382,18 @@ EDSCTimeline.defaultProps = {
   focusedInterval: {},
   // maxDate: new Date().getTime(),
   // minDate: 0,
+  onArrowKeyPan: null,
+  onButtonPan: null,
+  onButtonZoom: null,
+  onCreatedTemporal: null,
+  onDragPan: null,
+  onFocusedClick: null,
   onFocusedSet: null,
+  onScrollPan: null,
+  onScrollZoom: null,
   onTemporalSet: null,
   onTimelineMove: null,
+  onTimelineMoveEnd: null,
   minZoom: 1,
   maxZoom: 5,
   temporalRange: {},
@@ -1331,9 +1420,18 @@ EDSCTimeline.propTypes = {
   }),
   // maxDate: PropTypes.number, // maximum date timeline will allow scrolling
   // minDate: PropTypes.number, // minimum date timeline will allow scrolling
+  onArrowKeyPan: PropTypes.func,
+  onButtonPan: PropTypes.func,
+  onButtonZoom: PropTypes.func,
+  onCreatedTemporal: PropTypes.func,
+  onDragPan: PropTypes.func,
+  onFocusedClick: PropTypes.func,
   onFocusedSet: PropTypes.func,
+  onScrollPan: PropTypes.func,
+  onScrollZoom: PropTypes.func,
   onTemporalSet: PropTypes.func,
   onTimelineMove: PropTypes.func,
+  onTimelineMoveEnd: PropTypes.func,
   minZoom: PropTypes.number,
   maxZoom: PropTypes.number,
   temporalRange: PropTypes.shape({

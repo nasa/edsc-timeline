@@ -25,6 +25,7 @@ function setup(overrideProps) {
     onTemporalSet: jest.fn(),
     onFocusedSet: jest.fn(),
     onTimelineMove: jest.fn(),
+    onTimelineMoveEnd: jest.fn(),
     ...overrideProps
   }
 
@@ -100,6 +101,7 @@ describe('EDSCTimeline component', () => {
       tools.invoke('onChangeZoomLevel')(0)
 
       expect(props.onTimelineMove).toHaveBeenCalledTimes(0)
+      expect(props.onTimelineMoveEnd).toHaveBeenCalledTimes(0)
     })
 
     test('does not zoom above the maxZoom', () => {
@@ -110,6 +112,7 @@ describe('EDSCTimeline component', () => {
       tools.invoke('onChangeZoomLevel')(9)
 
       expect(props.onTimelineMove).toHaveBeenCalledTimes(0)
+      expect(props.onTimelineMoveEnd).toHaveBeenCalledTimes(0)
     })
   })
 
@@ -233,6 +236,7 @@ describe('EDSCTimeline component', () => {
         enzymeWrapper.update()
 
         expect(props.onTimelineMove).toHaveBeenCalledTimes(3)
+        expect(props.onTimelineMoveEnd).toHaveBeenCalledTimes(1)
 
         expect(enzymeWrapper.find(TimelineList).props().timeIntervals).toEqual([
           1372636800000, 1375315200000, 1377993600000, 1380585600000,
@@ -1249,6 +1253,7 @@ describe('EDSCTimeline component', () => {
 
           expect(props.onFocusedSet).toHaveBeenCalledTimes(21)
           expect(props.onTimelineMove).toHaveBeenCalledTimes(22)
+          expect(props.onTimelineMoveEnd).toHaveBeenCalledTimes(22)
         })
 
         test('loads more intervals when changing the focusedInterval forwards', () => {
@@ -1296,6 +1301,7 @@ describe('EDSCTimeline component', () => {
 
           expect(props.onFocusedSet).toHaveBeenCalledTimes(22)
           expect(props.onTimelineMove).toHaveBeenCalledTimes(23)
+          expect(props.onTimelineMoveEnd).toHaveBeenCalledTimes(23)
         })
 
         test('loads more intervals when changing the focusedInterval forwards and removes extra intervals', () => {
@@ -1343,6 +1349,7 @@ describe('EDSCTimeline component', () => {
 
           expect(props.onFocusedSet).toHaveBeenCalledTimes(52)
           expect(props.onTimelineMove).toHaveBeenCalledTimes(53)
+          expect(props.onTimelineMoveEnd).toHaveBeenCalledTimes(53)
         })
       })
     })

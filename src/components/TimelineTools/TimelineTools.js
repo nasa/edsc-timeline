@@ -92,6 +92,7 @@ export const TimelineTools = forwardRef(({
               onClick={() => onChangeFocusedInterval('previous')}
               title="Focus previous interval"
               label="Focus previous interval"
+              data-test-id="focusPrevious"
             >
               <FaChevronLeft />
             </button>
@@ -105,6 +106,7 @@ export const TimelineTools = forwardRef(({
               onClick={() => onChangeFocusedInterval('next')}
               title="Focus next interval"
               label="Focus next interval"
+              data-test-id="focusNext"
             >
               <FaChevronRight />
             </button>

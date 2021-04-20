@@ -86,6 +86,7 @@ export const TimelineInterval = ({
         role="button"
         tabIndex="0"
         onKeyPress={handleFocusedClick}
+        data-test-id={`timelineInterval-${zIndex}`}
       >
         {
           text && (

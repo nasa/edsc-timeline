@@ -13,3 +13,7 @@ webpack.config.js
 .codecov.yml
 .github/workflows/ci.yml
 .snyk
+cypress
+cypress.json
+cypress-coverage
+.nyc_output

@@ -38,6 +38,32 @@ describe('Temporal dragging', () => {
     })
   })
 
+  describe('removing temporal range', () => {
+    beforeEach(() => {
+      cy.visit('/temporalRange')
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(0)
+    })
+
+    it('clicking on the top of the timeline removes the temporal range', () => {
+      getByTestId('timelineList')
+        .trigger('pointerdown', { pointerId: 1, clientX: 650, clientY: 10 })
+        .trigger('pointerup', { pointerId: 1, force: true })
+
+      getByTestId('temporalStart').should('have.text', 'Temporal Start: null')
+      getByTestId('temporalEnd').should('have.text', 'Temporal End: null')
+    })
+
+    it('clicking on the middle of the timeline does not removes the temporal range', () => {
+      getByTestId('timelineList')
+        .trigger('pointerdown', { pointerId: 1, clientX: 650 })
+        .trigger('pointerup', { pointerId: 1, force: true })
+
+      getByTestId('temporalStart').should('have.text', `Temporal Start: ${timeAtPx[650]}`)
+      getByTestId('temporalEnd').should('have.text', `Temporal End: ${timeAtPx[750]}`)
+    })
+  })
+
   describe('editing temporal range', () => {
     beforeEach(() => {
       cy.visit('/temporalRange')
