@@ -8,7 +8,7 @@ describe('Temporal tooltips', () => {
   describe('when there is a temporal range', () => {
     beforeEach(() => {
       cy.visit('/temporalRange')
-      cy.wait(0)
+      cy.wait(100)
     })
 
     it('displays a tooltip over the temporal range', () => {
@@ -42,7 +42,7 @@ describe('Temporal tooltips', () => {
   describe('when there is only a temporal start marker', () => {
     beforeEach(() => {
       cy.visit('/temporalStart')
-      cy.wait(0)
+      cy.wait(100)
     })
 
     it('displays a tooltip over the temporal range', () => {
@@ -67,7 +67,7 @@ describe('Temporal tooltips', () => {
   describe('when there is only a temporal end marker', () => {
     beforeEach(() => {
       cy.visit('/temporalEnd')
-      cy.wait(0)
+      cy.wait(100)
     })
 
     it('displays a tooltip over the temporal range', () => {
@@ -75,7 +75,7 @@ describe('Temporal tooltips', () => {
       getByTestId('timelineList').rightclick()
 
       getByTestId('tooltip').should('have.text', 'Up to 16 Jan 2021 10:55:09')
-      getByTestId('tooltip').should('have.css', 'left', '339.5px')
+      getByTestId('tooltip').should('have.css', 'left', '301px')
       getByTestId('tooltip').should('have.css', 'bottom', '2px')
     })
 
