@@ -1,6 +1,6 @@
 // !important is used in a few places to override default cursor properties in Bootstrap. Because attribute selectors
 // are used to style the cursor, this is the easiest way to override that behavior.
-.timeline-list {
+.edsc-timeline-list {
   height: 100%;
   width: 100%;
   background-color: $color__black--050;
@@ -102,7 +102,7 @@
         cursor: ew-resize;
       }
 
-      .timeline-list--is-temporal-dragging & {
+      .edsc-timeline-list--is-temporal-dragging & {
         cursor: grabbing;
 
         &:not(:disabled) {
@@ -115,7 +115,7 @@
       }
     }
 
-    .timeline-list--will-cancel-temporal & {
+    .edsc-timeline-list--will-cancel-temporal & {
       opacity: 0.5;
     }
   }
@@ -134,11 +134,11 @@
     box-shadow: 0 0 3px 3px rgba($color__black--050, 0.1);
     transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
 
-    .timeline-list--prevent-temporal-selection-hover & {
+    .edsc-timeline-list--prevent-temporal-selection-hover & {
       pointer-events: none;
     }
 
-    .timeline-list--will-cancel-temporal & {
+    .edsc-timeline-list--will-cancel-temporal & {
       opacity: 0.8;
     }
   }

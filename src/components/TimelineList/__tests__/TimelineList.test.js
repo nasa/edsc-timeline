@@ -84,7 +84,7 @@ describe('TimelineList component', () => {
         temporalRangeMouseOverPosition: 42
       })
 
-      const marker = enzymeWrapper.find('.timeline-list__temporal-mouseover-marker')
+      const marker = enzymeWrapper.find('.edsc-timeline-list__temporal-mouseover-marker')
 
       expect(marker.exists()).toBeTruthy()
       expect(marker.props().style).toEqual({ left: 42 })
@@ -100,7 +100,7 @@ describe('TimelineList component', () => {
         }
       })
 
-      expect(enzymeWrapper.props().className).not.toContain('timeline-list--is-dragging')
+      expect(enzymeWrapper.props().className).not.toContain('edsc-timeline-list--is-dragging')
     })
   })
 
@@ -114,7 +114,7 @@ describe('TimelineList component', () => {
         }
       })
 
-      expect(enzymeWrapper.props().className).toContain('timeline-list--is-dragging')
+      expect(enzymeWrapper.props().className).toContain('edsc-timeline-list--is-dragging')
     })
   })
 
@@ -127,8 +127,8 @@ describe('TimelineList component', () => {
         }
       })
 
-      expect(enzymeWrapper.find('.timeline-list__focused-range').length).toEqual(0)
-      expect(enzymeWrapper.find('.timeline-list__focused-range-mask').length).toEqual(0)
+      expect(enzymeWrapper.find('.edsc-timeline-list__focused-range').length).toEqual(0)
+      expect(enzymeWrapper.find('.edsc-timeline-list__focused-range-mask').length).toEqual(0)
     })
   })
 
@@ -141,13 +141,13 @@ describe('TimelineList component', () => {
         }
       })
 
-      expect(enzymeWrapper.find('.timeline-list__temporal-start').exists()).toBeTruthy()
-      expect(enzymeWrapper.find('.timeline-list__temporal-end').exists()).toBeTruthy()
+      expect(enzymeWrapper.find('.edsc-timeline-list__temporal-start').exists()).toBeTruthy()
+      expect(enzymeWrapper.find('.edsc-timeline-list__temporal-end').exists()).toBeTruthy()
 
-      expect(enzymeWrapper.find('.timeline-list__temporal-start').props().style).toEqual({
+      expect(enzymeWrapper.find('.edsc-timeline-list__temporal-start').props().style).toEqual({
         left: 200.43835616438355
       })
-      expect(enzymeWrapper.find('.timeline-list__temporal-end').props().style).toEqual({
+      expect(enzymeWrapper.find('.edsc-timeline-list__temporal-end').props().style).toEqual({
         left: 305.75342465753425
       })
     })
@@ -160,7 +160,7 @@ describe('TimelineList component', () => {
         }
       })
 
-      const temporalRange = enzymeWrapper.find('.timeline-list__temporal-range')
+      const temporalRange = enzymeWrapper.find('.edsc-timeline-list__temporal-range')
 
       expect(temporalRange.exists()).toBeTruthy()
       expect(temporalRange.props().style.left).toEqual(200.43835616438355)
@@ -174,8 +174,8 @@ describe('TimelineList component', () => {
         }
       })
 
-      expect(enzymeWrapper.find('.timeline-list__temporal-start').exists()).toBeTruthy()
-      expect(enzymeWrapper.find('.timeline-list__temporal-end').exists()).toBeFalsy()
+      expect(enzymeWrapper.find('.edsc-timeline-list__temporal-start').exists()).toBeTruthy()
+      expect(enzymeWrapper.find('.edsc-timeline-list__temporal-end').exists()).toBeFalsy()
     })
 
     test('renders hightlighted area correctly if temporal range does not have an end', () => {
@@ -185,7 +185,7 @@ describe('TimelineList component', () => {
         }
       })
 
-      const temporalRange = enzymeWrapper.find('.timeline-list__temporal-range')
+      const temporalRange = enzymeWrapper.find('.edsc-timeline-list__temporal-range')
 
       expect(temporalRange.exists()).toBeTruthy()
       expect(temporalRange.props().style.left).toEqual(200.43835616438355)
@@ -199,8 +199,8 @@ describe('TimelineList component', () => {
         }
       })
 
-      expect(enzymeWrapper.find('.timeline-list__temporal-start').exists()).toBeFalsy()
-      expect(enzymeWrapper.find('.timeline-list__temporal-end').exists()).toBeTruthy()
+      expect(enzymeWrapper.find('.edsc-timeline-list__temporal-start').exists()).toBeFalsy()
+      expect(enzymeWrapper.find('.edsc-timeline-list__temporal-end').exists()).toBeTruthy()
     })
 
     test('renders hightlighted area correctly if temporal range does not have an start', () => {
@@ -210,7 +210,7 @@ describe('TimelineList component', () => {
         }
       })
 
-      const temporalRange = enzymeWrapper.find('.timeline-list__temporal-range')
+      const temporalRange = enzymeWrapper.find('.edsc-timeline-list__temporal-range')
 
       expect(temporalRange.exists()).toBeTruthy()
       expect(temporalRange.props().style.left).toEqual(0)
@@ -226,11 +226,11 @@ describe('TimelineList component', () => {
           }
         })
 
-        const startMarker = enzymeWrapper.find('.timeline-list__temporal-start')
-        const endMarker = enzymeWrapper.find('.timeline-list__temporal-end')
+        const startMarker = enzymeWrapper.find('.edsc-timeline-list__temporal-start')
+        const endMarker = enzymeWrapper.find('.edsc-timeline-list__temporal-end')
 
-        expect(startMarker.props().className).not.toContain('timeline-list__temporal-marker--is-dragging')
-        expect(endMarker.props().className).not.toContain('timeline-list__temporal-marker--is-dragging')
+        expect(startMarker.props().className).not.toContain('edsc-timeline-list__temporal-marker--is-dragging')
+        expect(endMarker.props().className).not.toContain('edsc-timeline-list__temporal-marker--is-dragging')
       })
     })
 
@@ -244,11 +244,11 @@ describe('TimelineList component', () => {
           }
         })
 
-        const startMarker = enzymeWrapper.find('.timeline-list__temporal-start')
-        const endMarker = enzymeWrapper.find('.timeline-list__temporal-end')
+        const startMarker = enzymeWrapper.find('.edsc-timeline-list__temporal-start')
+        const endMarker = enzymeWrapper.find('.edsc-timeline-list__temporal-end')
 
-        expect(startMarker.props().className).toContain('timeline-list__temporal-marker--is-dragging')
-        expect(endMarker.props().className).not.toContain('timeline-list__temporal-marker--is-dragging')
+        expect(startMarker.props().className).toContain('edsc-timeline-list__temporal-marker--is-dragging')
+        expect(endMarker.props().className).not.toContain('edsc-timeline-list__temporal-marker--is-dragging')
       })
     })
 
@@ -262,11 +262,11 @@ describe('TimelineList component', () => {
           }
         })
 
-        const startMarker = enzymeWrapper.find('.timeline-list__temporal-start')
-        const endMarker = enzymeWrapper.find('.timeline-list__temporal-end')
+        const startMarker = enzymeWrapper.find('.edsc-timeline-list__temporal-start')
+        const endMarker = enzymeWrapper.find('.edsc-timeline-list__temporal-end')
 
-        expect(startMarker.props().className).not.toContain('timeline-list__temporal-marker--is-dragging')
-        expect(endMarker.props().className).toContain('timeline-list__temporal-marker--is-dragging')
+        expect(startMarker.props().className).not.toContain('edsc-timeline-list__temporal-marker--is-dragging')
+        expect(endMarker.props().className).toContain('edsc-timeline-list__temporal-marker--is-dragging')
       })
     })
 
@@ -278,7 +278,7 @@ describe('TimelineList component', () => {
         }
       })
 
-      const startMarker = enzymeWrapper.find('.timeline-list__temporal-start')
+      const startMarker = enzymeWrapper.find('.edsc-timeline-list__temporal-start')
 
       act(() => {
         startMarker.simulate('pointerEnter', { pointerId: 1 })
@@ -303,7 +303,7 @@ describe('TimelineList component', () => {
         }
       })
 
-      const endMarker = enzymeWrapper.find('.timeline-list__temporal-end')
+      const endMarker = enzymeWrapper.find('.edsc-timeline-list__temporal-end')
 
       act(() => {
         endMarker.simulate('pointerEnter', { pointerId: 1 })
@@ -328,7 +328,7 @@ describe('TimelineList component', () => {
         }
       })
 
-      const endMarker = enzymeWrapper.find('.timeline-list__temporal-end')
+      const endMarker = enzymeWrapper.find('.edsc-timeline-list__temporal-end')
 
       act(() => {
         endMarker.simulate('pointerEnter', { pointerId: 1 })
@@ -355,7 +355,7 @@ describe('TimelineList component', () => {
         }
       })
 
-      const temporalRange = enzymeWrapper.find('.timeline-list__temporal-range')
+      const temporalRange = enzymeWrapper.find('.edsc-timeline-list__temporal-range')
 
       act(() => {
         temporalRange.simulate('pointerEnter', { pointerId: 1 })
@@ -388,7 +388,7 @@ describe('TimelineList component', () => {
         }
       })
 
-      expect(enzymeWrapper.props().className).toContain('timeline-list--has-focused-interval')
+      expect(enzymeWrapper.props().className).toContain('edsc-timeline-list--has-focused-interval')
     })
 
     test('renders an unfocusable TimelineInterval outside of the temporalRange', () => {
@@ -422,9 +422,9 @@ describe('TimelineList component', () => {
         }
       })
 
-      const focusedRange = enzymeWrapper.find('.timeline-list__focused-range')
-      const focusedRangeMaskLeft = enzymeWrapper.find('.timeline-list__focused-range-mask').at(0)
-      const focusedRangeMaskRight = enzymeWrapper.find('.timeline-list__focused-range-mask').at(1)
+      const focusedRange = enzymeWrapper.find('.edsc-timeline-list__focused-range')
+      const focusedRangeMaskLeft = enzymeWrapper.find('.edsc-timeline-list__focused-range-mask').at(0)
+      const focusedRangeMaskRight = enzymeWrapper.find('.edsc-timeline-list__focused-range-mask').at(1)
 
       expect(focusedRange.length).toEqual(1)
       expect(focusedRange.props().style.left).toEqual(200.43835616438355)

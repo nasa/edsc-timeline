@@ -1,4 +1,4 @@
-.timeline-interval {
+.edsc-timeline-interval {
   display: inline-flex;
   flex-direction: column;
   position: relative;
@@ -29,18 +29,18 @@
 
   &--is-focused {
     &:before {
-      .timeline-list--has-focused-interval & {
+      .edsc-timeline-list--has-focused-interval & {
         display: none;
       }
     }
 
-    + .timeline-interval {
+    + .edsc-timeline-interval {
       &:before {
         left: 2px;
       }
 
-      .timeline-interval__interval-top,
-      .timeline-interval__interval-bottom {
+      .edsc-timeline-interval__interval-top,
+      .edsc-timeline-interval__interval-bottom {
         border-left: 2px solid $color__blue;
       }
     }
@@ -51,7 +51,7 @@
     border-left: 1px solid #666;
     transition: border-color 0.2s ease-in-out;
 
-    .timeline-interval--is-focused & {
+    .edsc-timeline-interval--is-focused & {
       border-left: 2px solid $color__blue;
     }
   }
@@ -80,34 +80,34 @@
       cursor: pointer !important;
       border-left: 2px solid $color__blue;
 
-      .timeline-interval--is-unfocusable & {
+      .edsc-timeline-interval--is-unfocusable & {
         background-color: $color__black--100;
         border-left: 2px solid $color__black--500;
       }
 
-      .timeline-interval--is-focused & {
+      .edsc-timeline-interval--is-focused & {
         border-left: 2px solid darken($color__blue, 20);
       }
 
       &:after {
         border-right: 2px solid $color__blue;
 
-        .timeline-interval--is-unfocusable & {
+        .edsc-timeline-interval--is-unfocusable & {
           border-right: 2px solid $color__black--500;
         }
 
-        .timeline-interval--is-focused & {
+        .edsc-timeline-interval--is-focused & {
           border-right: 2px solid darken($color__blue, 20);
         }
       }
     }
 
-    .timeline-interval--is-focused & {
+    .edsc-timeline-interval--is-focused & {
       cursor: pointer !important;
       border-left: 2px solid $color__blue;
     }
 
-    .timeline-interval--is-unfocusable & {
+    .edsc-timeline-interval--is-unfocusable & {
       cursor: not-allowed !important;
 
       &:hover {
@@ -121,15 +121,15 @@
     font-size: 0.75rem;
     transition: color 0.2s ease-in-out;
 
-    .timeline-interval__interval-bottom:hover &,
-    .timeline-interval--is-focused & {
+    .edsc-timeline-interval__interval-bottom:hover &,
+    .edsc-timeline-interval--is-focused & {
       color: lighten($color__blue, 20);
 
-      .timeline-interval--is-unfocusable & {
+      .edsc-timeline-interval--is-unfocusable & {
         color: $color__black--500;
       }
 
-      .timeline-interval--is-focused & {
+      .edsc-timeline-interval--is-focused & {
         color: darken($color__blue, 5);
       }
     }
@@ -150,7 +150,7 @@
     white-space: nowrap;
     z-index: 1;
 
-    .timeline-interval--is-focused + .timeline-interval & {
+    .edsc-timeline-interval--is-focused + .edsc-timeline-interval & {
       left: 2px;
     }
   }

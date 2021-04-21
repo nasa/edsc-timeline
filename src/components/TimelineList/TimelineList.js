@@ -193,29 +193,29 @@ export const TimelineList = forwardRef(({
   }
 
   const timelineListClassnames = classNames([
-    'timeline-list',
+    'edsc-timeline-list',
     {
-      'timeline-list--is-dragging': draggingTimeline,
-      'timeline-list--is-temporal-dragging': draggingTemporalMarker,
-      'timeline-list--has-focused-interval': !!focusedIntervalStart,
-      'timeline-list--will-cancel-temporal': willCancelTemporalSelection,
-      'timeline-list--prevent-temporal-selection-hover': preventTemporalSelectionHover
+      'edsc-timeline-list--is-dragging': draggingTimeline,
+      'edsc-timeline-list--is-temporal-dragging': draggingTemporalMarker,
+      'edsc-timeline-list--has-focused-interval': !!focusedIntervalStart,
+      'edsc-timeline-list--will-cancel-temporal': willCancelTemporalSelection,
+      'edsc-timeline-list--prevent-temporal-selection-hover': preventTemporalSelectionHover
     }
   ])
 
   const temporalStartMarkerStartClassnames = classNames([
-    'timeline-list__temporal-marker',
-    'timeline-list__temporal-start',
+    'edsc-timeline-list__temporal-marker',
+    'edsc-timeline-list__temporal-start',
     {
-      'timeline-list__temporal-marker--is-dragging': draggingTemporalMarker === 'start'
+      'edsc-timeline-list__temporal-marker--is-dragging': draggingTemporalMarker === 'start'
     }
   ])
 
   const temporalStartMarkerEndClassnames = classNames([
-    'timeline-list__temporal-marker',
-    'timeline-list__temporal-end',
+    'edsc-timeline-list__temporal-marker',
+    'edsc-timeline-list__temporal-end',
     {
-      'timeline-list__temporal-marker--is-dragging': draggingTemporalMarker === 'end'
+      'edsc-timeline-list__temporal-marker--is-dragging': draggingTemporalMarker === 'end'
     }
   ])
 
@@ -234,7 +234,7 @@ export const TimelineList = forwardRef(({
       data-test-id="timelineList"
     >
       <section
-        className="timeline-list__markers"
+        className="edsc-timeline-list__markers"
         style={{
           zIndex: timeIntervals.length + 2
         }}
@@ -242,7 +242,7 @@ export const TimelineList = forwardRef(({
         {
           temporalRangeMouseOverPosition && (
             <div
-              className="timeline-list__temporal-mouseover-marker"
+              className="edsc-timeline-list__temporal-mouseover-marker"
               style={temporalRangeMouseOverStyle}
             />
           )
@@ -282,7 +282,7 @@ export const TimelineList = forwardRef(({
             <div
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...bindTemporalRangeGestures()}
-              className="timeline-list__temporal-range"
+              className="edsc-timeline-list__temporal-range"
               style={temporalRangeStyle}
             />
           )
@@ -291,29 +291,29 @@ export const TimelineList = forwardRef(({
           focusedIntervalStart && (
             <>
               <div
-                className="timeline-list__focused-range"
+                className="edsc-timeline-list__focused-range"
                 style={focusedRangeStyle}
               />
               <div
-                className="timeline-list__focused-range-mask"
+                className="edsc-timeline-list__focused-range-mask"
                 style={focusedRangeMaskLeftStyle}
               />
               <div
-                className="timeline-list__focused-range-mask"
+                className="edsc-timeline-list__focused-range-mask"
                 style={focusedRangeMaskRightStyle}
               />
             </>
           )
         }
       </section>
-      <span className="timeline-list__line" />
+      <span className="edsc-timeline-list__line" />
       <TimelineDataSection
         data={data}
         timeIntervals={timeIntervals}
         timelineWrapperWidth={timelineWrapperWidth}
         zoomLevel={zoomLevel}
       />
-      <div className="timeline-list__intervals">
+      <div className="edsc-timeline-list__intervals">
         {
           timeIntervals && timeIntervals.map((startTime, intervalIndex) => {
             let endTime

@@ -53,7 +53,7 @@ describe('TimelineDataSection component', () => {
         ]
       })
 
-      const dataRow = enzymeWrapper.find('.timeline-data-section__entry')
+      const dataRow = enzymeWrapper.find('.edsc-timeline-data-section__entry')
       expect(dataRow.exists()).toBeTruthy()
       expect(dataRow.length).toEqual(1)
       expect(dataRow.children().length).toEqual(2)
@@ -81,7 +81,7 @@ describe('TimelineDataSection component', () => {
         ]
       })
 
-      const dataRow = enzymeWrapper.find('.timeline-data-section__entry')
+      const dataRow = enzymeWrapper.find('.edsc-timeline-data-section__entry')
       expect(dataRow.exists()).toBeTruthy()
       expect(dataRow.length).toEqual(1)
 
@@ -116,7 +116,7 @@ describe('TimelineDataSection component', () => {
         ]
       })
 
-      const dataRow = enzymeWrapper.find('.timeline-data-section__entry')
+      const dataRow = enzymeWrapper.find('.edsc-timeline-data-section__entry')
       const firstDataChild = dataRow.childAt(0)
       expect(firstDataChild.props().style.backgroundColor).toEqual('#25c85b')
     })
@@ -145,7 +145,7 @@ describe('TimelineDataSection component', () => {
       ]
     })
 
-    const dataRow = enzymeWrapper.find('.timeline-data-section__entry')
+    const dataRow = enzymeWrapper.find('.edsc-timeline-data-section__entry')
 
     test('sets a custom color', () => {
       const firstDataChild = dataRow.childAt(0)
@@ -198,7 +198,7 @@ describe('TimelineDataSection component', () => {
       ]
     })
 
-    const dataRow = enzymeWrapper.find('.timeline-data-section__entry')
+    const dataRow = enzymeWrapper.find('.edsc-timeline-data-section__entry')
 
     test('renders data row', () => {
       expect(dataRow.exists()).toBeTruthy()

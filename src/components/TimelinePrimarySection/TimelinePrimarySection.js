@@ -17,8 +17,8 @@ export const TimelinePrimarySection = ({
   data,
   visibleTemporalRange
 }) => (
-  <section className="timeline-primary-section">
-    <ul className="timeline-primary-section__entries">
+  <section className="edsc-timeline-primary-section">
+    <ul className="edsc-timeline-primary-section__entries">
       {
         data && data.map((entry, i) => {
           const {
@@ -59,20 +59,20 @@ export const TimelinePrimarySection = ({
           })
 
           const noVisibleDataBeforeMarkerClassnames = classNames([
-            'timeline-primary-section__no-visible-data-marker',
-            'timeline-primary-section__no-visible-data-marker--before',
+            'edsc-timeline-primary-section__no-visible-data-marker',
+            'edsc-timeline-primary-section__no-visible-data-marker--before',
             {
-              'timeline-primary-section__no-visible-data-marker--is-visible': (
+              'edsc-timeline-primary-section__no-visible-data-marker--is-visible': (
                 !intervalsInVisibleRange.length && intervalsBeforeVisibleRange.length > 0
               )
             }
           ])
 
           const noVisibleDataAfterMarkerClassnames = classNames([
-            'timeline-primary-section__no-visible-data-marker',
-            'timeline-primary-section__no-visible-data-marker--before',
+            'edsc-timeline-primary-section__no-visible-data-marker',
+            'edsc-timeline-primary-section__no-visible-data-marker--before',
             {
-              'timeline-primary-section__no-visible-data-marker--is-visible': (
+              'edsc-timeline-primary-section__no-visible-data-marker--is-visible': (
                 !intervalsInVisibleRange.length && intervalsAfterVisibleRange.length > 0
               )
             }
@@ -81,22 +81,22 @@ export const TimelinePrimarySection = ({
           const key = `${id}-${i}`
           return (
             <li
-              className="timeline-primary-section__entry"
+              className="edsc-timeline-primary-section__entry"
               key={key}
               title={title}
             >
               <div className={noVisibleDataBeforeMarkerClassnames}>
                 <FaAngleDoubleLeft
-                  className="timeline-primary-section__no-visible-data-icon"
+                  className="edsc-timeline-primary-section__no-visible-data-icon"
                   style={{
                     fill: color
                   }}
                 />
               </div>
-              <div className="timeline-primary-section__primary">
-                <div className="timeline-primary-section__title-wrapper">
+              <div className="edsc-timeline-primary-section__primary">
+                <div className="edsc-timeline-primary-section__title-wrapper">
                   <h3
-                    className="timeline-primary-section__title"
+                    className="edsc-timeline-primary-section__title"
                     title={title}
                   >
                     {title}
@@ -105,7 +105,7 @@ export const TimelinePrimarySection = ({
               </div>
               <div className={noVisibleDataAfterMarkerClassnames}>
                 <FaAngleDoubleRight
-                  className="timeline-primary-section__no-visible-data-icon"
+                  className="edsc-timeline-primary-section__no-visible-data-icon"
                   style={{
                     fill: color
                   }}

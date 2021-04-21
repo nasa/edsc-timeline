@@ -1,4 +1,4 @@
-.timeline-primary-section {
+.edsc-timeline-primary-section {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -56,7 +56,7 @@
     opacity: 0;
     transition: opacity 0.1s ease-in-out;
 
-    .timeline-primary-section__no-visible-data-marker--is-visible & {
+    .edsc-timeline-primary-section__no-visible-data-marker--is-visible & {
       opacity: 1;
     }
   }
