@@ -8,7 +8,7 @@ describe('Callbacks', () => {
   beforeEach(() => {
     cy.visit('/callbacks')
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(100)
+    cy.wait(200)
   })
 
   it('calls onArrowKeyPan', () => {
@@ -20,8 +20,9 @@ describe('Callbacks', () => {
       .trigger('keydown', { key: 'ArrowLeft' })
 
     cy.window().then((win) => {
-      expect(win.console.log.getCall(0).args[0]).to.equal('handleFocusedClick called')
+      expect(win.console.log.getCall(0).args[0]).to.equal('handleFocusedIntervalClick called')
       expect(win.console.log.getCall(1).args[0]).to.equal('handleArrowKeyPan called')
+      expect(win.console.log.getCall(1).args[1]).to.equal('{"center":1609459200000,"focusedEnd":1612137599999,"focusedStart":1609459200000,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
     })
   })
 
@@ -33,25 +34,23 @@ describe('Callbacks', () => {
     getByTestId('focusNext').trigger('click')
 
     cy.window().then((win) => {
-      expect(win.console.log.getCall(0).args[0]).to.equal('handleFocusedClick called')
+      expect(win.console.log.getCall(0).args[0]).to.equal('handleFocusedIntervalClick called')
       expect(win.console.log.getCall(1).args[0]).to.equal('handleButtonPan called')
+      expect(win.console.log.getCall(1).args[1]).to.equal('{"center":1609459200000,"focusedEnd":1612137599999,"focusedStart":1609459200000,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
     })
   })
 
   it('calls onButtonZoom', () => {
-    // Focus a date
-    getByTestId('timelineInterval-31').trigger('click')
-
-    // Click the focus next button
-    getByTestId('focusNext').trigger('click')
+    // Click the zoom up button
+    getByTestId('zoomUp').trigger('click')
 
     cy.window().then((win) => {
-      expect(win.console.log.getCall(0).args[0]).to.equal('handleFocusedClick called')
-      expect(win.console.log.getCall(1).args[0]).to.equal('handleButtonPan called')
+      expect(win.console.log.getCall(0).args[0]).to.equal('handleButtonZoom called')
+      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1609459200000,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":4}')
     })
   })
 
-  it('calls onCreatedTemporal', () => {
+  it('calls onTemporalSet', () => {
     // Create a temporal range
     getByTestId('timelineList')
       .trigger('pointerdown', { pointerId: 1, clientX: 650, clientY: 10 })
@@ -59,7 +58,8 @@ describe('Callbacks', () => {
       .trigger('pointerup', { pointerId: 1, force: true })
 
     cy.window().then((win) => {
-      expect(win.console.log.getCall(0).args[0]).to.equal('handleCreatedTemporal called')
+      expect(win.console.log.getCall(0).args[0]).to.equal('handleTemporalSet called')
+      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1609459200000,"temporalEnd":1610794509343,"temporalStart":1608038660695,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
     })
   })
 
@@ -75,12 +75,13 @@ describe('Callbacks', () => {
     })
   })
 
-  it('calls onFocusedClick', () => {
+  it('calls onFocusedIntervalClick', () => {
     // Focus a date
     getByTestId('timelineInterval-31').trigger('click')
 
     cy.window().then((win) => {
-      expect(win.console.log.getCall(0).args[0]).to.equal('handleFocusedClick called')
+      expect(win.console.log.getCall(0).args[0]).to.equal('handleFocusedIntervalClick called')
+      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1609459200000,"focusedEnd":1612137599999,"focusedStart":1609459200000,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
     })
   })
 

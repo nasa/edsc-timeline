@@ -62,23 +62,34 @@ maxZoom | number | | 5 | Maximum zoom level
 zoom | number | | 3 | Active zoom level
 temporalRange | object | | {} | Temporal range ({ start, end }) that is displayed on the timeline
 focusedInterval | object | | {} | Focused interval ({ start, end }) that is displayed on the timeline
+onFocusedSet | function | | | Callback function that returns the focused interval when it is set
+onTemporalSet | function | | | Callback function that returns the temporal range when it is set
+onTimelineMove | function | | | Callback function called when the timeline is moved
+onTimelineMoveEnd | function | | | Callback function called when the timeline is finished moving
+onArrowKeyPan | function | | | Callback function called when arrow keys are used to change the focused interval
+onButtonPan | function | | | Callback function called when buttons are used to change the focused interval
+onButtonZoom | function | | | Callback function called when buttons are used to change the zoom level
+onDragPan | function | | | Callback function called when the timeline is panned using dragging
+onFocusedIntervalClick | function | | | Callback function called when a focused interval is clicked
+onScrollPan | function | | | Callback function called when the mouse wheel is used to pan the timeline
+onScrollZoom | function | | | Callback function called when the mouse wheel is used to change the zoom level
 
-### Callback prop functions
+### Callback function return value
 
-| Prop | Return value | Description
-| ---- | :----------: | -----------
-onFocusedSet | { start, end } | Callback function that returns the focused interval when it is set
-onTemporalSet | { start, end } | Callback function that returns the temporal range when it is set
-onTimelineMove | { center, end, interval, start } | Callback function called when the timeline is moved
-onTimelineMoveEnd | { center, end, interval, start } | Callback function called when the timeline is finished moving
-onArrowKeyPan | none | Callback function called when arrow keys are used to change the focused interval
-onButtonPan | none | Callback function called when buttons are used to change the focused interval
-onButtonZoom | none | Callback function called when buttons are used to change the zoom level
-onCreatedTemporal | none | Callback function called when a temporal range is created
-onDragPan | none | Callback function called when the timeline is panned using dragging
-onFocusedClick | none | Callback function called when an interval is clicked
-onScrollPan | none | Callback function called when the mouse wheel is used to pan the timeline
-onScrollZoom | none | Callback function called when the mouse wheel is used to change the zoom level
+Every callback function returns this object
+
+```javascript
+{
+  center,
+  focusedEnd,
+  focusedStart,
+  temporalEnd,
+  temporalStart,
+  timelineEnd,
+  timelineStart,
+  zoom
+}
+```
 
 ## Development
 
