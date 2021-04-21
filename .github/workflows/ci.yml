@@ -4,7 +4,6 @@ on:
   push:
     branches:
     - master
-    - 'EDSC-3021'
   pull_request: {}
 
 jobs:
@@ -93,8 +92,7 @@ jobs:
         echo "GITHUB_COMMIT=$GITHUB_SHA"
         git push ecc $GITHUB_SHA:refs/heads/master
   deploy-gh-pages:
-    # if: success() && github.ref == 'refs/heads/master' # only run on master success
-    if: success() && github.ref == 'refs/heads/EDSC-3021' # only run on feature branch success
+    if: success() && github.ref == 'refs/heads/master' # only run on master success
     needs: [jest, cypress] # only run after jest and cypress jobs complete
     runs-on: ubuntu-latest
     steps:
