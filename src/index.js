@@ -658,7 +658,7 @@ export const EDSCTimeline = ({
       setCenter(newCenteredTimestamp)
 
       zoomToTimestamp(newCenteredTimestamp, newZoomLevel, offset)
-      if (onScrollZoom) onScrollZoom()
+      if (onScrollZoom) onScrollZoom(buildReturnObject({ newZoom: newZoomLevel }))
     }
   }
 
@@ -672,7 +672,7 @@ export const EDSCTimeline = ({
       handleWheelZoom(state)
     } else {
       handlePanTimeline(state)
-      if (onScrollPan) onScrollPan()
+      if (onScrollPan) onScrollPan(buildReturnObject({}))
     }
   }
 
@@ -762,7 +762,7 @@ export const EDSCTimeline = ({
       handleSetTemporal(state)
     } else {
       handlePanTimeline(state)
-      if (onDragPan) onDragPan()
+      if (onDragPan) onDragPan(buildReturnObject({}))
     }
   }
 
