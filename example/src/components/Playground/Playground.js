@@ -20,27 +20,27 @@ export const Playground = () => {
 
   const [displayedCenter, setDisplayedCenter] = useState()
   const [timelineRange, setTimelineRange] = useState({})
-  const [displayedInterval, setDisplayedInterval] = useState()
+  const [displayedZoom, setDisplayedZoom] = useState()
 
   const handleTimelineMove = (values) => {
     const {
       center,
-      end,
-      interval,
-      start
+      timelineEnd,
+      zoom,
+      timelineStart
     } = values
 
     setDisplayedCenter(center)
-    setTimelineRange({ end, start })
-    setDisplayedInterval(interval)
+    setTimelineRange({ end: timelineEnd, start: timelineStart })
+    setDisplayedZoom(zoom)
   }
 
-  const handleTemporalSet = (values) => {
-    setTemporal(values)
+  const handleTemporalSet = ({ temporalEnd, temporalStart }) => {
+    setTemporal({ end: temporalEnd, start: temporalStart })
   }
 
-  const handleFocusedSet = (values) => {
-    setFocusedInterval(values)
+  const handleFocusedSet = ({ focusedEnd, focusedStart }) => {
+    setFocusedInterval({ end: focusedEnd, start: focusedStart })
   }
 
   const {
@@ -169,7 +169,7 @@ export const Playground = () => {
 
         <Output
           displayedCenter={displayedCenter}
-          interval={displayedInterval}
+          zoom={displayedZoom}
           timelineRange={timelineRange}
           temporalStart={temporalStart}
           temporalEnd={temporalEnd}

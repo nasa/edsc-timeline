@@ -6,7 +6,7 @@ import { RESOLUTIONS } from '../../../../src/constants'
 
 export const Output = ({
   displayedCenter,
-  interval,
+  zoom,
   timelineRange,
   temporalStart,
   temporalEnd,
@@ -25,9 +25,9 @@ export const Output = ({
         {` ${new Date(displayedCenter).toUTCString()}`}
       </div>
 
-      <div data-test-id="interval">
-        <span className="demo__metadata-label">Interval:</span>
-        {` ${startCase(RESOLUTIONS[interval])} (${interval})`}
+      <div data-test-id="zoom">
+        <span className="demo__metadata-label">Zoom:</span>
+        {` ${startCase(RESOLUTIONS[zoom])} (${zoom})`}
       </div>
 
       <div data-test-id="timelineStart">
@@ -65,7 +65,7 @@ export const Output = ({
 
 Output.defaultProps = {
   displayedCenter: null,
-  interval: null,
+  zoom: null,
   timelineRange: {},
   temporalStart: null,
   temporalEnd: null,
@@ -75,7 +75,7 @@ Output.defaultProps = {
 
 Output.propTypes = {
   displayedCenter: PropTypes.number,
-  interval: PropTypes.number,
+  zoom: PropTypes.number,
   timelineRange: PropTypes.shape({
     end: PropTypes.number,
     start: PropTypes.number

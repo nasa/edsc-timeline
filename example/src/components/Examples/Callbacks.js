@@ -13,27 +13,29 @@ export const Callbacks = () => {
 
   const [displayedCenter, setDisplayedCenter] = useState()
   const [timelineRange, setTimelineRange] = useState({})
-  const [displayedInterval, setDisplayedInterval] = useState()
+  const [displayedZoom, setDisplayedZoom] = useState()
 
   const handleTimelineMove = (values) => {
     const {
       center,
-      end,
-      interval,
-      start
+      timelineEnd,
+      zoom,
+      timelineStart
     } = values
 
     setDisplayedCenter(center)
-    setTimelineRange({ end, start })
-    setDisplayedInterval(interval)
+    setTimelineRange({ end: timelineEnd, start: timelineStart })
+    setDisplayedZoom(zoom)
   }
 
-  const handleTemporalSet = (values) => {
-    setTemporal(values)
+  const handleTemporalSet = (data) => {
+    const { temporalEnd, temporalStart } = data
+    setTemporal({ end: temporalEnd, start: temporalStart })
+    console.log('handleTemporalSet called', JSON.stringify(data))
   }
 
-  const handleFocusedSet = (values) => {
-    setFocusedInterval(values)
+  const handleFocusedSet = ({ focusedEnd, focusedStart }) => {
+    setFocusedInterval({ end: focusedEnd, start: focusedStart })
   }
 
   const {
@@ -54,14 +56,13 @@ export const Callbacks = () => {
     }
   ]
 
-  const handleArrowKeyPan = () => console.log('handleArrowKeyPan called')
-  const handleButtonPan = () => console.log('handleButtonPan called')
-  const handleButtonZoom = () => console.log('handleButtonZoom called')
-  const handleCreatedTemporal = () => console.log('handleCreatedTemporal called')
-  const handleDragPan = () => console.log('handleDragPan called')
-  const handleFocusedClick = () => console.log('handleFocusedClick called')
-  const handleScrollPan = () => console.log('handleScrollPan called')
-  const handleScrollZoom = () => console.log('handleScrollZoom called')
+  const handleArrowKeyPan = (data) => console.log('handleArrowKeyPan called', JSON.stringify(data))
+  const handleButtonPan = (data) => console.log('handleButtonPan called', JSON.stringify(data))
+  const handleButtonZoom = (data) => console.log('handleButtonZoom called', JSON.stringify(data))
+  const handleDragPan = (data) => console.log('handleDragPan called', JSON.stringify(data))
+  const handleFocusedIntervalClick = (data) => console.log('handleFocusedIntervalClick called', JSON.stringify(data))
+  const handleScrollPan = (data) => console.log('handleScrollPan called', JSON.stringify(data))
+  const handleScrollZoom = (data) => console.log('handleScrollZoom called', JSON.stringify(data))
 
   return (
     <>
@@ -82,9 +83,8 @@ export const Callbacks = () => {
             onArrowKeyPan={handleArrowKeyPan}
             onButtonPan={handleButtonPan}
             onButtonZoom={handleButtonZoom}
-            onCreatedTemporal={handleCreatedTemporal}
             onDragPan={handleDragPan}
-            onFocusedClick={handleFocusedClick}
+            onFocusedIntervalClick={handleFocusedIntervalClick}
             onFocusedSet={handleFocusedSet}
             onScrollPan={handleScrollPan}
             onScrollZoom={handleScrollZoom}
@@ -95,7 +95,7 @@ export const Callbacks = () => {
 
         <Output
           displayedCenter={displayedCenter}
-          interval={displayedInterval}
+          zoom={displayedZoom}
           timelineRange={timelineRange}
           temporalStart={temporalStart}
           temporalEnd={temporalEnd}
