@@ -72,6 +72,7 @@ describe('Callbacks', () => {
 
     cy.window().then((win) => {
       expect(win.console.log.getCall(0).args[0]).to.equal('handleDragPan called')
+      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1609459200000,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
     })
   })
 
@@ -92,6 +93,7 @@ describe('Callbacks', () => {
 
     cy.window().then((win) => {
       expect(win.console.log.getCall(0).args[0]).to.equal('handleScrollPan called')
+      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1609459200000,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
     })
   })
 
@@ -102,6 +104,7 @@ describe('Callbacks', () => {
 
     cy.window().then((win) => {
       expect(win.console.log.getCall(0).args[0]).to.equal('handleScrollZoom called')
+      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1609459200000,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":2}')
     })
   })
 })
