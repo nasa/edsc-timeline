@@ -57,10 +57,10 @@ export const TimelineInterval = ({
   )
 
   const intervalClassnames = classNames([
-    'timeline-interval',
+    'edsc-timeline-interval',
     {
-      'timeline-interval--is-focused': focused,
-      'timeline-interval--is-unfocusable': !focusable
+      'edsc-timeline-interval--is-focused': focused,
+      'edsc-timeline-interval--is-unfocusable': !focusable
     }
   ])
 
@@ -73,15 +73,15 @@ export const TimelineInterval = ({
         zIndex
       }}
     >
-      <div className="timeline-interval__interval-top">
+      <div className="edsc-timeline-interval__interval-top">
         {
           subText && (
-            <span className="timeline-interval__interval-section-label">{subText}</span>
+            <span className="edsc-timeline-interval__interval-section-label">{subText}</span>
           )
         }
       </div>
       <div
-        className="timeline-interval__interval-bottom"
+        className="edsc-timeline-interval__interval-bottom"
         onClick={handleFocusedClick}
         role="button"
         tabIndex="0"
@@ -90,7 +90,7 @@ export const TimelineInterval = ({
       >
         {
           text && (
-            <span className="timeline-interval__interval-label">{text}</span>
+            <span className="edsc-timeline-interval__interval-label">{text}</span>
           )
         }
       </div>

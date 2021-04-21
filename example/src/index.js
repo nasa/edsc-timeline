@@ -10,7 +10,7 @@ import { Playground } from './components/Playground/Playground'
 import { ExamplesIndex } from './components/Examples/ExamplesIndex'
 
 const App = () => (
-  <Router>
+  <Router basename={process.env.PUBLIC_URL}>
     <Switch>
       <Route path="/examples" component={ExamplesIndex} />
       <Route exact path="/" component={Playground} />

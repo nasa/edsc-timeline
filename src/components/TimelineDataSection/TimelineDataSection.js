@@ -23,7 +23,7 @@ export const TimelineDataSection = ({
   zoomLevel
 }) => (
   <div
-    className="timeline-data-section"
+    className="edsc-timeline-data-section"
     style={{
       zIndex: timeIntervals.length + 1
     }}
@@ -41,7 +41,7 @@ export const TimelineDataSection = ({
 
         return (
           <div
-            className="timeline-data-section__entry"
+            className="edsc-timeline-data-section__entry"
             key={key}
           >
             {
@@ -64,7 +64,7 @@ export const TimelineDataSection = ({
                 return (
                   <div
                     key={`${title}-${startTime}`}
-                    className="timeline-data-section__interval"
+                    className="edsc-timeline-data-section__interval"
                     style={{
                       left,
                       width,

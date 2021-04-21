@@ -810,7 +810,7 @@ export const EDSCTimeline = ({
 
     // Check to see if the user is hovering an interval bottom div. We cant use hover/mouseover
     // due to the fact that in its default state, the temporal selection div captures the hover/mouseover.
-    const intervalBottomHovered = !!elements.find((element) => element.classList.contains('timeline-interval__interval-bottom'))
+    const intervalBottomHovered = !!elements.find((element) => element.classList.contains('edsc-timeline-interval__interval-bottom'))
 
     const { top } = timelineWrapperRef.current.getBoundingClientRect()
 
@@ -1362,14 +1362,14 @@ export const EDSCTimeline = ({
 
   return (
     <div
-      className="timeline"
+      className="edsc-timeline"
       ref={timelineWrapperRef}
     >
       <div
-        className="timeline__tooltips"
+        className="edsc-timeline__tooltips"
       >
         <animated.div
-          className="timeline__tooltip"
+          className="edsc-timeline__tooltip"
           ref={temporalRangeTooltipRef}
           style={{
             ...tooltipSpringStyle
@@ -1393,9 +1393,9 @@ export const EDSCTimeline = ({
         data={trimmedData}
         visibleTemporalRange={visibleTemporalRange}
       />
-      <div className="timeline__outer-wrapper">
+      <div className="edsc-timeline__outer-wrapper">
         <div
-          className="timeline__wrapper"
+          className="edsc-timeline__wrapper"
         >
           {
             timeIntervals.length > 0 && (

@@ -125,10 +125,10 @@ describe('EDSCTimeline component', () => {
 
         const { enzymeWrapper } = setup()
 
-        enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-        enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+        enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+        enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
 
-        const list = enzymeWrapper.find(TimelineList).find('.timeline-list')
+        const list = enzymeWrapper.find(TimelineList).find('.edsc-timeline-list')
 
         // Clicks on the timeline
         act(() => {
@@ -187,9 +187,9 @@ describe('EDSCTimeline component', () => {
 
         const { enzymeWrapper, props } = setup()
 
-        enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+        enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
 
-        const list = enzymeWrapper.find(TimelineList).find('.timeline-list')
+        const list = enzymeWrapper.find(TimelineList).find('.edsc-timeline-list')
 
         // Clicks on the timeline
         act(() => {
@@ -275,8 +275,8 @@ describe('EDSCTimeline component', () => {
 
         const { enzymeWrapper } = setup()
 
-        enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-        enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
+        enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+        enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
 
         const list = enzymeWrapper.find(TimelineList)
 
@@ -341,8 +341,8 @@ describe('EDSCTimeline component', () => {
 
         const { enzymeWrapper } = setup()
 
-        enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-        enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
+        enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+        enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
 
         const list = enzymeWrapper.find(TimelineList)
 
@@ -441,8 +441,8 @@ describe('EDSCTimeline component', () => {
         }
       })
 
-      enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-      enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
 
       expect(enzymeWrapper.find(TimelineList).props().temporalRange).toEqual({
         end: 1630681200000,
@@ -478,8 +478,8 @@ describe('EDSCTimeline component', () => {
 
       enzymeWrapper.update()
 
-      enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-      enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
 
       expect(enzymeWrapper.find(TimelineList).props().temporalRange).toEqual({
         end: 2630681200000,
@@ -501,8 +501,8 @@ describe('EDSCTimeline component', () => {
 
       const { enzymeWrapper, props } = setup()
 
-      enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-      enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
 
       const list = enzymeWrapper.find(TimelineList)
 
@@ -557,8 +557,8 @@ describe('EDSCTimeline component', () => {
 
       const { enzymeWrapper, props } = setup()
 
-      enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-      enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
 
       const list = enzymeWrapper.find(TimelineList)
 
@@ -619,8 +619,8 @@ describe('EDSCTimeline component', () => {
         onTemporalSet: null
       })
 
-      enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-      enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
 
       const list = enzymeWrapper.find(TimelineList)
 
@@ -664,8 +664,8 @@ describe('EDSCTimeline component', () => {
         }
       })
 
-      enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-      enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
 
       const list = enzymeWrapper.find(TimelineList)
 
@@ -713,16 +713,16 @@ describe('EDSCTimeline component', () => {
         }
       })
 
-      enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-      enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
 
-      const startMarker = enzymeWrapper.find('.timeline-list__temporal-start')
+      const startMarker = enzymeWrapper.find('.edsc-timeline-list__temporal-start')
 
       startMarker.simulate('pointerenter', {
         pointerId: 1
       })
 
-      expect(enzymeWrapper.find('.timeline__tooltip').at(0).childAt(0).text()).toEqual('19 Jul 2021 04:48:00')
+      expect(enzymeWrapper.find('.edsc-timeline__tooltip').at(0).childAt(0).text()).toEqual('19 Jul 2021 04:48:00')
     })
 
     test('hovering the start marker displays the tooltip', () => {
@@ -744,16 +744,16 @@ describe('EDSCTimeline component', () => {
         }
       })
 
-      enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-      enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
 
-      const endMarker = enzymeWrapper.find('.timeline-list__temporal-end')
+      const endMarker = enzymeWrapper.find('.edsc-timeline-list__temporal-end')
 
       endMarker.simulate('pointerenter', {
         pointerId: 1
       })
 
-      expect(enzymeWrapper.find('.timeline__tooltip').at(0).childAt(0).text()).toEqual('03 Sep 2021 15:00:00')
+      expect(enzymeWrapper.find('.edsc-timeline__tooltip').at(0).childAt(0).text()).toEqual('03 Sep 2021 15:00:00')
     })
 
     test('mousing out hides the tooltip', () => {
@@ -775,10 +775,10 @@ describe('EDSCTimeline component', () => {
         }
       })
 
-      enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-      enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
 
-      const endMarker = enzymeWrapper.find('.timeline-list__temporal-end')
+      const endMarker = enzymeWrapper.find('.edsc-timeline-list__temporal-end')
 
       endMarker.simulate('pointerenter', {
         pointerId: 1
@@ -788,7 +788,7 @@ describe('EDSCTimeline component', () => {
         pointerId: 1
       })
 
-      expect(enzymeWrapper.find('.timeline__tooltip').at(0).childAt(0).text()).toEqual('')
+      expect(enzymeWrapper.find('.edsc-timeline__tooltip').at(0).childAt(0).text()).toEqual('')
     })
   })
 
@@ -808,8 +808,8 @@ describe('EDSCTimeline component', () => {
 
         const { enzymeWrapper } = setup()
 
-        enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectWrapperMock
-        enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getBoundingClientRectListMock
+        enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectWrapperMock
+        enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getBoundingClientRectListMock
 
         const list = enzymeWrapper.find(TimelineList)
 
@@ -845,8 +845,8 @@ describe('EDSCTimeline component', () => {
 
         const { enzymeWrapper } = setup()
 
-        enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectWrapperMock
-        enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getBoundingClientRectListMock
+        enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectWrapperMock
+        enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getBoundingClientRectListMock
 
         const list = enzymeWrapper.find(TimelineList)
 
@@ -879,8 +879,8 @@ describe('EDSCTimeline component', () => {
 
       const { enzymeWrapper } = setup()
 
-      enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectWrapperMock
-      enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getBoundingClientRectListMock
+      enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectWrapperMock
+      enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getBoundingClientRectListMock
 
       const list = enzymeWrapper.find(TimelineList)
 
@@ -931,8 +931,8 @@ describe('EDSCTimeline component', () => {
 
       const { enzymeWrapper } = setup()
 
-      enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectWrapperMock
-      enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getBoundingClientRectListMock
+      enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectWrapperMock
+      enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getBoundingClientRectListMock
 
       const list = enzymeWrapper.find(TimelineList)
 
@@ -1111,8 +1111,8 @@ describe('EDSCTimeline component', () => {
           }
         })
 
-        enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-        enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
+        enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+        enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
 
         act(() => {
           windowEventMap.keydown({
@@ -1153,8 +1153,8 @@ describe('EDSCTimeline component', () => {
           }
         })
 
-        enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-        enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
+        enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+        enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
 
         act(() => {
           windowEventMap.keydown({
@@ -1195,8 +1195,8 @@ describe('EDSCTimeline component', () => {
           }
         })
 
-        enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-        enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
+        enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+        enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
 
         enzymeWrapper.find(TimelineTools).invoke('onChangeFocusedInterval')('next')
 
@@ -1235,8 +1235,8 @@ describe('EDSCTimeline component', () => {
             }
           })
 
-          enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-          enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
+          enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+          enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
           expect(enzymeWrapper.find(TimelineList).props().timeIntervals.length).toEqual(61)
 
           // Click the array 21 times to load more intervals
@@ -1283,8 +1283,8 @@ describe('EDSCTimeline component', () => {
             }
           })
 
-          enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-          enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
+          enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+          enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
           expect(enzymeWrapper.find(TimelineList).props().timeIntervals.length).toEqual(61)
 
           // Click the array 22 times to load more intervals
@@ -1331,8 +1331,8 @@ describe('EDSCTimeline component', () => {
             }
           })
 
-          enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-          enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
+          enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+          enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getListBoundingClientRectMock
           expect(enzymeWrapper.find(TimelineList).props().timeIntervals.length).toEqual(61)
 
           // Click the array 52 times to load more intervals
@@ -1381,8 +1381,8 @@ describe('EDSCTimeline component', () => {
         }
       })
 
-      enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectWrapperMock
-      enzymeWrapper.find('.timeline-tools').getElement().ref.current.getBoundingClientRect = getBoundingClientRectToolsMock
+      enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectWrapperMock
+      enzymeWrapper.find('.edsc-timeline-tools').getElement().ref.current.getBoundingClientRect = getBoundingClientRectToolsMock
 
       enzymeWrapper.find(TimelineTools).invoke('onChangeFocusedInterval')('next')
 
@@ -1450,10 +1450,10 @@ describe('EDSCTimeline component', () => {
 
       const { enzymeWrapper } = setup()
 
-      enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-      enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
 
-      const list = enzymeWrapper.find(TimelineList).find('.timeline-list')
+      const list = enzymeWrapper.find(TimelineList).find('.edsc-timeline-list')
 
       // Drag the mouse again
       act(() => {
@@ -1487,10 +1487,10 @@ describe('EDSCTimeline component', () => {
 
       const { enzymeWrapper } = setup()
 
-      enzymeWrapper.find('.timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
-      enzymeWrapper.find('.timeline-list').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
+      enzymeWrapper.find('.edsc-timeline-list').getElement().ref.current.getBoundingClientRect = getBoundingClientRectMock
 
-      const list = enzymeWrapper.find(TimelineList).find('.timeline-list')
+      const list = enzymeWrapper.find(TimelineList).find('.edsc-timeline-list')
 
       // Drag the mouse again
       act(() => {

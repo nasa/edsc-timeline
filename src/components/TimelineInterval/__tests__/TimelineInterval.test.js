@@ -35,29 +35,29 @@ describe('TimelineInterval component', () => {
   test('renders the interval text', () => {
     const { enzymeWrapper } = setup()
 
-    expect(enzymeWrapper.find('.timeline-interval__interval-label').text()).toEqual('Jan')
-    expect(enzymeWrapper.find('.timeline-interval__interval-section-label').text()).toEqual('2021')
+    expect(enzymeWrapper.find('.edsc-timeline-interval__interval-label').text()).toEqual('Jan')
+    expect(enzymeWrapper.find('.edsc-timeline-interval__interval-section-label').text()).toEqual('2021')
   })
 
   test('renders a focused interval', () => {
     const { enzymeWrapper } = setup({ focused: true })
 
-    expect(enzymeWrapper.find('.timeline-interval--is-focused').exists()).toBeTruthy()
-    expect(enzymeWrapper.find('.timeline-interval__interval-label').text()).toEqual('Jan')
-    expect(enzymeWrapper.find('.timeline-interval__interval-section-label').text()).toEqual('2021')
+    expect(enzymeWrapper.find('.edsc-timeline-interval--is-focused').exists()).toBeTruthy()
+    expect(enzymeWrapper.find('.edsc-timeline-interval__interval-label').text()).toEqual('Jan')
+    expect(enzymeWrapper.find('.edsc-timeline-interval__interval-section-label').text()).toEqual('2021')
   })
 
   test('renders the unfocusable class when the interval cannot be focused', () => {
     const { enzymeWrapper } = setup({ focusable: false })
 
-    expect(enzymeWrapper.props().className).toContain('timeline-interval--is-unfocusable')
+    expect(enzymeWrapper.props().className).toContain('edsc-timeline-interval--is-unfocusable')
   })
 
   describe('handleFocusedClick', () => {
     test('calls onFocusedClick', () => {
       const { enzymeWrapper, props } = setup()
 
-      enzymeWrapper.find('.timeline-interval__interval-bottom').invoke('onClick')({ mock: 'event' })
+      enzymeWrapper.find('.edsc-timeline-interval__interval-bottom').invoke('onClick')({ mock: 'event' })
 
       expect(props.onFocusedClick).toHaveBeenCalledTimes(1)
       expect(props.onFocusedClick).toHaveBeenCalledWith({
@@ -71,7 +71,7 @@ describe('TimelineInterval component', () => {
         focusable: false
       })
 
-      enzymeWrapper.find('.timeline-interval__interval-bottom').invoke('onClick')({ mock: 'event' })
+      enzymeWrapper.find('.edsc-timeline-interval__interval-bottom').invoke('onClick')({ mock: 'event' })
 
       expect(props.onFocusedClick).toHaveBeenCalledTimes(0)
     })

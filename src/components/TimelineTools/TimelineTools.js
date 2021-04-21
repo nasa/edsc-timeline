@@ -47,16 +47,16 @@ export const TimelineTools = forwardRef(({
   const focusedIntervalLabel = determineFocusedIntervalLabel(focusedStart, zoomLevel)
 
   const focusedIntervalLabelClassnames = classNames([
-    'timeline-tools__label',
-    'timeline-tools__label--focused-interval',
-    `timeline-tools__label--focused-interval-${zoomLevel}`
+    'edsc-timeline-tools__label',
+    'edsc-timeline-tools__label--focused-interval',
+    `edsc-timeline-tools__label--focused-interval-${zoomLevel}`
   ])
 
   return (
-    <section className="timeline-tools" ref={timelineToolsRef}>
-      <section className="timeline-tools__section">
+    <section className="edsc-timeline-tools" ref={timelineToolsRef}>
+      <section className="edsc-timeline-tools__section">
         <button
-          className="timeline-tools__action"
+          className="edsc-timeline-tools__action"
           type="button"
           disabled={zoomLevel === maxZoom}
           onClick={() => onChangeZoomLevel(zoomLevel + 1)}
@@ -66,11 +66,11 @@ export const TimelineTools = forwardRef(({
         >
           <FaChevronUp />
         </button>
-        <span className="timeline-tools__label timeline-tools__label--resolution">
+        <span className="edsc-timeline-tools__label edsc-timeline-tools__label--resolution">
           {startCase(RESOLUTIONS[zoomLevel])}
         </span>
         <button
-          className="timeline-tools__action"
+          className="edsc-timeline-tools__action"
           type="button"
           disabled={zoomLevel === minZoom}
           onClick={() => onChangeZoomLevel(zoomLevel - 1)}
@@ -84,9 +84,9 @@ export const TimelineTools = forwardRef(({
 
       {
         focusedStart != null && (
-          <section className="timeline-tools__section timeline-tools__section--horizontal">
+          <section className="edsc-timeline-tools__section edsc-timeline-tools__section--horizontal">
             <button
-              className="timeline-tools__action"
+              className="edsc-timeline-tools__action"
               type="button"
               disabled={temporalStart >= focusedStart}
               onClick={() => onChangeFocusedInterval('previous')}
@@ -100,7 +100,7 @@ export const TimelineTools = forwardRef(({
               {focusedIntervalLabel}
             </span>
             <button
-              className="timeline-tools__action"
+              className="edsc-timeline-tools__action"
               type="button"
               disabled={temporalEnd <= focusedEnd}
               onClick={() => onChangeFocusedInterval('next')}

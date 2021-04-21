@@ -102,7 +102,7 @@
     "test:watch": "NODE_OPTIONS=--max_old_space_size=4096 jest --watchAll",
     "test:bamboo": "cypress run --reporter junit --reporter-options \"mochaFile=junit.xml\" -c video=false",
     "prepare": "npm run build",
-    "predeploy": "webpack --config example/webpack.config.js",
+    "predeploy": "PUBLIC_URL=https://nasa.github.io/edsc-timeline/ webpack --config example/webpack.config.js",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
