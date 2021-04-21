@@ -61,35 +61,35 @@ describe('Timeline zooming', () => {
 
   describe('when zooming with the mouse wheel', () => {
     it('does not scroll past min zoomLevel', () => {
-      getByTestId('interval').should('have.text', 'Interval: Month (3)')
+      getByTestId('zoom').should('have.text', 'Zoom: Month (3)')
 
       // Scroll down to zoom 2
       scrollWheel(1)
-      getByTestId('interval').should('have.text', 'Interval: Day (2)')
+      getByTestId('zoom').should('have.text', 'Zoom: Day (2)')
 
       // Scroll down to zoom 1
       scrollWheel(1)
-      getByTestId('interval').should('have.text', 'Interval: Hour (1)')
+      getByTestId('zoom').should('have.text', 'Zoom: Hour (1)')
 
       // Scroll down again
       scrollWheel(1)
-      getByTestId('interval').should('have.text', 'Interval: Hour (1)')
+      getByTestId('zoom').should('have.text', 'Zoom: Hour (1)')
     })
 
     it('does not scroll past max zoomLevel', () => {
-      getByTestId('interval').should('have.text', 'Interval: Month (3)')
+      getByTestId('zoom').should('have.text', 'Zoom: Month (3)')
 
       // Scroll up to zoom 4
       scrollWheel(-1)
-      getByTestId('interval').should('have.text', 'Interval: Year (4)')
+      getByTestId('zoom').should('have.text', 'Zoom: Year (4)')
 
       // Scroll up to zoom 5
       scrollWheel(-1)
-      getByTestId('interval').should('have.text', 'Interval: Year (5)')
+      getByTestId('zoom').should('have.text', 'Zoom: Year (5)')
 
       // Scroll up again
       scrollWheel(-1)
-      getByTestId('interval').should('have.text', 'Interval: Year (5)')
+      getByTestId('zoom').should('have.text', 'Zoom: Year (5)')
     })
 
     it('keeps the mouse position centered in the timeline', () => {

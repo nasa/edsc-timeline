@@ -537,10 +537,10 @@ describe('EDSCTimeline component', () => {
       })
 
       expect(props.onTemporalSet).toHaveBeenCalledTimes(1)
-      expect(props.onTemporalSet).toHaveBeenCalledWith({
-        end: 1697265792000,
-        start: 1690848000000
-      })
+      expect(props.onTemporalSet).toHaveBeenCalledWith(expect.objectContaining({
+        temporalEnd: 1697265792000,
+        temporalStart: 1690848000000
+      }))
     })
 
     test('dragging a temporal range in reverse saves temporalRange and calls onTemporalSet', () => {
@@ -593,10 +593,10 @@ describe('EDSCTimeline component', () => {
       })
 
       expect(props.onTemporalSet).toHaveBeenCalledTimes(1)
-      expect(props.onTemporalSet).toHaveBeenCalledWith({
-        end: 1690848000000,
-        start: 1684430208000
-      })
+      expect(props.onTemporalSet).toHaveBeenCalledWith(expect.objectContaining({
+        temporalEnd: 1690848000000,
+        temporalStart: 1684430208000
+      }))
     })
 
     test('when onTemporalSet is not defined, clicking in the temporal range zone clears existing temporal range and does not call on TemporalSet', () => {
@@ -688,7 +688,10 @@ describe('EDSCTimeline component', () => {
       expect(enzymeWrapper.find(TimelineList).props().temporalRange).toEqual({})
 
       expect(props.onTemporalSet).toHaveBeenCalledTimes(1)
-      expect(props.onTemporalSet).toHaveBeenCalledWith({})
+      expect(props.onTemporalSet).toHaveBeenCalledWith(expect.objectContaining({
+        temporalEnd: undefined,
+        temporalStart: undefined
+      }))
     })
 
     test('hovering the start marker displays the tooltip', () => {
@@ -986,10 +989,10 @@ describe('EDSCTimeline component', () => {
           start: 1627776000000
         })
         expect(props.onFocusedSet).toHaveBeenCalledTimes(1)
-        expect(props.onFocusedSet).toHaveBeenCalledWith({
-          end: 1630454399999,
-          start: 1627776000000
-        })
+        expect(props.onFocusedSet).toHaveBeenCalledWith(expect.objectContaining({
+          focusedEnd: 1630454399999,
+          focusedStart: 1627776000000
+        }))
       })
 
       test('removes the focusedInterval', () => {
@@ -1011,7 +1014,10 @@ describe('EDSCTimeline component', () => {
 
         expect(enzymeWrapper.find(TimelineList).props().focusedInterval).toEqual({})
         expect(props.onFocusedSet).toHaveBeenCalledTimes(1)
-        expect(props.onFocusedSet).toHaveBeenCalledWith({})
+        expect(props.onFocusedSet).toHaveBeenCalledWith(expect.objectContaining({
+          focusedEnd: undefined,
+          focusedStart: undefined
+        }))
       })
     })
 
@@ -1121,10 +1127,10 @@ describe('EDSCTimeline component', () => {
           start: 1625097600000
         })
         expect(props.onFocusedSet).toHaveBeenCalledTimes(1)
-        expect(props.onFocusedSet).toHaveBeenCalledWith({
-          end: 1627775999999,
-          start: 1625097600000
-        })
+        expect(props.onFocusedSet).toHaveBeenCalledWith(expect.objectContaining({
+          focusedEnd: 1627775999999,
+          focusedStart: 1625097600000
+        }))
       })
 
       test('changes the focusedInterval with right arrow keypress', () => {
@@ -1163,10 +1169,10 @@ describe('EDSCTimeline component', () => {
           start: 1630454400000
         })
         expect(props.onFocusedSet).toHaveBeenCalledTimes(1)
-        expect(props.onFocusedSet).toHaveBeenCalledWith({
-          end: 1633046399999,
-          start: 1630454400000
-        })
+        expect(props.onFocusedSet).toHaveBeenCalledWith(expect.objectContaining({
+          focusedEnd: 1633046399999,
+          focusedStart: 1630454400000
+        }))
       })
 
       test('changes the focusedInterval with TimelineTools', () => {
@@ -1201,10 +1207,10 @@ describe('EDSCTimeline component', () => {
           start: 1630454400000
         })
         expect(props.onFocusedSet).toHaveBeenCalledTimes(1)
-        expect(props.onFocusedSet).toHaveBeenCalledWith({
-          end: 1633046399999,
-          start: 1630454400000
-        })
+        expect(props.onFocusedSet).toHaveBeenCalledWith(expect.objectContaining({
+          focusedEnd: 1633046399999,
+          focusedStart: 1630454400000
+        }))
       })
 
       describe('loading more intervals', () => {

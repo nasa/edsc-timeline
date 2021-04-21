@@ -40,17 +40,27 @@ const lethargy = new Lethargy()
  * Renders the EDSC Timeline
  * @param {Object} param0
  * @param {Integer} param0.center Center timestamp of the timeline
+ * @param {Object} param0.data Data to be displayed on the timeline
  * @param {Object} param0.focusedInterval Focused date range to display on the timeline
  * @param {Integer} param0.minZoom Min zoom allowed
  * @param {Integer} param0.maxZoom Max zoom allowed
  * @param {Object} param0.temporalRange Temporal range to display on the timeline
  * @param {Integer} param0.zoom Current zoom level of the timeline
- * @param {Function} param0.onFocusedSet Callback that returns focused interval values
- * @param {Function} param0.onTimelineMove Callback that returns timeline center and interval values
- * @param {Function} param0.onTemporalSet Callback that returns temporal start and end values
+ * @param {Function} param0.onFocusedSet Callback function that returns the focused interval when it is set
+ * @param {Function} param0.onTemporalSet Callback function that returns the temporal range when it is set
+ * @param {Function} param0.onTimelineMove Callback function called when the timeline is moved
+ * @param {Function} param0.onTimelineMoveEnd Callback function called when the timeline is finished moving
+ * @param {Function} param0.onArrowKeyPan Callback function called when arrow keys are used to change the focused interval
+ * @param {Function} param0.onButtonPan Callback function called when buttons are used to change the focused interval
+ * @param {Function} param0.onButtonZoom Callback function called when buttons are used to change the zoom level
+ * @param {Function} param0.onDragPan Callback function called when the timeline is panned using dragging
+ * @param {Function} param0.onFocusedIntervalClick Callback function called when a focused interval is clicked
+ * @param {Function} param0.onScrollPan Callback function called when the mouse wheel is used to pan the timeline
+ * @param {Function} param0.onScrollZoom Callback function called when the mouse wheel is used to change the zoom level
+
  */
 export const EDSCTimeline = ({
-  center,
+  center: propsCenter,
   data,
   focusedInterval: propsFocusedInterval,
   minZoom,
@@ -60,9 +70,8 @@ export const EDSCTimeline = ({
   onArrowKeyPan,
   onButtonPan,
   onButtonZoom,
-  onCreatedTemporal,
   onDragPan,
-  onFocusedClick,
+  onFocusedIntervalClick,
   onFocusedSet,
   onScrollPan,
   onScrollZoom,
@@ -81,6 +90,8 @@ export const EDSCTimeline = ({
 
   // Ref for the timeline to access the temporal range DOM element
   const temporalRangeTooltipRef = useRef(null)
+
+  const [center, setCenter] = useState(propsCenter)
 
   // Store the zoom level and allow for changing props to modify the state
   const [zoomLevel, setZoomLevel] = useState(zoom)
@@ -146,6 +157,11 @@ export const EDSCTimeline = ({
     end: null
   })
 
+  const [timelineWrapperWidth, setTimelineWrapperWidth] = useState(null)
+  const [temporalRangeTooltipWidth, setTemporalRangeTooltipWidth] = useState(null)
+  const [temporalTooltipStyle, setTemporalTooltipStyle] = useState({ left: 'auto', right: 'auto' })
+  const [temporalTooltipText, setTemporalTooltipText] = useState(null)
+
   /**
    * Creates a full list of new timeIntervals based on the given center and zoom
    * @param {Integer} center Center timestamp of the new interval list
@@ -176,7 +192,42 @@ export const EDSCTimeline = ({
   // Store calculated time intervals that power the display of the timeline dates
   const [timeIntervals, setTimeIntervals] = useState(() => generateNewTimeIntervals(center))
 
-  useEffect(() => {
+  /**
+   * Build an object with all current timeline values to return in callback functions
+   */
+  const buildReturnObject = ({
+    newCenter = center,
+    newFocusedInterval = focusedInterval,
+    newTemporalRange = temporalRange,
+    newTimeIntervals = timeIntervals,
+    newZoom = zoomLevel
+  }) => {
+    const {
+      end: focusedEnd,
+      start: focusedStart
+    } = newFocusedInterval
+
+    const {
+      end: temporalEnd,
+      start: temporalStart
+    } = newTemporalRange
+
+    return {
+      center: newCenter,
+      focusedEnd,
+      focusedStart,
+      temporalEnd,
+      temporalStart,
+      timelineEnd: newTimeIntervals[newTimeIntervals.length - 1],
+      timelineStart: newTimeIntervals[0],
+      zoom: newZoom
+    }
+  }
+
+  /**
+   * Calculates the new intervals list width
+   */
+  const calculateNewIntervalListWidth = () => {
     // Anytime new time intervals are calcualted update the pixel width of their container
     const duration = getIntervalsDuration(timeIntervals, zoomLevel)
 
@@ -184,7 +235,12 @@ export const EDSCTimeline = ({
 
     const width = determineScaledWidth(duration, zoomLevel, timelineWrapperWidth)
 
-    setIntervalListWidthInPixels(width)
+    return width
+  }
+
+  // On page load, set the interval list width
+  useEffect(() => {
+    setIntervalListWidthInPixels(calculateNewIntervalListWidth())
   }, [])
 
   /**
@@ -297,7 +353,7 @@ export const EDSCTimeline = ({
     if (!isEmpty(temporalRange)) {
       setTemporalRange({})
 
-      if (onTemporalSet) onTemporalSet({})
+      if (onTemporalSet) onTemporalSet(buildReturnObject({ newTemporalRange: {} }))
     }
   }
 
@@ -306,38 +362,23 @@ export const EDSCTimeline = ({
    * @param {Object} position Position to move the timeline to
    */
   const handleMoveTimeline = (position, active) => {
-    if (onTimelineMove) {
-      const centeredTimestamp = getCenterTimestamp({
-        intervalListWidthInPixels,
-        timeIntervals,
-        timelinePosition: position || timelinePosition,
-        timelineWrapperRef,
-        zoomLevel
-      })
+    if (!onTimelineMove && !onTimelineMoveEnd) return
 
-      onTimelineMove({
-        center: centeredTimestamp,
-        start: timeIntervals[0],
-        end: timeIntervals[timeIntervals.length - 1],
-        interval: zoomLevel
-      })
+    const centeredTimestamp = getCenterTimestamp({
+      intervalListWidthInPixels,
+      timeIntervals,
+      timelinePosition: position || timelinePosition,
+      timelineWrapperRef,
+      zoomLevel
+    })
+    setCenter(centeredTimestamp)
+
+    if (onTimelineMove) {
+      onTimelineMove(buildReturnObject({ newCenter: centeredTimestamp }))
     }
 
     if (!active && onTimelineMoveEnd) {
-      const centeredTimestamp = getCenterTimestamp({
-        intervalListWidthInPixels,
-        timeIntervals,
-        timelinePosition: position || timelinePosition,
-        timelineWrapperRef,
-        zoomLevel
-      })
-
-      onTimelineMoveEnd({
-        center: centeredTimestamp,
-        start: timeIntervals[0],
-        end: timeIntervals[timeIntervals.length - 1],
-        interval: zoomLevel
-      })
+      onTimelineMoveEnd(buildReturnObject({ newCenter: centeredTimestamp }))
     }
   }
 
@@ -372,21 +413,11 @@ export const EDSCTimeline = ({
     })
 
     if (onTimelineMove) {
-      onTimelineMove({
-        center: timestamp,
-        start: timeIntervals[0],
-        end: timeIntervals[timeIntervals.length - 1],
-        interval: zoom
-      })
+      onTimelineMove(buildReturnObject({ newCenter: timestamp, newZoom: zoom }))
     }
 
     if (onTimelineMoveEnd) {
-      onTimelineMoveEnd({
-        center: timestamp,
-        start: timeIntervals[0],
-        end: timeIntervals[timeIntervals.length - 1],
-        interval: zoom
-      })
+      onTimelineMoveEnd(buildReturnObject({ newCenter: timestamp, newZoom: zoom }))
     }
   }
 
@@ -399,9 +430,33 @@ export const EDSCTimeline = ({
       timelineWrapperRef,
       zoomLevel
     })
+    setCenter(centeredTimestamp)
 
     if (centeredTimestamp) centerTimelineToTimestamp({ timestamp: centeredTimestamp })
   }, [zoomLevel])
+
+  /**
+   * Calculate a new interval list width and center the timeline on window resize
+   */
+  const onWindowResize = () => {
+    const newIntervalListWidth = calculateNewIntervalListWidth()
+    setIntervalListWidthInPixels(newIntervalListWidth)
+
+    if (timelineWrapperRef.current) {
+      setTimelineWrapperWidth(timelineWrapperRef.current.getBoundingClientRect().width)
+    }
+
+    centerTimelineToTimestamp({ timestamp: center })
+  }
+
+  // Setup handles for window resizing
+  useEffect(() => {
+    window.addEventListener('resize', onWindowResize)
+
+    return () => {
+      window.removeEventListener('resize', onWindowResize)
+    }
+  }, [center, timeIntervals, timelinePosition, zoomLevel])
 
   /**
    * Handles panning the timeline side to side
@@ -452,12 +507,14 @@ export const EDSCTimeline = ({
       }
     }
 
+    const newLeft = newTimelinePosition.left + positionOffset.left
+
     setTimelinePosition({
       top: 0,
-      left: newTimelinePosition.left + positionOffset.left
+      left: newLeft
     })
 
-    handleMoveTimeline({ left: newTimelinePosition.left + positionOffset.left }, active)
+    handleMoveTimeline({ left: newLeft }, active)
 
     setDraggingTimeline(active)
   }
@@ -508,8 +565,7 @@ export const EDSCTimeline = ({
     setDraggingTemporalMarker(markerType)
 
     if (!active) {
-      if (onCreatedTemporal) onCreatedTemporal()
-      if (onTemporalSet) onTemporalSet(range)
+      if (onTemporalSet) onTemporalSet(buildReturnObject({ newTemporalRange: range }))
       setDraggingTemporalMarker('')
     }
   }
@@ -526,7 +582,7 @@ export const EDSCTimeline = ({
     updateTimeIntervals(newIntervals, zoom)
     setZoomLevel(zoom)
     setFocusedInterval({})
-    if (onFocusedSet) onFocusedSet({})
+    if (onFocusedSet) onFocusedSet(buildReturnObject({ newFocusedInterval: {} }))
 
     centerTimelineToTimestamp({
       timestamp,
@@ -580,6 +636,7 @@ export const EDSCTimeline = ({
         timelineWrapperRef,
         zoomLevel
       })
+
       const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
       const currentCenterPosition = getPositionByTimestamp({
         timestamp: currentCenterTimestamp,
@@ -598,6 +655,7 @@ export const EDSCTimeline = ({
         timeIntervals,
         zoomLevel
       })
+      setCenter(newCenteredTimestamp)
 
       zoomToTimestamp(newCenteredTimestamp, newZoomLevel, offset)
       if (onScrollZoom) onScrollZoom()
@@ -676,7 +734,7 @@ export const EDSCTimeline = ({
     if (!active) {
       setHasReversedTemporalMarkers(false)
       setDraggingTemporalMarker('')
-      if (onTemporalSet) onTemporalSet(range)
+      if (onTemporalSet) onTemporalSet(buildReturnObject({ newTemporalRange: range }))
     }
   }
 
@@ -873,7 +931,7 @@ export const EDSCTimeline = ({
       // Move the timeline to the center's position, then subtract half the wrapper width to center that value in the timeline wrapper
       const left = -(
         getPositionByTimestamp({
-          timestamp: center,
+          timestamp: propsCenter,
           timeIntervals,
           zoomLevel,
           wrapperWidth: timelineWrapperWidth
@@ -894,23 +952,14 @@ export const EDSCTimeline = ({
         timelineWrapperRef,
         zoomLevel
       })
+      setCenter(centeredTimestamp)
 
       if (onTimelineMove) {
-        onTimelineMove({
-          center: centeredTimestamp,
-          start: timeIntervals[0],
-          end: timeIntervals[timeIntervals.length - 1],
-          interval: zoomLevel
-        })
+        onTimelineMove(buildReturnObject({ newCenter: centeredTimestamp }))
       }
 
       if (onTimelineMoveEnd) {
-        onTimelineMoveEnd({
-          center: centeredTimestamp,
-          start: timeIntervals[0],
-          end: timeIntervals[timeIntervals.length - 1],
-          interval: zoomLevel
-        })
+        onTimelineMoveEnd(buildReturnObject({ newCenter: centeredTimestamp }))
       }
 
       setIsLoaded(true)
@@ -920,8 +969,8 @@ export const EDSCTimeline = ({
   /**
    * Sets or unsets the focusedInterval as the interval where the user clicked
    */
-  const handleFocusedClick = (newFocusedInterval) => {
-    if (onFocusedClick) onFocusedClick()
+  const onFocusedClick = (newFocusedInterval) => {
+    if (onFocusedIntervalClick) onFocusedIntervalClick(buildReturnObject({ newFocusedInterval }))
 
     const {
       end: newEnd,
@@ -934,20 +983,20 @@ export const EDSCTimeline = ({
     } = focusedInterval
 
     // If the selected interval is already focused, remove the focus
-    // Trim the last 3 digits off of the number because EDSC keeps track of seconds instead of milliseconds
+    // Convert milliseconds to seconds before compairing the previous focused interval to the new focused interval
     const startRounded = Math.floor(start / 1000)
     const newStartRounded = Math.floor(newStart / 1000)
     const endRounded = Math.floor(end / 1000)
     const newEndRounded = Math.floor(newEnd / 1000)
     if (startRounded === newStartRounded && endRounded === newEndRounded) {
-      if (onFocusedSet) onFocusedSet({})
+      if (onFocusedSet) onFocusedSet(buildReturnObject({ newFocusedInterval: {} }))
       setFocusedInterval({})
 
       return
     }
 
     // Set the selected interval as focused
-    if (onFocusedSet) onFocusedSet(newFocusedInterval)
+    if (onFocusedSet) onFocusedSet(buildReturnObject({ newFocusedInterval }))
     setFocusedInterval(newFocusedInterval)
   }
 
@@ -979,7 +1028,7 @@ export const EDSCTimeline = ({
     const newFocused = getIntervalBounds(timeIntervals, currentEnd, delta)
 
     // Update the focusedInterval state and call onFocusedSet
-    if (onFocusedSet) onFocusedSet(newFocused)
+    if (onFocusedSet) onFocusedSet(buildReturnObject({ newFocusedInterval: newFocused }))
     setFocusedInterval(newFocused)
 
     const {
@@ -1033,8 +1082,8 @@ export const EDSCTimeline = ({
     })
 
     handleMoveTimeline({ left: newTimelinePosition }, false)
-    if (onArrowKeyPan && withArrowKeys) onArrowKeyPan(direction)
-    if (onButtonPan && !withArrowKeys) onButtonPan(direction)
+    if (onArrowKeyPan && withArrowKeys) onArrowKeyPan(buildReturnObject({}))
+    if (onButtonPan && !withArrowKeys) onButtonPan(buildReturnObject({}))
   }
 
   /**
@@ -1099,9 +1148,15 @@ export const EDSCTimeline = ({
         timelineWrapperRef,
         zoomLevel
       })
+      setCenter(centeredTimestamp)
 
       zoomToTimestamp(centeredTimestamp, newZoomLevel)
-      if (onButtonZoom) onButtonZoom()
+      if (onButtonZoom) {
+        onButtonZoom(buildReturnObject({
+          newCenter: centeredTimestamp,
+          newZoom: newZoomLevel
+        }))
+      }
     }
   }
 
@@ -1113,11 +1168,6 @@ export const EDSCTimeline = ({
   }
 
   const { end: endTemporal, start: startTemporal } = temporalRange
-
-  const [timelineWrapperWidth, setTimelineWrapperWidth] = useState(null)
-  const [temporalRangeTooltipWidth, setTemporalRangeTooltipWidth] = useState(null)
-  const [temporalTooltipStyle, setTemporalTooltipStyle] = useState({ left: 'auto', right: 'auto' })
-  const [temporalTooltipText, setTemporalTooltipText] = useState(null)
 
   // Set the tooltip text based on the current state
   useEffect(() => {
@@ -1367,7 +1417,7 @@ export const EDSCTimeline = ({
                 onTemporalRangeHover={onTemporalRangeHover}
                 willCancelTemporalSelection={willCancelTemporalSelection}
                 preventTemporalSelectionHover={preventTemporalSelectionHover}
-                onFocusedClick={handleFocusedClick}
+                onFocusedClick={onFocusedClick}
               />
             )
           }
@@ -1385,9 +1435,8 @@ EDSCTimeline.defaultProps = {
   onArrowKeyPan: null,
   onButtonPan: null,
   onButtonZoom: null,
-  onCreatedTemporal: null,
   onDragPan: null,
-  onFocusedClick: null,
+  onFocusedIntervalClick: null,
   onFocusedSet: null,
   onScrollPan: null,
   onScrollZoom: null,
@@ -1423,9 +1472,8 @@ EDSCTimeline.propTypes = {
   onArrowKeyPan: PropTypes.func,
   onButtonPan: PropTypes.func,
   onButtonZoom: PropTypes.func,
-  onCreatedTemporal: PropTypes.func,
   onDragPan: PropTypes.func,
-  onFocusedClick: PropTypes.func,
+  onFocusedIntervalClick: PropTypes.func,
   onFocusedSet: PropTypes.func,
   onScrollPan: PropTypes.func,
   onScrollZoom: PropTypes.func,
