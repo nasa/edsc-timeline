@@ -23,7 +23,7 @@ const App = () => (
       </h1>
     </section>
 
-    <Router basename={process.env.PUBLIC_URL}>
+    <Router>
       <Switch>
         <Route path="/empty" component={EmptyTimeline} />
         <Route path="/temporalRange" component={TemporalRange} />
