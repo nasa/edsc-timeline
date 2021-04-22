@@ -461,8 +461,9 @@ export const EDSCTimeline = ({
   /**
    * Handles panning the timeline side to side
    * @param {Object} state useGesture state
+   * @param {Boolean} reverseDirection Optional - Reverse the direction of the pan
    */
-  const handlePanTimeline = (state) => {
+  const handlePanTimeline = (state, reverseDirection = false) => {
     const {
       active,
       delta: [deltaX],
@@ -474,8 +475,11 @@ export const EDSCTimeline = ({
       left: 0
     }
 
+    // Reverse the direction of the pan if reverseDirection is true (for wheel scrolling)
+    const reverseX = reverseDirection ? -1 : 1
+
     const newTimelinePosition = {}
-    newTimelinePosition.left = timelinePosition.left + deltaX
+    newTimelinePosition.left = timelinePosition.left + (deltaX * reverseX)
 
     const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
     const timelineListWidth = timelineListRef.current.getBoundingClientRect().width
@@ -671,7 +675,7 @@ export const EDSCTimeline = ({
     if (axis === 'y') {
       handleWheelZoom(state)
     } else {
-      handlePanTimeline(state)
+      handlePanTimeline(state, true)
       if (onScrollPan) onScrollPan(buildReturnObject({}))
     }
   }
