@@ -7,6 +7,9 @@ import '../../styles.scss'
 import { Output } from '../Output/Output'
 
 export const Playground = () => {
+  // eslint-disable-next-line no-undef
+  if (hljs) hljs.highlightAll()
+
   const [center] = useState(new Date('2020-01-01T03:12:58.000Z').getTime())
   const [temporal, setTemporal] = useState({
     start: new Date('2020-01').getTime(),

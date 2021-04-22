@@ -7,6 +7,9 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import '../../styles.scss'
 
 export const TemporalStart = () => {
+  // eslint-disable-next-line no-undef
+  if (hljs) hljs.highlightAll()
+
   const [center] = useState(new Date('2021').getTime())
   const [temporal, setTemporal] = useState({
     start: new Date('2020-12-15T13:24:20.695Z').getTime()

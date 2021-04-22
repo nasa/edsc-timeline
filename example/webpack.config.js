@@ -1,6 +1,5 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const webpack = require('webpack')
 
 const htmlWebpackPlugin = new HtmlWebpackPlugin({
   template: path.join(__dirname, 'src/index.html'),
@@ -38,14 +37,7 @@ module.exports = {
       }
     ]
   },
-  plugins: [
-    htmlWebpackPlugin,
-    new webpack.DefinePlugin({
-      'process.env': {
-        PUBLIC_URL: JSON.stringify('/edsc-timeline')
-      }
-    })
-  ],
+  plugins: [htmlWebpackPlugin],
   resolve: {
     extensions: ['.js', '.jsx']
   },
