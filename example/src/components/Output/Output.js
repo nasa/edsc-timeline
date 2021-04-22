@@ -20,6 +20,10 @@ export const Output = ({
 
   return (
     <section className="demo__metadata mb-4">
+      <h3>
+        Timeline Output Values
+      </h3>
+
       <div data-test-id="center">
         <span className="demo__metadata-label">Center:</span>
         {` ${new Date(displayedCenter).toUTCString()}`}
