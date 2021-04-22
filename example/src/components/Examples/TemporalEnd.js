@@ -57,38 +57,54 @@ export const TemporalEnd = () => {
   ]
 
   return (
-    <>
-      <section className="container">
-        <h1>
-          EDSC Timeline React Plugin Demo
-        </h1>
-
-        <div className="timeline-example timeline-example--one">
-          <EDSCTimeline
-            data={data}
-            center={center}
-            focusedInterval={focusedInterval}
-            zoom={3}
-            minZoom={1}
-            maxZoom={5}
-            temporalRange={temporal}
-            onTimelineMove={handleTimelineMove}
-            onTimelineMoveEnd={handleTimelineMove}
-            onTemporalSet={handleTemporalSet}
-            onFocusedSet={handleFocusedSet}
-          />
-        </div>
-
-        <Output
-          displayedCenter={displayedCenter}
-          zoom={displayedZoom}
-          timelineRange={timelineRange}
-          temporalStart={temporalStart}
-          temporalEnd={temporalEnd}
-          focusedStart={focusedStart}
-          focusedEnd={focusedEnd}
+    <section className="container">
+      <div className="timeline-example timeline-example--one">
+        <EDSCTimeline
+          data={data}
+          center={center}
+          focusedInterval={focusedInterval}
+          zoom={3}
+          minZoom={1}
+          maxZoom={5}
+          temporalRange={temporal}
+          onTimelineMove={handleTimelineMove}
+          onTimelineMoveEnd={handleTimelineMove}
+          onTemporalSet={handleTemporalSet}
+          onFocusedSet={handleFocusedSet}
         />
-      </section>
-    </>
+      </div>
+
+      <Output
+        displayedCenter={displayedCenter}
+        zoom={displayedZoom}
+        timelineRange={timelineRange}
+        temporalStart={temporalStart}
+        temporalEnd={temporalEnd}
+        focusedStart={focusedStart}
+        focusedEnd={focusedEnd}
+      />
+
+      <div className="demo__code">
+        <p>
+          This example shows a timeline where a temporal range with only a end value is provided.
+        </p>
+        <pre>
+          <code className="jsx">
+            {`
+<EDSCTimeline
+  data={[{
+    id: 'row1',
+    title: 'Test',
+    intervals: []
+  }]}
+  temporalRange={{
+    end: new Date('2021-01-16T10:55:09.343Z').getTime()
+  }}
+/>
+            `}
+          </code>
+        </pre>
+      </div>
+    </section>
   )
 }

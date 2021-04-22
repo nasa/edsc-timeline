@@ -12,9 +12,6 @@ module.exports = {
     'package-lock.json',
     'src/css'
   ],
-  // setupFiles: [
-  //   '<rootDir>/test-env.js'
-  // ],
   testPathIgnorePatterns: [
     'mocks.js'
   ]

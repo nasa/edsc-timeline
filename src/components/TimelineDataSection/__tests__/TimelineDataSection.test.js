@@ -185,9 +185,7 @@ describe('TimelineDataSection component', () => {
               new Date('2021-03-02').getTime(),
               new Date('2021-03-13').getTime(),
               32
-            ]
-
-            ,
+            ],
             [
               new Date('2021-03-14').getTime(),
               new Date('2021-03-15').getTime(),

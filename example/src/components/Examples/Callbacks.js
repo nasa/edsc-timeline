@@ -65,44 +65,69 @@ export const Callbacks = () => {
   const handleScrollZoom = (data) => console.log('handleScrollZoom called', JSON.stringify(data))
 
   return (
-    <>
-      <section className="container">
-        <h1>
-          EDSC Timeline React Plugin Demo
-        </h1>
-
-        <div className="timeline-example timeline-example--one">
-          <EDSCTimeline
-            data={data}
-            center={center}
-            focusedInterval={focusedInterval}
-            zoom={3}
-            minZoom={1}
-            maxZoom={5}
-            temporalRange={temporal}
-            onArrowKeyPan={handleArrowKeyPan}
-            onButtonPan={handleButtonPan}
-            onButtonZoom={handleButtonZoom}
-            onDragPan={handleDragPan}
-            onFocusedIntervalClick={handleFocusedIntervalClick}
-            onFocusedSet={handleFocusedSet}
-            onScrollPan={handleScrollPan}
-            onScrollZoom={handleScrollZoom}
-            onTemporalSet={handleTemporalSet}
-            onTimelineMoveEnd={handleTimelineMove}
-          />
-        </div>
-
-        <Output
-          displayedCenter={displayedCenter}
-          zoom={displayedZoom}
-          timelineRange={timelineRange}
-          temporalStart={temporalStart}
-          temporalEnd={temporalEnd}
-          focusedStart={focusedStart}
-          focusedEnd={focusedEnd}
+    <section className="container">
+      <div className="timeline-example timeline-example--one">
+        <EDSCTimeline
+          data={data}
+          center={center}
+          focusedInterval={focusedInterval}
+          zoom={3}
+          minZoom={1}
+          maxZoom={5}
+          temporalRange={temporal}
+          onArrowKeyPan={handleArrowKeyPan}
+          onButtonPan={handleButtonPan}
+          onButtonZoom={handleButtonZoom}
+          onDragPan={handleDragPan}
+          onFocusedIntervalClick={handleFocusedIntervalClick}
+          onFocusedSet={handleFocusedSet}
+          onScrollPan={handleScrollPan}
+          onScrollZoom={handleScrollZoom}
+          onTemporalSet={handleTemporalSet}
+          onTimelineMoveEnd={handleTimelineMove}
         />
-      </section>
-    </>
+      </div>
+
+      <Output
+        displayedCenter={displayedCenter}
+        zoom={displayedZoom}
+        timelineRange={timelineRange}
+        temporalStart={temporalStart}
+        temporalEnd={temporalEnd}
+        focusedStart={focusedStart}
+        focusedEnd={focusedEnd}
+      />
+
+      <div className="demo__code">
+        <p>
+          This example shows a timeline where all the callbacks are used.
+          Check the console log for the callback output.
+        </p>
+        <pre>
+          <code className="jsx">
+            {`
+<EDSCTimeline
+  data={[{
+    id: 'row1',
+    title: 'Test',
+    intervals: []
+  }]}
+  onArrowKeyPan={handleArrowKeyPan}
+  onButtonPan={handleButtonPan}
+  onButtonZoom={handleButtonZoom}
+  onDragPan={handleDragPan}
+  onFocusedIntervalClick={handleFocusedIntervalClick}
+  onFocusedSet={handleFocusedSet}
+  onScrollPan={handleScrollPan}
+  onScrollZoom={handleScrollZoom}
+  onTemporalSet={handleTemporalSet}
+  onTimelineMoveEnd={handleTimelineMove}
+/>
+            `}
+          </code>
+        </pre>
+      </div>
+
+    </section>
   )
 }

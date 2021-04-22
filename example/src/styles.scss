@@ -6,7 +6,6 @@ body {
 
 body {
   position: relative;
-  overflow: hidden;
 }
 
 #root {
@@ -39,5 +38,31 @@ body {
   &__metadata-label {
     font-weight: 700;
     color: $color__black--300;
+  }
+
+  &__code {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    code {
+      border: 1px solid $color__black--300;
+      border-radius: 5px;
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
+  &__navigation {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.925rem;
+    color: $color__black--200;
+
+    ul {
+      list-style: none;
+    }
   }
 }

@@ -14,8 +14,8 @@ describe('Window resizing', () => {
     getByTestId('tooltip').should('have.css', 'left', '553.5px')
     getByTestId('tooltip').should('have.css', 'bottom', '2px')
 
-    // Change the window from 1400x900 to 1000x900
-    cy.viewport(1000, 900)
+    // Change the window from 1400x1100 to 1000x1100
+    cy.viewport(1000, 1100)
 
     // Mouse over the temporal range
     getByTestId('timelineList').rightclick()
@@ -37,7 +37,7 @@ describe('Window resizing', () => {
     getByTestId('tooltip').should('have.css', 'bottom', '2px')
 
     // Reset the window size
-    cy.viewport(1400, 900)
+    cy.viewport(1400, 1100)
 
     // Mouse over the temporal range
     getByTestId('timelineList').rightclick()
