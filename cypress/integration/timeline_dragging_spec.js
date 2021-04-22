@@ -46,7 +46,7 @@ describe('Timeline dragging', () => {
       getByTestId('center').should('have.text', startCenter)
 
       getByTestId('timelineList')
-        .trigger('wheel', { deltaX: 47 })
+        .trigger('wheel', { deltaX: -47 })
 
       getByTestId('center').should('have.text', backwardCenter)
       getByTestId('timelineStart').should('have.text', timelineRangeStart)
@@ -59,7 +59,7 @@ describe('Timeline dragging', () => {
       getByTestId('center').should('have.text', startCenter)
 
       getByTestId('timelineList')
-        .trigger('wheel', { deltaX: -47 })
+        .trigger('wheel', { deltaX: 47 })
 
       getByTestId('center').should('have.text', forwardCenter)
       getByTestId('timelineStart').should('have.text', timelineRangeStart)
