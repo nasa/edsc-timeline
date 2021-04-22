@@ -14,12 +14,23 @@ export const getTimestampByPosition = ({
   timeIntervals,
   zoomLevel
 }) => {
+  // Start time of the current intervals
   const startTime = timeIntervals[0]
 
+  // End time of the current intervals
   const endTime = generateEndTime(timeIntervals, zoomLevel)
 
+  // Duration of the intervals
+  const duration = endTime - startTime
+
+  // Percentage of the list width of the current position
   const percentScrolled = ((position) / intervalListWidthInPixels)
-  const timestamp = startTime + ((endTime - startTime) * percentScrolled)
+
+  // Find the percentage of the duration
+  const percentDuration = percentScrolled * duration
+
+  // To find the timestamp add the percentage scrolled of the total duration to the start time
+  const timestamp = startTime + percentDuration
 
   return parseInt(timestamp.toFixed(0), 10)
 }
