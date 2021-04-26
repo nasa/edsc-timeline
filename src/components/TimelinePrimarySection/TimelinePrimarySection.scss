@@ -46,6 +46,9 @@
   }
 
   &__no-visible-data-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-left: 0.125rem;
     margin-right: 0.125rem;
   }

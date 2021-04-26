@@ -3,11 +3,14 @@
 }
 
 .edsc-timeline {
+  position: relative;
   display: flex;
   flex-direction: row;
   user-select: none;
   position: relative;
   width: 100%;
+  line-height: 1;
+  z-index: 1;
 
   &__tooltips {
     position: absolute;
@@ -20,7 +23,7 @@
   &__tooltip {
     position: absolute;
     bottom: -0.125rem;
-    padding: 0.025rem 0.5rem;
+    padding: 0.25rem 0.5rem;
     white-space: nowrap;
     color: $color__white;
     font-size: 0.775rem;
