@@ -1,3 +1,5 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
+
 import { getByTestId } from '../support/getByTestId'
 
 Cypress.on('window:before:load', (win) => {
@@ -7,7 +9,6 @@ Cypress.on('window:before:load', (win) => {
 describe('Callbacks', () => {
   beforeEach(() => {
     cy.visit('/callbacks')
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(200)
   })
 
@@ -72,7 +73,7 @@ describe('Callbacks', () => {
 
     cy.window().then((win) => {
       expect(win.console.log.getCall(0).args[0]).to.equal('handleDragPan called')
-      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1609459200000,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
+      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1608123891892,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
     })
   })
 
@@ -91,9 +92,12 @@ describe('Callbacks', () => {
     getByTestId('timelineList')
       .trigger('wheel', { deltaX: 47 })
 
+    // Wait for the wheel event to end
+    cy.wait(300)
+
     cy.window().then((win) => {
       expect(win.console.log.getCall(0).args[0]).to.equal('handleScrollPan called')
-      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1609459200000,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
+      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1610794508108,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
     })
   })
 
