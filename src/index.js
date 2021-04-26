@@ -671,12 +671,13 @@ export const EDSCTimeline = ({
    * @param {Object} state useGesture state
    */
   const handleWheel = (state) => {
-    const { axis } = state
+    const { axis, last } = state
+
     if (axis === 'y') {
       handleWheelZoom(state)
     } else {
       handlePanTimeline(state, true)
-      if (onScrollPan) onScrollPan(buildReturnObject({}))
+      if (last && onScrollPan) onScrollPan(buildReturnObject({}))
     }
   }
 
@@ -749,7 +750,8 @@ export const EDSCTimeline = ({
   const handlePan = (state) => {
     const {
       event,
-      initial: [, mouseY]
+      initial: [, mouseY],
+      last
     } = state
 
     const { target } = event
@@ -766,7 +768,7 @@ export const EDSCTimeline = ({
       handleSetTemporal(state)
     } else {
       handlePanTimeline(state)
-      if (onDragPan) onDragPan(buildReturnObject({}))
+      if (last && onDragPan) onDragPan(buildReturnObject({}))
     }
   }
 
