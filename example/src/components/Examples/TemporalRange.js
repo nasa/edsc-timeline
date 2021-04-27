@@ -12,8 +12,8 @@ export const TemporalRange = () => {
 
   const [center] = useState(new Date('2021').getTime())
   const [temporal, setTemporal] = useState({
-    start: new Date('2020-12-15T13:24:20.695Z').getTime(),
-    end: new Date('2021-01-16T10:55:09.343Z').getTime()
+    start: new Date('2020-12-15T05:30:49.884Z').getTime(),
+    end: new Date('2021-01-16T03:01:38.533Z').getTime()
   })
   const [focusedInterval, setFocusedInterval] = useState({})
 
