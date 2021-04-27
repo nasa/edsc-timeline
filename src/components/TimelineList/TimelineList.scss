@@ -82,10 +82,10 @@
       position: absolute;
       height: 10px;
       width: 10px;
-      left: -5px;
-      top: -5px;
+      left: 0;
+      top: 0;
       background-color: $color__red-orange;
-      transform: translateX(0.5px) rotate(45deg);
+      transform: translate3d(-4.5px, -4.5px, 0px) rotate(45deg);
       transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
     }
 

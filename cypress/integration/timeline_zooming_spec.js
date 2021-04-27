@@ -1,11 +1,11 @@
 import { getByTestId } from '../support/getByTestId'
 
 const startCenter = 'Center: Fri, 01 Jan 2021 00:00:00 GMT'
-const zoom1Center = 'Center: Tue, 23 Mar 2021 23:34:04 GMT'
-const zoom2Center = 'Center: Wed, 17 Mar 2021 10:48:40 GMT'
-const zoom3Center = 'Center: Fri, 01 Jan 2021 00:00:01 GMT'
-const zoom4Center = 'Center: Sat, 22 Dec 2018 11:01:45 GMT'
-const zoom5Center = 'Center: Sat, 19 Dec 2009 03:29:37 GMT'
+const zoom1Center = 'Center: Tue, 23 Mar 2021 15:41:51 GMT'
+const zoom2Center = 'Center: Wed, 17 Mar 2021 03:34:04 GMT'
+const zoom3Center = 'Center: Fri, 01 Jan 2021 00:00:00 GMT'
+const zoom4Center = 'Center: Tue, 25 Dec 2018 10:07:13 GMT'
+const zoom5Center = 'Center: Mon, 04 Jan 2010 06:25:55 GMT'
 
 const scrollWheel = (direction) => {
   getByTestId('timelineList')

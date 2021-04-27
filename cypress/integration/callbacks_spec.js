@@ -60,7 +60,7 @@ describe('Callbacks', () => {
 
     cy.window().then((win) => {
       expect(win.console.log.getCall(0).args[0]).to.equal('handleTemporalSet called')
-      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1609459200000,"temporalEnd":1610794509343,"temporalStart":1608038660695,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
+      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1609459200000,"temporalEnd":1610766098533,"temporalStart":1608010249884,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
     })
   })
 

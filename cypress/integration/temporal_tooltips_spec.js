@@ -15,8 +15,8 @@ describe('Temporal tooltips', () => {
       // Mouse over the temporal range
       getByTestId('timelineList').rightclick()
 
-      getByTestId('tooltip').should('have.text', '15 Dec 2020 13:24:20 to 16 Jan 2021 10:55:09')
-      getByTestId('tooltip').should('have.css', 'left', '553.5px')
+      getByTestId('tooltip').should('have.text', '15 Dec 2020 05:30:49 to 16 Jan 2021 03:01:38')
+      getByTestId('tooltip').should('have.css', 'left', '552.5px')
       getByTestId('tooltip').should('have.css', 'bottom', '2px')
     })
 
@@ -24,8 +24,8 @@ describe('Temporal tooltips', () => {
       // Mouse over the start marker
       getByTestId('startMarker').rightclick()
 
-      getByTestId('tooltip').should('have.text', '15 Dec 2020 13:24:20')
-      getByTestId('tooltip').should('have.css', 'left', '505px')
+      getByTestId('tooltip').should('have.text', '15 Dec 2020 05:30:49')
+      getByTestId('tooltip').should('have.css', 'left', '504px')
       getByTestId('tooltip').should('have.css', 'bottom', '2px')
     })
 
@@ -33,8 +33,8 @@ describe('Temporal tooltips', () => {
       // Mouse over the end marker
       getByTestId('endMarker').rightclick()
 
-      getByTestId('tooltip').should('have.text', '16 Jan 2021 10:55:09')
-      getByTestId('tooltip').should('have.css', 'left', '602px')
+      getByTestId('tooltip').should('have.text', '16 Jan 2021 03:01:38')
+      getByTestId('tooltip').should('have.css', 'left', '601px')
       getByTestId('tooltip').should('have.css', 'bottom', '2px')
     })
   })
