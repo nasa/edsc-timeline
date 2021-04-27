@@ -3,7 +3,7 @@
   "title": "Earthdata Search Components: Timeline",
   "main": "dist/index.js",
   "description": "Timeline component used by Earthdata Search",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nasa/edsc-timeline.git"
