@@ -20,3 +20,12 @@ import './commands'
 // require('./commands')
 
 import '@cypress/code-coverage/support'
+
+Cypress.on('uncaught:exception', (err) => {
+  // ResizeObserver is throwing errors during tests that we can ignore
+  if (err.message.includes('ResizeObserver')) {
+    return false
+  }
+
+  return true
+})

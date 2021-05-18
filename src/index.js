@@ -8,6 +8,7 @@ import { useGesture } from 'react-use-gesture'
 import { animated, useSpring } from 'react-spring'
 import { isEmpty } from 'lodash'
 import { Lethargy } from 'lethargy'
+import { ResizeObserver } from '@juggle/resize-observer'
 
 import { TimelineList } from './components/TimelineList/TimelineList'
 import { TimelinePrimarySection } from './components/TimelinePrimarySection/TimelinePrimarySection'
@@ -1222,9 +1223,18 @@ export const EDSCTimeline = ({
 
   // Track the width of the timeline wrapper
   useEffect(() => {
-    if (timelineWrapperRef.current) {
+    // Setup a ResizeObserver to handle updating the intervalListWidthInPixels and timelineWrapperWidth
+    // when the timelineWrapperRef is changed
+    const resizeObserver = new ResizeObserver(() => {
+      const newIntervalListWidth = calculateNewIntervalListWidth()
+      setIntervalListWidthInPixels(newIntervalListWidth)
+
       setTimelineWrapperWidth(timelineWrapperRef.current.getBoundingClientRect().width)
-    }
+    })
+
+    resizeObserver.observe(timelineWrapperRef.current)
+
+    return () => resizeObserver.unobserve(timelineWrapperRef.current)
   }, [timelineWrapperRef.current])
 
   // Track the width of the timeline tooltip
