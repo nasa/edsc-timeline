@@ -2,10 +2,10 @@ import { getByTestId } from '../support/getByTestId'
 
 const startCenter = 'Center: Fri, 01 Jan 2021 00:00:00 GMT'
 const zoom1Center = 'Center: Tue, 23 Mar 2021 15:41:51 GMT'
-const zoom2Center = 'Center: Wed, 17 Mar 2021 03:34:04 GMT'
-const zoom3Center = 'Center: Fri, 01 Jan 2021 00:00:00 GMT'
-const zoom4Center = 'Center: Tue, 25 Dec 2018 10:07:13 GMT'
-const zoom5Center = 'Center: Mon, 04 Jan 2010 06:25:55 GMT'
+const zoom2Center = 'Center: Tue, 16 Mar 2021 22:11:02 GMT'
+const zoom3Center = 'Center: Fri, 01 Jan 2021 00:00:01 GMT'
+const zoom4Center = 'Center: Tue, 25 Dec 2018 10:07:15 GMT'
+const zoom5Center = 'Center: Mon, 04 Jan 2010 06:26:04 GMT'
 
 const scrollWheel = (direction) => {
   getByTestId('timelineList')
@@ -13,7 +13,7 @@ const scrollWheel = (direction) => {
 
   // Wait for an event to finish before starting the a new event
   // eslint-disable-next-line cypress/no-unnecessary-waiting
-  cy.wait(350)
+  cy.wait(500)
 }
 
 describe('Timeline zooming', () => {
