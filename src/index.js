@@ -1235,7 +1235,7 @@ export const EDSCTimeline = ({
     resizeObserver.observe(timelineWrapperRef.current)
 
     return () => resizeObserver.unobserve(timelineWrapperRef.current)
-  }, [timelineWrapperRef.current])
+  }, [timelineWrapperRef.current, zoomLevel])
 
   // Track the width of the timeline tooltip
   useEffect(() => {
