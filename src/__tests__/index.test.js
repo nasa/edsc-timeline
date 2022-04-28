@@ -1,3 +1,5 @@
+/* eslint-disable no-import-assign */
+
 import React from 'react'
 import Enzyme, { mount } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
