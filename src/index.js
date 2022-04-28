@@ -272,7 +272,8 @@ export const EDSCTimeline = ({
 
     if (timeIntervals.length > MAX_INTERVAL_BUFFER) {
       currentTimeIntervals = currentTimeIntervals.slice(
-        0, (currentTimeIntervals.length - INTERVAL_BUFFER)
+        0,
+        (currentTimeIntervals.length - INTERVAL_BUFFER)
       )
     }
 
@@ -324,7 +325,8 @@ export const EDSCTimeline = ({
       const duration = endTime - startTime
 
       currentTimeIntervals = currentTimeIntervals.slice(
-        INTERVAL_BUFFER, currentTimeIntervals.length
+        INTERVAL_BUFFER,
+        currentTimeIntervals.length
       )
 
       const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width

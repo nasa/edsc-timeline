@@ -37,6 +37,7 @@ import './TimelineList.scss'
  * @param {Function} param0.onTimelineMouseMove Callback function for onMouseMove
  * @param {Object} timelineListRef Ref to the DOM element representing the timeline list
  */
+// eslint-disable-next-line react/display-name
 export const TimelineList = forwardRef(({
   data,
   bindTimelineGestures,

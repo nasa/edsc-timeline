@@ -371,7 +371,7 @@ describe('calculateTimelineIntervals', () => {
         new Date('1980-01-01T00:00:00.000Z').getTime(),
         new Date('1990-01-01T00:00:00.000Z').getTime(),
         new Date('2000-01-01T00:00:00.000Z').getTime(),
-        new Date('2010-01-01T00:00:00.000Z').getTime(),
+        new Date('2010-01-01T00:00:00.000Z').getTime()
       ]
 
       expect(result).toEqual(expectedResult)
@@ -431,7 +431,7 @@ describe('calculateTimelineIntervals', () => {
         new Date('1821-01-01T00:00:00.000Z').getTime(),
         new Date('1871-01-01T00:00:00.000Z').getTime(),
         new Date('1921-01-01T00:00:00.000Z').getTime(),
-        new Date('1971-01-01T00:00:00.000Z').getTime(),
+        new Date('1971-01-01T00:00:00.000Z').getTime()
       ]
 
       expect(result).toEqual(expectedResult)
