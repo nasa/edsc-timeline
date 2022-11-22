@@ -5,7 +5,7 @@ import React, {
 } from 'react'
 import PropTypes from 'prop-types'
 import { useGesture } from 'react-use-gesture'
-import { animated, useSpring } from 'react-spring'
+import { animated, useSpring } from '@react-spring/web'
 import { isEmpty } from 'lodash'
 import { Lethargy } from 'lethargy'
 import { ResizeObserver } from '@juggle/resize-observer'
