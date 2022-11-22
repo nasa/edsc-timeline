@@ -37,7 +37,7 @@ jobs:
     - name: Run Jest tests
       run: npm run test
     - name: Upload coverage to codecov
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v3
   cypress:
     runs-on: ubuntu-latest
     strategy:
@@ -68,7 +68,7 @@ jobs:
     - name: Run Cypress tests
       run: npm run cypress:ci
     - name: Upload coverage to codecov
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v3
       with:
         directory: 'cypress-coverage'
   deploy:
