@@ -1,8 +1,8 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import {
   HashRouter as Router,
-  Switch,
+  Routes,
   Route,
   Link
 } from 'react-router-dom'
@@ -24,14 +24,14 @@ const App = () => (
     </section>
 
     <Router>
-      <Switch>
-        <Route path="/empty" component={EmptyTimeline} />
-        <Route path="/temporalRange" component={TemporalRange} />
-        <Route path="/temporalStart" component={TemporalStart} />
-        <Route path="/temporalEnd" component={TemporalEnd} />
-        <Route path="/callbacks" component={Callbacks} />
-        <Route exact path="/" component={Playground} />
-      </Switch>
+      <Routes>
+        <Route exact path="/" element={<Playground />} />
+        <Route path="/empty" element={<EmptyTimeline />} />
+        <Route path="/temporalRange" element={<TemporalRange />} />
+        <Route path="/temporalStart" element={<TemporalStart />} />
+        <Route path="/temporalEnd" element={<TemporalEnd />} />
+        <Route path="/callbacks" element={<Callbacks />} />
+      </Routes>
 
       <div className="container demo__navigation">
         <h3>Additional Examples</h3>
@@ -62,4 +62,7 @@ const App = () => (
   </>
 )
 
-render(<App />, document.getElementById('root'))
+const container = document.getElementById('root')
+const root = createRoot(container)
+
+root.render(<App />)
