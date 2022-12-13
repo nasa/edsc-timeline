@@ -1,10 +1,7 @@
 import React from 'react'
-import Enzyme, { shallow } from 'enzyme'
-import Adapter from '@wojtekmaj/enzyme-adapter-react-17'
+import { render, screen, within } from '@testing-library/react'
 
 import { TimelinePrimarySection } from '../TimelinePrimarySection'
-
-Enzyme.configure({ adapter: new Adapter() })
 
 function setup(overrideProps) {
   const props = {
@@ -45,55 +42,53 @@ function setup(overrideProps) {
     ...overrideProps
   }
 
-  const enzymeWrapper = shallow(<TimelinePrimarySection {...props} />)
+  const { container } = render(<TimelinePrimarySection {...props} />)
 
   return {
-    enzymeWrapper,
+    container,
     props
   }
 }
 
 describe('TimelinePrimarySection component', () => {
   test('renders the data row titles', () => {
-    const { enzymeWrapper } = setup()
+    setup()
 
-    const dataRows = enzymeWrapper.find('.edsc-timeline-primary-section__entry')
+    const dataRows = screen.getAllByRole('listitem')
 
-    expect(dataRows.at(0).find('.edsc-timeline-primary-section__title').text()).toEqual('Test Data Row 1')
-    expect(dataRows.at(0).find('.edsc-timeline-primary-section__title').props().title).toEqual('Test Data Row 1')
+    expect(within(dataRows[0]).getByRole('heading', { level: 3 })).toHaveTextContent('Test Data Row 1')
+    expect(within(dataRows[0]).getByRole('heading', { level: 3 })).toHaveAttribute('title', 'Test Data Row 1')
 
-    expect(dataRows.at(1).find('.edsc-timeline-primary-section__title').text()).toEqual('Test Data Row 2')
-    expect(dataRows.at(1).find('.edsc-timeline-primary-section__title').props().title).toEqual('Test Data Row 2')
+    expect(within(dataRows[1]).getByRole('heading', { level: 3 })).toHaveTextContent('Test Data Row 2')
+    expect(within(dataRows[1]).getByRole('heading', { level: 3 })).toHaveAttribute('title', 'Test Data Row 2')
 
-    expect(dataRows.at(2).find('.edsc-timeline-primary-section__title').text()).toEqual('Test Data Row 3')
-    expect(dataRows.at(2).find('.edsc-timeline-primary-section__title').props().title).toEqual('Test Data Row 3')
+    expect(within(dataRows[2]).getByRole('heading', { level: 3 })).toHaveTextContent('Test Data Row 3')
+    expect(within(dataRows[2]).getByRole('heading', { level: 3 })).toHaveAttribute('title', 'Test Data Row 3')
   })
 
   describe('when all the data is in view', () => {
     test('does not render the before arrow', () => {
-      const { enzymeWrapper } = setup()
+      setup()
 
-      const dataRows = enzymeWrapper.find('.edsc-timeline-primary-section__entry')
+      const dataRows = screen.getAllByRole('listitem')
+      const beforeMarker = dataRows[0].getElementsByClassName('edsc-timeline-primary-section__no-visible-data-marker')[0]
 
-      const beforeMarker = dataRows.at(0).find('.edsc-timeline-primary-section__no-visible-data-marker').at(0)
-
-      expect(beforeMarker.props().className).not.toContain('edsc-timeline-primary-section__no-visible-data-marker--is-visible')
+      expect(beforeMarker.classList.contains('edsc-timeline-primary-section__no-visible-data-marker--is-visible')).toEqual(false)
     })
 
     test('does not render the after arrow', () => {
-      const { enzymeWrapper } = setup()
+      setup()
 
-      const dataRows = enzymeWrapper.find('.edsc-timeline-primary-section__entry')
+      const dataRows = screen.getAllByRole('listitem')
+      const afterMarker = dataRows[0].getElementsByClassName('edsc-timeline-primary-section__no-visible-data-marker')[1]
 
-      const afterMarker = dataRows.at(0).find('.edsc-timeline-primary-section__no-visible-data-marker').at(1)
-
-      expect(afterMarker.props().className).not.toContain('edsc-timeline-primary-section__no-visible-data-marker--is-visible')
+      expect(afterMarker.classList.contains('edsc-timeline-primary-section__no-visible-data-marker--is-visible')).toEqual(false)
     })
   })
 
   describe('when data exists only before the current view', () => {
     test('render the before arrow', () => {
-      const { enzymeWrapper } = setup({
+      setup({
         data: [
           {
             id: 'row1',
@@ -109,17 +104,16 @@ describe('TimelinePrimarySection component', () => {
         ]
       })
 
-      const dataRows = enzymeWrapper.find('.edsc-timeline-primary-section__entry')
+      const dataRows = screen.getAllByRole('listitem')
+      const beforeMarker = dataRows[0].getElementsByClassName('edsc-timeline-primary-section__no-visible-data-marker')[0]
 
-      const beforeMarker = dataRows.at(0).find('.edsc-timeline-primary-section__no-visible-data-marker').at(0)
-
-      expect(beforeMarker.props().className).toContain('edsc-timeline-primary-section__no-visible-data-marker--is-visible')
+      expect(beforeMarker.classList.contains('edsc-timeline-primary-section__no-visible-data-marker--is-visible')).toEqual(true)
     })
   })
 
   describe('when data exists only after the current view', () => {
     test('render the after arrow', () => {
-      const { enzymeWrapper } = setup({
+      setup({
         data: [
           {
             id: 'row1',
@@ -135,17 +129,16 @@ describe('TimelinePrimarySection component', () => {
         ]
       })
 
-      const dataRows = enzymeWrapper.find('.edsc-timeline-primary-section__entry')
+      const dataRows = screen.getAllByRole('listitem')
+      const afterMarker = dataRows[0].getElementsByClassName('edsc-timeline-primary-section__no-visible-data-marker')[1]
 
-      const afterMarker = dataRows.at(0).find('.edsc-timeline-primary-section__no-visible-data-marker').at(1)
-
-      expect(afterMarker.props().className).toContain('edsc-timeline-primary-section__no-visible-data-marker--is-visible')
+      expect(afterMarker.classList.contains('edsc-timeline-primary-section__no-visible-data-marker--is-visible')).toEqual(true)
     })
   })
 
   describe('when data exists before and after the current view', () => {
     test('render both arrows', () => {
-      const { enzymeWrapper } = setup({
+      setup({
         data: [
           {
             id: 'row1',
@@ -166,13 +159,12 @@ describe('TimelinePrimarySection component', () => {
         ]
       })
 
-      const dataRows = enzymeWrapper.find('.edsc-timeline-primary-section__entry')
+      const dataRows = screen.getAllByRole('listitem')
+      const beforeMarker = dataRows[0].getElementsByClassName('edsc-timeline-primary-section__no-visible-data-marker')[0]
+      const afterMarker = dataRows[0].getElementsByClassName('edsc-timeline-primary-section__no-visible-data-marker')[1]
 
-      const beforeMarker = dataRows.at(0).find('.edsc-timeline-primary-section__no-visible-data-marker').at(1)
-      const afterMarker = dataRows.at(0).find('.edsc-timeline-primary-section__no-visible-data-marker').at(1)
-
-      expect(beforeMarker.props().className).toContain('edsc-timeline-primary-section__no-visible-data-marker--is-visible')
-      expect(afterMarker.props().className).toContain('edsc-timeline-primary-section__no-visible-data-marker--is-visible')
+      expect(beforeMarker.classList.contains('edsc-timeline-primary-section__no-visible-data-marker--is-visible')).toEqual(true)
+      expect(afterMarker.classList.contains('edsc-timeline-primary-section__no-visible-data-marker--is-visible')).toEqual(true)
     })
   })
 })

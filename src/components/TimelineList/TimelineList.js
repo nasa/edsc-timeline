@@ -243,6 +243,7 @@ export const TimelineList = forwardRef(({
         {
           temporalRangeMouseOverPosition && (
             <div
+              aria-label="Set temporal range"
               className="edsc-timeline-list__temporal-mouseover-marker"
               style={temporalRangeMouseOverStyle}
             />
@@ -256,7 +257,9 @@ export const TimelineList = forwardRef(({
               className={temporalStartMarkerStartClassnames}
               style={temporalStartStyle}
               label="Click and drag to edit the start of the selected temporal range"
-              aria-label="Click and drag to edit the start of the selected temporal range"
+              aria-label="Temporal range start"
+              // eslint-disable-next-line jsx-a11y/aria-props
+              aria-description="Click and drag to edit the start of the selected temporal range"
               type="button"
               data-marker-type="start"
               data-test-id="startMarker"
@@ -271,7 +274,9 @@ export const TimelineList = forwardRef(({
               className={temporalStartMarkerEndClassnames}
               style={temporalEndStyle}
               label="Click and drag to edit the end of the selected temporal range"
-              aria-label="Click and drag to edit the end of the selected temporal range"
+              aria-label="Temporal range end"
+              // eslint-disable-next-line jsx-a11y/aria-props
+              aria-description="Click and drag to edit the end of the selected temporal range"
               type="button"
               data-marker-type="end"
               data-test-id="endMarker"

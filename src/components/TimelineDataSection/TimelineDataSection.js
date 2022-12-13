@@ -42,6 +42,7 @@ export const TimelineDataSection = ({
         return (
           <div
             className="edsc-timeline-data-section__entry"
+            data-testid="timeline-data-section__entry"
             key={key}
           >
             {
@@ -65,6 +66,7 @@ export const TimelineDataSection = ({
                   <div
                     key={`${title}-${startTime}`}
                     className="edsc-timeline-data-section__interval"
+                    data-testid="timeline-data-section__interval"
                     style={{
                       left,
                       width,

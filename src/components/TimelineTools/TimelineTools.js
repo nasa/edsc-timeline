@@ -62,11 +62,15 @@ export const TimelineTools = forwardRef(({
           onClick={() => onChangeZoomLevel(zoomLevel + 1)}
           title="Increase zoom level"
           label="Increase zoom level"
+          aria-label="Increase zoom level"
           data-test-id="zoomUp"
         >
           <FaChevronUp />
         </button>
-        <span className="edsc-timeline-tools__label edsc-timeline-tools__label--resolution">
+        <span
+          aria-label="Zoom level"
+          className="edsc-timeline-tools__label edsc-timeline-tools__label--resolution"
+        >
           {startCase(RESOLUTIONS[zoomLevel])}
         </span>
         <button
@@ -76,6 +80,7 @@ export const TimelineTools = forwardRef(({
           onClick={() => onChangeZoomLevel(zoomLevel - 1)}
           title="Decrease zoom level"
           label="Decrease zoom level"
+          aria-label="Decrease zoom level"
           data-test-id="zoomDown"
         >
           <FaChevronDown />
@@ -92,11 +97,15 @@ export const TimelineTools = forwardRef(({
               onClick={() => onChangeFocusedInterval('previous')}
               title="Focus previous interval"
               label="Focus previous interval"
+              aria-label="Focus previous interval"
               data-test-id="focusPrevious"
             >
               <FaChevronLeft />
             </button>
-            <span className={focusedIntervalLabelClassnames}>
+            <span
+              aria-label="Focused interval"
+              className={focusedIntervalLabelClassnames}
+            >
               {focusedIntervalLabel}
             </span>
             <button
@@ -106,6 +115,7 @@ export const TimelineTools = forwardRef(({
               onClick={() => onChangeFocusedInterval('next')}
               title="Focus next interval"
               label="Focus next interval"
+              aria-label="Focus next interval"
               data-test-id="focusNext"
             >
               <FaChevronRight />

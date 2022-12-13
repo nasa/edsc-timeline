@@ -12,7 +12,9 @@ module.exports = {
     'package-lock.json',
     'src/css'
   ],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testPathIgnorePatterns: [
-    'mocks.js'
+    'mocks.js',
+    'dist'
   ]
 }
