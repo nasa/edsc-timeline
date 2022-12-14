@@ -18,7 +18,7 @@ describe('Timeline dragging', () => {
       getByTestId('timelineList')
         .trigger('pointerdown', { pointerId: 1, clientX: 500 })
         .trigger('pointermove', { pointerId: 1, clientX: 550 })
-        .trigger('pointerup', { pointerId: 1, force: true })
+        .trigger('pointerup', { pointerId: 1 })
 
       getByTestId('center').should('have.text', backwardCenter)
       getByTestId('timelineStart').should('have.text', timelineRangeStart)
@@ -33,7 +33,7 @@ describe('Timeline dragging', () => {
       getByTestId('timelineList')
         .trigger('pointerdown', { pointerId: 1, clientX: 500 })
         .trigger('pointermove', { pointerId: 1, clientX: 450 })
-        .trigger('pointerup', { pointerId: 1, force: true })
+        .trigger('pointerup', { pointerId: 1 })
 
       getByTestId('center').should('have.text', forwardCenter)
       getByTestId('timelineStart').should('have.text', timelineRangeStart)

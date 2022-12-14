@@ -56,7 +56,7 @@ describe('Callbacks', () => {
     getByTestId('timelineList')
       .trigger('pointerdown', { pointerId: 1, clientX: 650, clientY: 10 })
       .trigger('pointermove', { pointerId: 1, clientX: 750, clientY: 10 })
-      .trigger('pointerup', { pointerId: 1, force: true })
+      .trigger('pointerup', { pointerId: 1 })
 
     cy.window().then((win) => {
       expect(win.console.log.getCall(0).args[0]).to.equal('handleTemporalSet called')
@@ -69,7 +69,7 @@ describe('Callbacks', () => {
     getByTestId('timelineList')
       .trigger('pointerdown', { pointerId: 1, clientX: 500 })
       .trigger('pointermove', { pointerId: 1, clientX: 550 })
-      .trigger('pointerup', { pointerId: 1, force: true })
+      .trigger('pointerup', { pointerId: 1 })
 
     cy.window().then((win) => {
       expect(win.console.log.getCall(0).args[0]).to.equal('handleDragPan called')
