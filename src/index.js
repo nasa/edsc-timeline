@@ -1382,6 +1382,7 @@ export const EDSCTimeline = ({
     <div
       className="edsc-timeline"
       ref={timelineWrapperRef}
+      data-test-id="timeline"
     >
       <div
         className="edsc-timeline__tooltips"

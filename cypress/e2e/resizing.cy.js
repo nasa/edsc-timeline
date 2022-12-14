@@ -26,10 +26,10 @@ describe('Window resizing', () => {
     getByTestId('tooltip').should('have.css', 'bottom', '2px')
 
     // Drag the timeline a little
-    getByTestId('timelineList')
-      .trigger('pointerdown', { pointerId: 1, clientX: 500 })
-      .trigger('pointermove', { pointerId: 1, clientX: 450 })
-      .trigger('pointerup', { pointerId: 1, force: true })
+    getByTestId('timeline')
+      .trigger('pointerdown', 500, 25, { pointerId: 1 })
+      .trigger('pointermove', 450, 25, { pointerId: 1 })
+      .trigger('pointerup', { pointerId: 1 })
 
     getByTestId('center').should('have.text', 'Center: Tue, 19 Jan 2021 10:42:34 GMT')
     getByTestId('tooltip').should('have.text', '15 Dec 2020 05:30:49 to 16 Jan 2021 03:01:38')
