@@ -24,42 +24,42 @@ export const Output = ({
         Timeline Output Values
       </h3>
 
-      <div data-test-id="center">
+      <div data-testid="center">
         <span className="demo__metadata-label">Center:</span>
         {` ${new Date(displayedCenter).toUTCString()}`}
       </div>
 
-      <div data-test-id="zoom">
+      <div data-testid="zoom">
         <span className="demo__metadata-label">Zoom:</span>
         {` ${startCase(RESOLUTIONS[zoom])} (${zoom})`}
       </div>
 
-      <div data-test-id="timelineStart">
+      <div data-testid="timelineStart">
         <span className="demo__metadata-label">Timeline Start:</span>
         {` ${timelineStart && new Date(timelineStart).toISOString()}`}
       </div>
 
-      <div data-test-id="timelineEnd">
+      <div data-testid="timelineEnd">
         <span className="demo__metadata-label">Timeline End:</span>
         {` ${timelineEnd && new Date(timelineEnd).toISOString()}`}
       </div>
 
-      <div data-test-id="temporalStart">
+      <div data-testid="temporalStart">
         <span className="demo__metadata-label">Temporal Start:</span>
         {` ${temporalStart && new Date(temporalStart).toISOString()}`}
       </div>
 
-      <div data-test-id="temporalEnd">
+      <div data-testid="temporalEnd">
         <span className="demo__metadata-label">Temporal End:</span>
         {` ${temporalEnd && new Date(temporalEnd).toISOString()}`}
       </div>
 
-      <div data-test-id="focusedStart">
+      <div data-testid="focusedStart">
         <span className="demo__metadata-label">Focused Start:</span>
         {` ${focusedStart && new Date(focusedStart).toISOString()}`}
       </div>
 
-      <div data-test-id="focusedEnd">
+      <div data-testid="focusedEnd">
         <span className="demo__metadata-label">Focused End:</span>
         {` ${focusedEnd && new Date(focusedEnd).toISOString()}`}
       </div>

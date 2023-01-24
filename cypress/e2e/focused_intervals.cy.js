@@ -34,7 +34,7 @@ describe('Focused intervals', () => {
 
     it('clicking an interval at the bottom selects it as the focused interval', () => {
       // Click on a timeline interval bottom
-      // foce: true - force the click to happen through the temporal range
+      // force: true - force the click to happen through the temporal range
       getByTestId('timelineInterval-31').trigger('click', { force: true })
 
       getByTestId('focusedStart').should('have.text', 'Focused Start: 2021-01-01T00:00:00.000Z')
@@ -55,6 +55,62 @@ describe('Focused intervals', () => {
 
       getByTestId('focusedStart').should('have.text', 'Focused Start: null')
       getByTestId('focusedEnd').should('have.text', 'Focused End: null')
+    })
+
+    it('selects the correct interval when pressing the left arrow button', () => {
+      // Click on a timeline interval bottom
+      // force: true - force the click to happen through the temporal range
+      getByTestId('timelineInterval-31').trigger('click', { force: true })
+
+      getByTestId('focusedStart').should('have.text', 'Focused Start: 2021-01-01T00:00:00.000Z')
+      getByTestId('focusedEnd').should('have.text', 'Focused End: 2021-01-31T23:59:59.999Z')
+
+      getByTestId('timeline').type('{leftArrow}')
+
+      getByTestId('focusedStart').should('have.text', 'Focused Start: 2020-12-01T00:00:00.000Z')
+      getByTestId('focusedEnd').should('have.text', 'Focused End: 2020-12-31T23:59:59.999Z')
+    })
+
+    it('selects the correct interval when pressing the right arrow button', () => {
+      // Click on a timeline interval bottom
+      // force: true - force the click to happen through the temporal range
+      getByTestId('timelineInterval-32').trigger('click', { force: true })
+
+      getByTestId('focusedStart').should('have.text', 'Focused Start: 2020-12-01T00:00:00.000Z')
+      getByTestId('focusedEnd').should('have.text', 'Focused End: 2020-12-31T23:59:59.999Z')
+
+      getByTestId('timeline').type('{rightArrow}')
+
+      getByTestId('focusedStart').should('have.text', 'Focused Start: 2021-01-01T00:00:00.000Z')
+      getByTestId('focusedEnd').should('have.text', 'Focused End: 2021-01-31T23:59:59.999Z')
+    })
+
+    it('selects the correct interval when pressing the focus previous button', () => {
+      // Click on a timeline interval bottom
+      // force: true - force the click to happen through the temporal range
+      getByTestId('timelineInterval-31').trigger('click', { force: true })
+
+      getByTestId('focusedStart').should('have.text', 'Focused Start: 2021-01-01T00:00:00.000Z')
+      getByTestId('focusedEnd').should('have.text', 'Focused End: 2021-01-31T23:59:59.999Z')
+
+      getByTestId('focusPrevious').click()
+
+      getByTestId('focusedStart').should('have.text', 'Focused Start: 2020-12-01T00:00:00.000Z')
+      getByTestId('focusedEnd').should('have.text', 'Focused End: 2020-12-31T23:59:59.999Z')
+    })
+
+    it('selects the correct interval when pressing the focus next button', () => {
+      // Click on a timeline interval bottom
+      // force: true - force the click to happen through the temporal range
+      getByTestId('timelineInterval-32').trigger('click', { force: true })
+
+      getByTestId('focusedStart').should('have.text', 'Focused Start: 2020-12-01T00:00:00.000Z')
+      getByTestId('focusedEnd').should('have.text', 'Focused End: 2020-12-31T23:59:59.999Z')
+
+      getByTestId('focusNext').click()
+
+      getByTestId('focusedStart').should('have.text', 'Focused Start: 2021-01-01T00:00:00.000Z')
+      getByTestId('focusedEnd').should('have.text', 'Focused End: 2021-01-31T23:59:59.999Z')
     })
   })
 })
