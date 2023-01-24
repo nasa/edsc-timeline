@@ -99,7 +99,7 @@ describe('Timeline dragging', () => {
     })
 
     describe('when the number of intervals reaches the MAX_INTERVAL_BUFFER', () => {
-      it.only('trims the intervals', () => {
+      it('trims the intervals', () => {
         getByTestId('timelineInterval').should('have.length', 61)
 
         getByTestId('timeline')

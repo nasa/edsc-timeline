@@ -14,7 +14,7 @@ describe('Temporal dragging', () => {
     })
 
     describe('when hovering outside the temporal range area', () => {
-      it.only('does not display the indicator', () => {
+      it('does not display the indicator', () => {
         getByTestId('timeline')
           .trigger('pointermove', { pointerId: 1, clientX: 750, clientY: 250 })
 
