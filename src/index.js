@@ -229,7 +229,7 @@ export const EDSCTimeline = ({
    * Calculates the new intervals list width
    */
   const calculateNewIntervalListWidth = () => {
-    // Anytime new time intervals are calcualted update the pixel width of their container
+    // Anytime new time intervals are calculated update the pixel width of their container
     const duration = getIntervalsDuration(timeIntervals, zoomLevel)
 
     const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
@@ -1236,7 +1236,9 @@ export const EDSCTimeline = ({
 
     resizeObserver.observe(timelineWrapperRef.current)
 
-    return () => resizeObserver.unobserve(timelineWrapperRef.current)
+    return () => {
+      if (timelineWrapperRef.current) resizeObserver.unobserve(timelineWrapperRef.current)
+    }
   }, [timelineWrapperRef.current, zoomLevel])
 
   // Track the width of the timeline tooltip

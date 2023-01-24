@@ -13,6 +13,24 @@ describe('Temporal dragging', () => {
       cy.visit('/empty')
     })
 
+    describe('when hovering outside the temporal range area', () => {
+      it.only('does not display the indicator', () => {
+        getByTestId('timeline')
+          .trigger('pointermove', { pointerId: 1, clientX: 750, clientY: 250 })
+
+        getByTestId('temporalRangeMouseoverMarker').should('not.exist')
+      })
+    })
+
+    describe('when hovering inside the temporal range area', () => {
+      it('does not display the indicator', () => {
+        getByTestId('timeline')
+          .trigger('pointermove', { pointerId: 1, clientX: 750, clientY: 100 })
+
+        getByTestId('temporalRangeMouseoverMarker').should('exist')
+      })
+    })
+
     describe('when dragging backwards', () => {
       it('the temporal range is updated', () => {
         getByTestId('timelineList')

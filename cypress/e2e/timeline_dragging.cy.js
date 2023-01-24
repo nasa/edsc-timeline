@@ -24,6 +24,49 @@ describe('Timeline dragging', () => {
       getByTestId('timelineStart').should('have.text', timelineRangeStart)
       getByTestId('timelineEnd').should('have.text', timelineRangeEnd)
     })
+
+    describe('when dragging enough to load new intervals', () => {
+      it('new intervals are added', () => {
+        getByTestId('timelineInterval').should('have.length', 61)
+
+        getByTestId('timeline')
+          .trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 200 })
+          .trigger('pointermove', { pointerId: 1, clientX: 1900, clientY: 200 })
+          .trigger('pointerup', { pointerId: 1 })
+
+        getByTestId('timelineInterval').should('have.length', 91)
+        getByTestId('timelineInterval').eq(0).should('have.text', '2016Jan')
+        getByTestId('timelineStart').should('have.text', 'Timeline Start: 2016-01-01T00:00:00.000Z')
+      })
+    })
+
+    describe('when the number of intervals reaches the MAX_INTERVAL_BUFFER', () => {
+      it('trims the intervals', () => {
+        getByTestId('timelineInterval').should('have.length', 61)
+
+        getByTestId('timeline')
+          .trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 200 })
+          .trigger('pointermove', { pointerId: 1, clientX: 1900, clientY: 200 })
+          .trigger('pointerup', { pointerId: 1 })
+
+        getByTestId('timeline')
+          .trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 200 })
+          .trigger('pointermove', { pointerId: 1, clientX: 2800, clientY: 200 })
+          .trigger('pointerup', { pointerId: 1 })
+
+        getByTestId('timeline')
+          .trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 200 })
+          .trigger('pointermove', { pointerId: 1, clientX: 2800, clientY: 200 })
+          .trigger('pointerup', { pointerId: 1 })
+
+        getByTestId('timeline')
+          .trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 200 })
+          .trigger('pointermove', { pointerId: 1, clientX: 2800, clientY: 200 })
+          .trigger('pointerup', { pointerId: 1 })
+
+        getByTestId('timelineInterval').should('have.length', 151)
+      })
+    })
   })
 
   describe('when dragging forwards', () => {
@@ -38,6 +81,49 @@ describe('Timeline dragging', () => {
       getByTestId('center').should('have.text', forwardCenter)
       getByTestId('timelineStart').should('have.text', timelineRangeStart)
       getByTestId('timelineEnd').should('have.text', timelineRangeEnd)
+    })
+
+    describe('when dragging enough to load new intervals', () => {
+      it('new intervals are added', () => {
+        getByTestId('timelineInterval').should('have.length', 61)
+
+        getByTestId('timeline')
+          .trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 200 })
+          .trigger('pointermove', { pointerId: 1, clientX: -2000, clientY: 200 })
+          .trigger('pointerup', { pointerId: 1 })
+
+        getByTestId('timelineInterval').should('have.length', 91)
+        getByTestId('timelineInterval').eq(-1).should('have.text', '2026Jan')
+        getByTestId('timelineEnd').should('have.text', 'Timeline End: 2026-01-01T00:00:00.000Z')
+      })
+    })
+
+    describe('when the number of intervals reaches the MAX_INTERVAL_BUFFER', () => {
+      it.only('trims the intervals', () => {
+        getByTestId('timelineInterval').should('have.length', 61)
+
+        getByTestId('timeline')
+          .trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 200 })
+          .trigger('pointermove', { pointerId: 1, clientX: -1900, clientY: 200 })
+          .trigger('pointerup', { pointerId: 1 })
+
+        getByTestId('timeline')
+          .trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 200 })
+          .trigger('pointermove', { pointerId: 1, clientX: -2800, clientY: 200 })
+          .trigger('pointerup', { pointerId: 1 })
+
+        getByTestId('timeline')
+          .trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 200 })
+          .trigger('pointermove', { pointerId: 1, clientX: -2800, clientY: 200 })
+          .trigger('pointerup', { pointerId: 1 })
+
+        getByTestId('timeline')
+          .trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 200 })
+          .trigger('pointermove', { pointerId: 1, clientX: -2800, clientY: 200 })
+          .trigger('pointerup', { pointerId: 1 })
+
+        getByTestId('timelineInterval').should('have.length', 151)
+      })
     })
   })
 

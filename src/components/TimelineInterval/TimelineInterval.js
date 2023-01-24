@@ -66,12 +66,12 @@ export const TimelineInterval = ({
 
   return (
     <div
-      key={startTime}
       className={intervalClassnames}
       style={{
         width,
         zIndex
       }}
+      data-testid="timelineInterval"
     >
       <div className="edsc-timeline-interval__interval-top">
         {
@@ -88,7 +88,7 @@ export const TimelineInterval = ({
         aria-disabled={!focusable}
         tabIndex="0"
         onKeyPress={handleFocusedClick}
-        data-test-id={`timelineInterval-${zIndex}`}
+        data-testid={`timelineInterval-${zIndex}`}
       >
         {
           text && (

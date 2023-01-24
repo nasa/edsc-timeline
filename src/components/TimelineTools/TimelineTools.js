@@ -63,7 +63,7 @@ export const TimelineTools = forwardRef(({
           title="Increase zoom level"
           label="Increase zoom level"
           aria-label="Increase zoom level"
-          data-test-id="zoomUp"
+          data-testid="zoomUp"
         >
           <FaChevronUp />
         </button>
@@ -81,7 +81,7 @@ export const TimelineTools = forwardRef(({
           title="Decrease zoom level"
           label="Decrease zoom level"
           aria-label="Decrease zoom level"
-          data-test-id="zoomDown"
+          data-testid="zoomDown"
         >
           <FaChevronDown />
         </button>
@@ -98,7 +98,7 @@ export const TimelineTools = forwardRef(({
               title="Focus previous interval"
               label="Focus previous interval"
               aria-label="Focus previous interval"
-              data-test-id="focusPrevious"
+              data-testid="focusPrevious"
             >
               <FaChevronLeft />
             </button>
@@ -116,7 +116,7 @@ export const TimelineTools = forwardRef(({
               title="Focus next interval"
               label="Focus next interval"
               aria-label="Focus next interval"
-              data-test-id="focusNext"
+              data-testid="focusNext"
             >
               <FaChevronRight />
             </button>
