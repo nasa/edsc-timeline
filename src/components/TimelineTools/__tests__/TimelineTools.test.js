@@ -1,12 +1,7 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 
-// import Enzyme, { shallow } from 'enzyme'
-// import Adapter from '@wojtekmaj/enzyme-adapter-react-17'
-
 import { TimelineTools } from '../TimelineTools'
-
-// Enzyme.configure({ adapter: new Adapter() })
 
 function setup(overrideProps) {
   const props = {
