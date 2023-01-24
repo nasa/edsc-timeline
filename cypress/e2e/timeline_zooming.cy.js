@@ -5,7 +5,7 @@ const zoom1Center = 'Center: Tue, 23 Mar 2021 15:41:51 GMT'
 const zoom2Center = 'Center: Tue, 16 Mar 2021 22:11:02 GMT'
 const zoom3Center = 'Center: Fri, 01 Jan 2021 00:00:01 GMT'
 const zoom4Center = 'Center: Tue, 25 Dec 2018 10:07:15 GMT'
-const zoom5Center = 'Center: Mon, 04 Jan 2010 06:26:04 GMT'
+const zoom5Center = 'Center: Mon, 04 Jan 2010 01:03:03 GMT'
 
 const scrollWheel = (direction) => {
   getByTestId('timelineList')
@@ -99,25 +99,25 @@ describe('Timeline zooming', () => {
       scrollWheel(1)
       getByTestId('center').should('have.text', zoom2Center)
 
-      // // Scroll down to zoom 1
-      // scrollWheel(1)
-      // getByTestId('center').should('have.text', zoom1Center)
+      // Scroll down to zoom 1
+      scrollWheel(1)
+      getByTestId('center').should('have.text', zoom1Center)
 
-      // // Scroll up to zoom 2
-      // scrollWheel(-1)
-      // getByTestId('center').should('have.text', zoom2Center)
+      // Scroll up to zoom 2
+      scrollWheel(-1)
+      getByTestId('center').should('have.text', zoom2Center)
 
-      // // Scroll up to zoom 3
-      // scrollWheel(-1)
-      // getByTestId('center').should('have.text', zoom3Center)
+      // Scroll up to zoom 3
+      scrollWheel(-1)
+      getByTestId('center').should('have.text', zoom3Center)
 
-      // // Scroll up to zoom 4
-      // scrollWheel(-1)
-      // getByTestId('center').should('have.text', zoom4Center)
+      // Scroll up to zoom 4
+      scrollWheel(-1)
+      getByTestId('center').should('have.text', zoom4Center)
 
-      // // Scroll up to zoom 5
-      // scrollWheel(-1)
-      // getByTestId('center').should('have.text', zoom5Center)
+      // Scroll up to zoom 5
+      scrollWheel(-1)
+      getByTestId('center').should('have.text', zoom5Center)
     })
   })
 })
