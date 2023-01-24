@@ -1384,7 +1384,7 @@ export const EDSCTimeline = ({
     <div
       className="edsc-timeline"
       ref={timelineWrapperRef}
-      data-test-id="timeline"
+      data-testid="timeline"
     >
       <div
         className="edsc-timeline__tooltips"
@@ -1395,7 +1395,7 @@ export const EDSCTimeline = ({
           style={{
             ...tooltipSpringStyle
           }}
-          data-test-id="tooltip"
+          data-testid="tooltip"
         >
           {temporalTooltipText}
         </animated.div>
