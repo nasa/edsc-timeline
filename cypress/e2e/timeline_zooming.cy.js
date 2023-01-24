@@ -92,7 +92,7 @@ describe('Timeline zooming', () => {
       getByTestId('zoom').should('have.text', 'Zoom: Year (5)')
     })
 
-    it.only('keeps the mouse position centered in the timeline', () => {
+    it('keeps the mouse position centered in the timeline', () => {
       getByTestId('center').should('have.text', startCenter)
 
       // Scroll down to zoom 2
