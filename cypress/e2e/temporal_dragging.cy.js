@@ -37,6 +37,24 @@ describe('Temporal dragging', () => {
           .trigger('pointerdown', { pointerId: 1, clientX: 650, clientY: 10 })
           .trigger('pointermove', { pointerId: 1, clientX: 750, clientY: 10 })
           .trigger('pointerup', { pointerId: 1 })
+          .trigger('pointermove', { pointerId: 1, clientX: 755, clientY: 10 })
+
+        getByTestId('temporalStart').should('have.text', `Temporal Start: ${timeAtPx[650]}`)
+        getByTestId('temporalEnd').should('have.text', `Temporal End: ${timeAtPx[750]}`)
+      })
+
+      it('mouseover stuff', () => {
+        getByTestId('timeline')
+          .trigger('pointerdown', { pointerId: 1, clientX: 650, clientY: 10 })
+          .trigger('pointermove', { pointerId: 1, clientX: 750, clientY: 10 })
+          .trigger('pointerup', { pointerId: 1 })
+          .trigger('pointermove', { pointerId: 1, clientX: 10, clientY: 10 })
+
+        // TODO: Why does this not trigger the mouseout behavior
+        getByTestId('endMarker')
+          .trigger('mouseover', { force: true })
+          .trigger('mousemove', 500, 500, { force: true })
+          .trigger('mouseout', { force: true })
 
         getByTestId('temporalStart').should('have.text', `Temporal Start: ${timeAtPx[650]}`)
         getByTestId('temporalEnd').should('have.text', `Temporal End: ${timeAtPx[750]}`)
