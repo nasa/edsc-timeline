@@ -22,7 +22,7 @@ describe('Timeline zooming', () => {
   })
 
   describe('when zooming with TimelineTools buttons', () => {
-    it('keeps the center when  zooming through all zoom levels', () => {
+    it('keeps the center when zooming through all zoom levels', () => {
       getByTestId('center').should('have.text', startCenter)
 
       getByTestId('zoomDown').click() // Zoom down to level 2
