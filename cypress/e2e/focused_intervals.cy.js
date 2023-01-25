@@ -113,4 +113,23 @@ describe('Focused intervals', () => {
       getByTestId('focusedEnd').should('have.text', 'Focused End: 2021-01-31T23:59:59.999Z')
     })
   })
+
+  describe('with no temporal range selected', () => {
+    it('loads new intervals when needed when clicking the next button', () => {
+      cy.visit('/empty')
+      cy.wait(200)
+      // Click on a timeline interval bottom
+      // force: true - force the click to happen through the temporal range
+      getByTestId('timelineInterval-32').trigger('click', { force: true })
+
+      cy.get('[data-testid*="timelineInterval"]').should('have.length', 122)
+
+      getByTestId('focusNext').click()
+      getByTestId('focusNext').click()
+      getByTestId('focusNext').click()
+      getByTestId('focusNext').click()
+
+      cy.get('[data-testid*="timelineInterval"]').should('have.length', 182)
+    })
+  })
 })
