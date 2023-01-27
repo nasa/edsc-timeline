@@ -23,11 +23,21 @@ describe('Temporal dragging', () => {
     })
 
     describe('when hovering inside the temporal range area', () => {
-      it('does not display the indicator', () => {
+      it('display the indicator', () => {
         getByTestId('timeline')
           .trigger('pointermove', { pointerId: 1, clientX: 750, clientY: 100 })
 
         getByTestId('temporalRangeMouseoverMarker').should('exist')
+      })
+    })
+
+    describe('when hovering inside and then outside the temporal range area', () => {
+      it('remove the indicator', () => {
+        getByTestId('timeline')
+          .trigger('pointermove', { pointerId: 1, clientX: 750, clientY: 100 })
+          .trigger('pointermove', { pointerId: 1, clientX: 750, clientY: 500 })
+
+        getByTestId('temporalRangeMouseoverMarker').should('not.exist')
       })
     })
 
@@ -43,21 +53,20 @@ describe('Temporal dragging', () => {
         getByTestId('temporalEnd').should('have.text', `Temporal End: ${timeAtPx[750]}`)
       })
 
-      it('mouseover stuff', () => {
-        getByTestId('timeline')
-          .trigger('pointerdown', { pointerId: 1, clientX: 650, clientY: 10 })
-          .trigger('pointermove', { pointerId: 1, clientX: 750, clientY: 10 })
+      it('when mousing out of a temporal marker does not hover the marker ', () => {
+        // Set the temporal range
+        getByTestId('timelineList')
+          .trigger('pointerdown', { pointerId: 1, clientX: 650, clientY: 100 })
+          .trigger('pointermove', { pointerId: 1, clientX: 750, clientY: 100 })
           .trigger('pointerup', { pointerId: 1 })
-          .trigger('pointermove', { pointerId: 1, clientX: 10, clientY: 10 })
 
-        // TODO: Why does this not trigger the mouseout behavior
-        getByTestId('endMarker')
-          .trigger('mouseover', { force: true })
-          .trigger('mousemove', 500, 500, { force: true })
-          .trigger('mouseout', { force: true })
+        // Hover over and out of the start marker
+        getByTestId('startMarker')
+          .realHover()
+          .realMouseMove(100, 100)
 
-        getByTestId('temporalStart').should('have.text', `Temporal Start: ${timeAtPx[650]}`)
-        getByTestId('temporalEnd').should('have.text', `Temporal End: ${timeAtPx[750]}`)
+        // Test that the tooltip is no longer visible, meaning the marker is not hovered
+        getByTestId('tooltip').should('have.css', 'opacity', '0')
       })
     })
 

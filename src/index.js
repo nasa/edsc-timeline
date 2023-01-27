@@ -992,7 +992,7 @@ export const EDSCTimeline = ({
     } = focusedInterval
 
     // If the selected interval is already focused, remove the focus
-    // Convert milliseconds to seconds before compairing the previous focused interval to the new focused interval
+    // Convert milliseconds to seconds before comparing the previous focused interval to the new focused interval
     const startRounded = Math.floor(start / 1000)
     const newStartRounded = Math.floor(newStart / 1000)
     const endRounded = Math.floor(end / 1000)

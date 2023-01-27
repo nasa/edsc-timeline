@@ -24,6 +24,14 @@ describe('Focused intervals', () => {
       getByTestId('focusedStart').should('have.text', 'Focused Start: null')
       getByTestId('focusedEnd').should('have.text', 'Focused End: null')
     })
+
+    it('clicking a focused interval removes focus', () => {
+      // Click on a timeline interval bottom
+      getByTestId('timelineInterval-31').trigger('click')
+      getByTestId('timelineInterval-31').trigger('click')
+
+      getByTestId('timelineInterval-31').parent().should('not.have.class', 'edsc-timeline-interval--is-focused')
+    })
   })
 
   describe('when a temporal range exists', () => {

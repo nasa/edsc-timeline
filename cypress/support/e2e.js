@@ -21,6 +21,8 @@ import './commands'
 
 import '@cypress/code-coverage/support'
 
+import 'cypress-real-events'
+
 Cypress.on('uncaught:exception', (err) => {
   // ResizeObserver is throwing errors during tests that we can ignore
   if (err.message.includes('ResizeObserver')) {
