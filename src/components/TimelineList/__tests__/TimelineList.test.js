@@ -288,7 +288,7 @@ describe('TimelineList component', () => {
       })
     })
 
-    test('start marker triggers the hover handler', () => {
+    test('start marker triggers the hover handler', async () => {
       const { props } = setup({
         temporalRange: {
           start: new Date('2021-03').getTime(),

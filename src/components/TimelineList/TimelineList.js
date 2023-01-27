@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
-import { useGesture } from '@use-gesture/react'
+import { useGesture } from 'react-use-gesture'
 
 import { determineScaledWidth } from '../../utils/determineScaledWidth'
 import { generateEndTime } from '../../utils/generateEndTime'
