@@ -9,9 +9,15 @@ describe('determineTemporalLabel', () => {
     })
   })
 
-  describe('when passed a valid timestamp', () => {
+  describe('when passed an invalid timestamp', () => {
     it('returns the correct value', () => {
       const value = determineTemporalLabel()
+
+      expect(value).toEqual('')
+    })
+
+    it('returns the correct value', () => {
+      const value = determineTemporalLabel('abc')
 
       expect(value).toEqual('')
     })
