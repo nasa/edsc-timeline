@@ -16,7 +16,8 @@
     "test:bamboo": "cypress run --reporter junit --reporter-options \"mochaFile=junit.xml\" -c video=false",
     "prepare": "npm run build",
     "predeploy": "PUBLIC_URL=https://nasa.github.io/edsc-timeline/ webpack --config example/webpack.config.js",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
