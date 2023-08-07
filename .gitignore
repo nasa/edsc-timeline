@@ -9,3 +9,4 @@ cypress-coverage
 cypress/screenshots
 cypress/videos
 cypress/fixtures/example.json
+.vscode
