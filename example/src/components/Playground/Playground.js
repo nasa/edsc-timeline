@@ -176,7 +176,8 @@ export const Playground = () => {
 
       <div className="demo__code">
         <p>
-          This example shows a timeline with three rows of data, a temporal range and a focused interval included.
+          This example shows a timeline with three rows of data,
+          a temporal range and a focused interval included.
         </p>
         <pre>
           <code className="jsx">
