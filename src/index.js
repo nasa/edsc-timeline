@@ -118,7 +118,10 @@ export const EDSCTimeline = ({
   const [draggingTemporalMarker, setDraggingTemporalMarker] = useState('')
 
   // The current position of the timeline
-  const [timelinePosition, setTimelinePosition] = useState({ top: 0, left: 0 })
+  const [timelinePosition, setTimelinePosition] = useState({
+    top: 0,
+    left: 0
+  })
 
   // The current position of the mouse when mouseover is triggered on the temporal selection area
   const [temporalRangeMouseOverPosition, setTemporalRangeMouseOverPosition] = useState(null)
@@ -160,25 +163,28 @@ export const EDSCTimeline = ({
 
   const [timelineWrapperWidth, setTimelineWrapperWidth] = useState(null)
   const [temporalRangeTooltipWidth, setTemporalRangeTooltipWidth] = useState(null)
-  const [temporalTooltipStyle, setTemporalTooltipStyle] = useState({ left: 'auto', right: 'auto' })
+  const [temporalTooltipStyle, setTemporalTooltipStyle] = useState({
+    left: 'auto',
+    right: 'auto'
+  })
   const [temporalTooltipText, setTemporalTooltipText] = useState(null)
 
   /**
    * Creates a full list of new timeIntervals based on the given center and zoom
-   * @param {Integer} center Center timestamp of the new interval list
+   * @param {Integer} newCenter Center timestamp of the new interval list
    * @param {Integer} zoom Optional - Zoom level to create the intervals at, defaults to zoomLevel
    */
-  const generateNewTimeIntervals = (center, zoom = zoomLevel) => {
-    const centerInterval = roundTime(center, zoom)
+  const generateNewTimeIntervals = (newCenter, newZoom = zoomLevel) => {
+    const centerInterval = roundTime(newCenter, newZoom)
     const leftIntervals = calculateTimeIntervals({
-      timeAnchor: center,
-      zoomLevel: zoom,
+      timeAnchor: newCenter,
+      zoomLevel: newZoom,
       numIntervals: INTERVAL_BUFFER,
       reverse: true
     })
     const rightIntervals = calculateTimeIntervals({
-      timeAnchor: center,
-      zoomLevel: zoom,
+      timeAnchor: newCenter,
+      zoomLevel: newZoom,
       numIntervals: INTERVAL_BUFFER,
       reverse: false
     })
@@ -232,9 +238,9 @@ export const EDSCTimeline = ({
     // Anytime new time intervals are calculated update the pixel width of their container
     const duration = getIntervalsDuration(timeIntervals, zoomLevel)
 
-    const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+    const newTimelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
-    const width = determineScaledWidth(duration, zoomLevel, timelineWrapperWidth)
+    const width = determineScaledWidth(duration, zoomLevel, newTimelineWrapperWidth)
 
     return width
   }
@@ -247,15 +253,15 @@ export const EDSCTimeline = ({
   /**
    * Sets new timeIntervals, and determines the new width of the interval list
    * @param {Object} newIntervals New timeIntervals to set
-   * @param {Integer} zoom Zoom level used in the newIntervals
+   * @param {Integer} newZoom Zoom level used in the newIntervals
    */
-  const updateTimeIntervals = (newIntervals, zoom = zoomLevel) => {
+  const updateTimeIntervals = (newIntervals, newZoom = zoomLevel) => {
     setTimeIntervals(newIntervals)
-    const duration = getIntervalsDuration(newIntervals, zoom)
+    const duration = getIntervalsDuration(newIntervals, newZoom)
 
-    const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+    const newTimelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
-    const width = determineScaledWidth(duration, zoom, timelineWrapperWidth)
+    const width = determineScaledWidth(duration, newZoom, newTimelineWrapperWidth)
 
     setIntervalListWidthInPixels(width)
   }
@@ -296,9 +302,9 @@ export const EDSCTimeline = ({
 
     const duration = endTime - startTime
 
-    const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+    const newTimelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
-    translationAdjustment = -determineScaledWidth(duration, zoomLevel, timelineWrapperWidth)
+    translationAdjustment = -determineScaledWidth(duration, zoomLevel, newTimelineWrapperWidth)
 
     return {
       left: translationAdjustment
@@ -329,9 +335,9 @@ export const EDSCTimeline = ({
         currentTimeIntervals.length
       )
 
-      const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+      const newTimelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
-      translationAdjustment = determineScaledWidth(duration, zoomLevel, timelineWrapperWidth)
+      translationAdjustment = determineScaledWidth(duration, zoomLevel, newTimelineWrapperWidth)
     }
 
     updateTimeIntervals([
@@ -395,20 +401,20 @@ export const EDSCTimeline = ({
   const centerTimelineToTimestamp = ({
     timestamp,
     intervals = timeIntervals,
-    zoom = zoomLevel,
+    zoom: newZoom = zoomLevel,
     offset = 0
   }) => {
-    const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+    const newTimelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
     const timestampPosition = getPositionByTimestamp({
       timestamp,
       timeIntervals: intervals,
-      zoomLevel: zoom,
-      wrapperWidth: timelineWrapperWidth
+      zoomLevel: newZoom,
+      wrapperWidth: newTimelineWrapperWidth
     })
 
     // Move the timeline to the timestampPosition - offset, then subtract half the wrapper width to center that value in the timeline wrapper
-    const left = -((timestampPosition - offset) - (timelineWrapperWidth / 2))
+    const left = -((timestampPosition - offset) - (newTimelineWrapperWidth / 2))
 
     setTimelinePosition({
       ...timelinePosition,
@@ -416,11 +422,17 @@ export const EDSCTimeline = ({
     })
 
     if (onTimelineMove) {
-      onTimelineMove(buildReturnObject({ newCenter: timestamp, newZoom: zoom }))
+      onTimelineMove(buildReturnObject({
+        newCenter: timestamp,
+        newZoom
+      }))
     }
 
     if (onTimelineMoveEnd) {
-      onTimelineMoveEnd(buildReturnObject({ newCenter: timestamp, newZoom: zoom }))
+      onTimelineMoveEnd(buildReturnObject({
+        newCenter: timestamp,
+        newZoom
+      }))
     }
   }
 
@@ -484,15 +496,15 @@ export const EDSCTimeline = ({
     const newTimelinePosition = {}
     newTimelinePosition.left = timelinePosition.left + (deltaX * reverseX)
 
-    const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+    const newTimelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
     const timelineListWidth = timelineListRef.current.getBoundingClientRect().width
 
     const scrollDirection = directionX !== 1 ? 'forward' : 'backward'
 
-    const loadMoreWindow = timelineWrapperWidth / 3
+    const loadMoreWindow = newTimelineWrapperWidth / 3
     const distanceFromLeftEdge = -newTimelinePosition.left
     const distanceFromRightEdge = timelineListWidth
-      - (-newTimelinePosition.left + timelineWrapperWidth)
+      - (-newTimelinePosition.left + newTimelineWrapperWidth)
 
     if (scrollDirection === 'backward') {
       // If the scroll position is within the window to load another page
@@ -559,7 +571,10 @@ export const EDSCTimeline = ({
       zoomLevel
     })
 
-    let range = { end, start }
+    let range = {
+      end,
+      start
+    }
 
     if (start > end) {
       range = {
@@ -580,21 +595,21 @@ export const EDSCTimeline = ({
   /**
    * Generates new timeIntervals at the given zoom and moves the timeline to the given timestamp
    * @param {Integer} timestamp Timestamp to zoom to
-   * @param {Integer} zoom Zoom level to zoom to
+   * @param {Integer} newZoom Zoom level to zoom to
    * @param {Integer} offset Optional: offset the timeline position by this offset value
    */
-  const zoomToTimestamp = (timestamp, zoom, offset = 0) => {
-    const newIntervals = generateNewTimeIntervals(timestamp, zoom)
+  const zoomToTimestamp = (timestamp, newZoom, offset = 0) => {
+    const newIntervals = generateNewTimeIntervals(timestamp, newZoom)
 
-    updateTimeIntervals(newIntervals, zoom)
-    setZoomLevel(zoom)
+    updateTimeIntervals(newIntervals, newZoom)
+    setZoomLevel(newZoom)
     setFocusedInterval({})
     if (onFocusedSet) onFocusedSet(buildReturnObject({ newFocusedInterval: {} }))
 
     centerTimelineToTimestamp({
       timestamp,
       intervals: newIntervals,
-      zoom,
+      zoom: newZoom,
       offset
     })
   }
@@ -644,12 +659,12 @@ export const EDSCTimeline = ({
         zoomLevel
       })
 
-      const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+      const newTimelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
       const currentCenterPosition = getPositionByTimestamp({
         timestamp: currentCenterTimestamp,
         timeIntervals,
         zoomLevel,
-        wrapperWidth: timelineWrapperWidth
+        wrapperWidth: newTimelineWrapperWidth
       })
 
       // Determine the offset of the mouse position and the current center
@@ -935,7 +950,7 @@ export const EDSCTimeline = ({
   useEffect(() => {
     if (timelineWrapperRef.current && !isLoaded && intervalsCenterInPixels) {
       // Center the timeline on load
-      const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+      const newTimelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
       // Move the timeline to the center's position, then subtract half the wrapper width to center that value in the timeline wrapper
       const left = -(
@@ -943,8 +958,8 @@ export const EDSCTimeline = ({
           timestamp: propsCenter,
           timeIntervals,
           zoomLevel,
-          wrapperWidth: timelineWrapperWidth
-        }) - (timelineWrapperWidth / 2)
+          wrapperWidth: newTimelineWrapperWidth
+        }) - (newTimelineWrapperWidth / 2)
       )
 
       setTimelinePosition({
@@ -1045,18 +1060,18 @@ export const EDSCTimeline = ({
       start: newStart
     } = newFocused
 
-    const timelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+    const newTimelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
     const newStartPosition = getPositionByTimestamp({
       timestamp: newStart,
       timeIntervals,
       zoomLevel,
-      wrapperWidth: timelineWrapperWidth
+      wrapperWidth: newTimelineWrapperWidth
     })
     const newEndPosition = getPositionByTimestamp({
       timestamp: newEnd,
       timeIntervals,
       zoomLevel,
-      wrapperWidth: timelineWrapperWidth
+      wrapperWidth: newTimelineWrapperWidth
     })
 
     // Find the width of the new focusedInterval so the scroll methods can keep the focusedInterval in the same position
@@ -1367,6 +1382,7 @@ export const EDSCTimeline = ({
       config: (property) => {
         // Set the opacity to fade out
         if (property === 'opacity') return { duration: 100 }
+
         return {}
       },
       // Prevent spring animation when dragging a marker or the timeline
@@ -1392,9 +1408,11 @@ export const EDSCTimeline = ({
         <animated.div
           className="edsc-timeline__tooltip"
           ref={temporalRangeTooltipRef}
-          style={{
-            ...tooltipSpringStyle
-          }}
+          style={
+            {
+              ...tooltipSpringStyle
+            }
+          }
           data-testid="tooltip"
         >
           {temporalTooltipText}
@@ -1451,7 +1469,7 @@ export const EDSCTimeline = ({
 EDSCTimeline.defaultProps = {
   center: new Date().getTime(),
   focusedInterval: {},
-  // maxDate: new Date().getTime(),
+  // MaxDate: new Date().getTime(),
   // minDate: 0,
   onArrowKeyPan: null,
   onButtonPan: null,
@@ -1488,7 +1506,7 @@ EDSCTimeline.propTypes = {
     end: PropTypes.number,
     start: PropTypes.number
   }),
-  // maxDate: PropTypes.number, // maximum date timeline will allow scrolling
+  // MaxDate: PropTypes.number, // maximum date timeline will allow scrolling
   // minDate: PropTypes.number, // minimum date timeline will allow scrolling
   onArrowKeyPan: PropTypes.func,
   onButtonPan: PropTypes.func,

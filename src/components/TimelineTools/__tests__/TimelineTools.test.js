@@ -1,5 +1,9 @@
 import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
+import {
+  render,
+  screen,
+  fireEvent
+} from '@testing-library/react'
 
 import { TimelineTools } from '../TimelineTools'
 

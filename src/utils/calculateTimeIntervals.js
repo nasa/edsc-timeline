@@ -20,7 +20,6 @@ export const calculateTimeIntervals = ({
 
   // Round the timeAnchor to ensure the intervals are at the correct rounded time
   const anchorDate = new Date(roundTime(timeAnchor, zoomLevel))
-  // const anchorDate = new Date(timeAnchor)
 
   // Loop numIntervals times, creating a new interval each time
   new Array(numIntervals).fill(null).forEach((_, index) => {

@@ -24,9 +24,11 @@ export const TimelineDataSection = ({
 }) => (
   <div
     className="edsc-timeline-data-section"
-    style={{
-      zIndex: timeIntervals.length + 1
-    }}
+    style={
+      {
+        zIndex: timeIntervals.length + 1
+      }
+    }
   >
     {
       data.map((entry, i) => {
@@ -67,11 +69,13 @@ export const TimelineDataSection = ({
                     key={`${title}-${startTime}`}
                     className="edsc-timeline-data-section__interval"
                     data-testid="timeline-data-section__interval"
-                    style={{
-                      left,
-                      width,
-                      backgroundColor: color
-                    }}
+                    style={
+                      {
+                        left,
+                        width,
+                        backgroundColor: color
+                      }
+                    }
                   />
                 )
               })

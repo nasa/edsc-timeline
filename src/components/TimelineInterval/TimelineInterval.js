@@ -67,10 +67,12 @@ export const TimelineInterval = ({
   return (
     <div
       className={intervalClassnames}
-      style={{
-        width,
-        zIndex
-      }}
+      style={
+        {
+          width,
+          zIndex
+        }
+      }
       data-testid="timelineInterval"
     >
       <div className="edsc-timeline-interval__interval-top">

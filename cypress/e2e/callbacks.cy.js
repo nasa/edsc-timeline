@@ -54,8 +54,16 @@ describe('Callbacks', () => {
   it('calls onTemporalSet', () => {
     // Create a temporal range
     getByTestId('timelineList')
-      .trigger('pointerdown', { pointerId: 1, clientX: 650, clientY: 10 })
-      .trigger('pointermove', { pointerId: 1, clientX: 750, clientY: 10 })
+      .trigger('pointerdown', {
+        pointerId: 1,
+        clientX: 650,
+        clientY: 10
+      })
+      .trigger('pointermove', {
+        pointerId: 1,
+        clientX: 750,
+        clientY: 10
+      })
       .trigger('pointerup', { pointerId: 1 })
 
     cy.window().then((win) => {
@@ -67,8 +75,14 @@ describe('Callbacks', () => {
   it('calls onDragPan', () => {
     // Drag the timeline
     getByTestId('timelineList')
-      .trigger('pointerdown', { pointerId: 1, clientX: 500 })
-      .trigger('pointermove', { pointerId: 1, clientX: 550 })
+      .trigger('pointerdown', {
+        pointerId: 1,
+        clientX: 500
+      })
+      .trigger('pointermove', {
+        pointerId: 1,
+        clientX: 550
+      })
       .trigger('pointerup', { pointerId: 1 })
 
     cy.window().then((win) => {
