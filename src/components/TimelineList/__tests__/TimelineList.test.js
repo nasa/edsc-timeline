@@ -11,7 +11,11 @@ jest.mock('../../TimelineInterval/TimelineInterval', () => ({
 }))
 
 import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
+import {
+  render,
+  screen,
+  fireEvent
+} from '@testing-library/react'
 
 import { TimelineList } from '../TimelineList'
 import { TimelineInterval } from '../../TimelineInterval/TimelineInterval'
@@ -387,12 +391,16 @@ describe('TimelineList component', () => {
 
       expect(TimelineInterval)
         .toHaveBeenNthCalledWith(1, expect.objectContaining({ focusable: false }), {})
+
       expect(TimelineInterval)
         .toHaveBeenNthCalledWith(2, expect.objectContaining({ focusable: false }), {})
+
       expect(TimelineInterval)
         .toHaveBeenNthCalledWith(3, expect.objectContaining({ focused: true }), {})
+
       expect(TimelineInterval)
         .toHaveBeenNthCalledWith(4, expect.objectContaining({ focusable: false }), {})
+
       expect(TimelineInterval)
         .toHaveBeenNthCalledWith(5, expect.objectContaining({ focusable: false }), {})
     })

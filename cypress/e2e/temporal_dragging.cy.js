@@ -16,7 +16,11 @@ describe('Temporal dragging', () => {
     describe('when hovering outside the temporal range area', () => {
       it('does not display the indicator', () => {
         getByTestId('timeline')
-          .trigger('pointermove', { pointerId: 1, clientX: 750, clientY: 250 })
+          .trigger('pointermove', {
+            pointerId: 1,
+            clientX: 750,
+            clientY: 250
+          })
 
         getByTestId('temporalRangeMouseoverMarker').should('not.exist')
       })
@@ -25,7 +29,11 @@ describe('Temporal dragging', () => {
     describe('when hovering inside the temporal range area', () => {
       it('display the indicator', () => {
         getByTestId('timeline')
-          .trigger('pointermove', { pointerId: 1, clientX: 750, clientY: 100 })
+          .trigger('pointermove', {
+            pointerId: 1,
+            clientX: 750,
+            clientY: 100
+          })
 
         getByTestId('temporalRangeMouseoverMarker').should('exist')
       })
@@ -34,8 +42,16 @@ describe('Temporal dragging', () => {
     describe('when hovering inside and then outside the temporal range area', () => {
       it('remove the indicator', () => {
         getByTestId('timeline')
-          .trigger('pointermove', { pointerId: 1, clientX: 750, clientY: 100 })
-          .trigger('pointermove', { pointerId: 1, clientX: 750, clientY: 500 })
+          .trigger('pointermove', {
+            pointerId: 1,
+            clientX: 750,
+            clientY: 100
+          })
+          .trigger('pointermove', {
+            pointerId: 1,
+            clientX: 750,
+            clientY: 500
+          })
 
         getByTestId('temporalRangeMouseoverMarker').should('not.exist')
       })
@@ -44,10 +60,22 @@ describe('Temporal dragging', () => {
     describe('when dragging backwards', () => {
       it('the temporal range is updated', () => {
         getByTestId('timelineList')
-          .trigger('pointerdown', { pointerId: 1, clientX: 650, clientY: 10 })
-          .trigger('pointermove', { pointerId: 1, clientX: 750, clientY: 10 })
+          .trigger('pointerdown', {
+            pointerId: 1,
+            clientX: 650,
+            clientY: 10
+          })
+          .trigger('pointermove', {
+            pointerId: 1,
+            clientX: 750,
+            clientY: 10
+          })
           .trigger('pointerup', { pointerId: 1 })
-          .trigger('pointermove', { pointerId: 1, clientX: 755, clientY: 10 })
+          .trigger('pointermove', {
+            pointerId: 1,
+            clientX: 755,
+            clientY: 10
+          })
 
         getByTestId('temporalStart').should('have.text', `Temporal Start: ${timeAtPx[650]}`)
         getByTestId('temporalEnd').should('have.text', `Temporal End: ${timeAtPx[750]}`)
@@ -56,8 +84,16 @@ describe('Temporal dragging', () => {
       it('when mousing out of a temporal marker does not hover the marker ', () => {
         // Set the temporal range
         getByTestId('timelineList')
-          .trigger('pointerdown', { pointerId: 1, clientX: 650, clientY: 100 })
-          .trigger('pointermove', { pointerId: 1, clientX: 750, clientY: 100 })
+          .trigger('pointerdown', {
+            pointerId: 1,
+            clientX: 650,
+            clientY: 100
+          })
+          .trigger('pointermove', {
+            pointerId: 1,
+            clientX: 750,
+            clientY: 100
+          })
           .trigger('pointerup', { pointerId: 1 })
 
         // Hover over and out of the start marker
@@ -73,8 +109,16 @@ describe('Temporal dragging', () => {
     describe('when dragging forwards', () => {
       it('the temporal range is updated', () => {
         getByTestId('timelineList')
-          .trigger('pointerdown', { pointerId: 1, clientX: 650, clientY: 10 })
-          .trigger('pointermove', { pointerId: 1, clientX: 550, clientY: 10 })
+          .trigger('pointerdown', {
+            pointerId: 1,
+            clientX: 650,
+            clientY: 10
+          })
+          .trigger('pointermove', {
+            pointerId: 1,
+            clientX: 550,
+            clientY: 10
+          })
           .trigger('pointerup', { pointerId: 1 })
 
         getByTestId('temporalStart').should('have.text', `Temporal Start: ${timeAtPx[550]}`)
@@ -92,7 +136,11 @@ describe('Temporal dragging', () => {
 
     it('clicking on the top of the timeline removes the temporal range', () => {
       getByTestId('timelineList')
-        .trigger('pointerdown', { pointerId: 1, clientX: 650, clientY: 10 })
+        .trigger('pointerdown', {
+          pointerId: 1,
+          clientX: 650,
+          clientY: 10
+        })
         .trigger('pointerup', { pointerId: 1 })
 
       getByTestId('temporalStart').should('have.text', 'Temporal Start: null')
@@ -101,7 +149,10 @@ describe('Temporal dragging', () => {
 
     it('clicking on the middle of the timeline does not removes the temporal range', () => {
       getByTestId('timelineList')
-        .trigger('pointerdown', { pointerId: 1, clientX: 650 })
+        .trigger('pointerdown', {
+          pointerId: 1,
+          clientX: 650
+        })
         .trigger('pointerup', { pointerId: 1 })
 
       getByTestId('temporalStart').should('have.text', `Temporal Start: ${timeAtPx[650]}`)
@@ -119,8 +170,16 @@ describe('Temporal dragging', () => {
     it('dragging the start marker changes the temporal range', () => {
       // Grab the start marker, move it to the left
       getByTestId('startMarker')
-        .trigger('pointerdown', { pointerId: 1, clientX: 650, clientY: 10 })
-        .trigger('pointermove', { pointerId: 1, clientX: 550, clientY: 10 })
+        .trigger('pointerdown', {
+          pointerId: 1,
+          clientX: 650,
+          clientY: 10
+        })
+        .trigger('pointermove', {
+          pointerId: 1,
+          clientX: 550,
+          clientY: 10
+        })
         .trigger('pointerup', { pointerId: 1 })
 
       getByTestId('temporalStart').should('have.text', `Temporal Start: ${timeAtPx[550]}`)
@@ -130,8 +189,16 @@ describe('Temporal dragging', () => {
     it('dragging the start marker past the end marker changes the temporal range', () => {
       // Grab the start marker, move it to the right past the end marker
       getByTestId('startMarker')
-        .trigger('pointerdown', { pointerId: 1, clientX: 650, clientY: 10 })
-        .trigger('pointermove', { pointerId: 1, clientX: 850, clientY: 10 })
+        .trigger('pointerdown', {
+          pointerId: 1,
+          clientX: 650,
+          clientY: 10
+        })
+        .trigger('pointermove', {
+          pointerId: 1,
+          clientX: 850,
+          clientY: 10
+        })
         .trigger('pointerup', { pointerId: 1 })
 
       getByTestId('temporalStart').should('have.text', `Temporal Start: ${timeAtPx[750]}`)
@@ -141,8 +208,16 @@ describe('Temporal dragging', () => {
     it('dragging the end marker changes the temporal range', () => {
       // Grab the end marker, move it to the right
       getByTestId('endMarker')
-        .trigger('pointerdown', { pointerId: 1, clientX: 750, clientY: 10 })
-        .trigger('pointermove', { pointerId: 1, clientX: 850, clientY: 10 })
+        .trigger('pointerdown', {
+          pointerId: 1,
+          clientX: 750,
+          clientY: 10
+        })
+        .trigger('pointermove', {
+          pointerId: 1,
+          clientX: 850,
+          clientY: 10
+        })
         .trigger('pointerup', { pointerId: 1 })
 
       getByTestId('temporalStart').should('have.text', `Temporal Start: ${timeAtPx[650]}`)
@@ -152,8 +227,16 @@ describe('Temporal dragging', () => {
     it('dragging the end marker past the start marker changes the temporal range', () => {
       // Grab the end marker, move it to the left past the start marker
       getByTestId('endMarker')
-        .trigger('pointerdown', { pointerId: 1, clientX: 750, clientY: 10 })
-        .trigger('pointermove', { pointerId: 1, clientX: 550, clientY: 10 })
+        .trigger('pointerdown', {
+          pointerId: 1,
+          clientX: 750,
+          clientY: 10
+        })
+        .trigger('pointermove', {
+          pointerId: 1,
+          clientX: 550,
+          clientY: 10
+        })
         .trigger('pointerup', { pointerId: 1 })
 
       getByTestId('temporalStart').should('have.text', `Temporal Start: ${timeAtPx[550]}`)
@@ -169,8 +252,16 @@ describe('Temporal dragging', () => {
 
       // Grab the start marker, move it to the left
       getByTestId('startMarker')
-        .trigger('pointerdown', { pointerId: 1, clientX: 650, clientY: 10 })
-        .trigger('pointermove', { pointerId: 1, clientX: 550, clientY: 10 })
+        .trigger('pointerdown', {
+          pointerId: 1,
+          clientX: 650,
+          clientY: 10
+        })
+        .trigger('pointermove', {
+          pointerId: 1,
+          clientX: 550,
+          clientY: 10
+        })
         .trigger('pointerup', { pointerId: 1 })
 
       getByTestId('temporalStart').should('have.text', `Temporal Start: ${timeAtPx[550]}`)
@@ -183,8 +274,16 @@ describe('Temporal dragging', () => {
 
       // Grab the end marker, move it to the right
       getByTestId('endMarker')
-        .trigger('pointerdown', { pointerId: 1, clientX: 750, clientY: 10 })
-        .trigger('pointermove', { pointerId: 1, clientX: 850, clientY: 10 })
+        .trigger('pointerdown', {
+          pointerId: 1,
+          clientX: 750,
+          clientY: 10
+        })
+        .trigger('pointermove', {
+          pointerId: 1,
+          clientX: 850,
+          clientY: 10
+        })
         .trigger('pointerup', { pointerId: 1 })
 
       getByTestId('temporalEnd').should('have.text', `Temporal End: ${timeAtPx[850]}`)

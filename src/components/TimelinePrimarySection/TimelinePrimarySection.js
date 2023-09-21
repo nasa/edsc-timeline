@@ -79,6 +79,7 @@ export const TimelinePrimarySection = ({
           ])
 
           const key = `${id}-${i}`
+
           return (
             <li
               className="edsc-timeline-primary-section__entry"
@@ -88,9 +89,11 @@ export const TimelinePrimarySection = ({
               <div className={noVisibleDataBeforeMarkerClassnames}>
                 <FaAngleDoubleLeft
                   className="edsc-timeline-primary-section__no-visible-data-icon"
-                  style={{
-                    fill: color
-                  }}
+                  style={
+                    {
+                      fill: color
+                    }
+                  }
                 />
               </div>
               <div className="edsc-timeline-primary-section__primary">
@@ -106,9 +109,11 @@ export const TimelinePrimarySection = ({
               <div className={noVisibleDataAfterMarkerClassnames}>
                 <FaAngleDoubleRight
                   className="edsc-timeline-primary-section__no-visible-data-icon"
-                  style={{
-                    fill: color
-                  }}
+                  style={
+                    {
+                      fill: color
+                    }
+                  }
                 />
               </div>
             </li>

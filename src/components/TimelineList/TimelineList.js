@@ -68,7 +68,10 @@ export const TimelineList = forwardRef(({
    * Sets up handler for the temporal marker hover
    */
   const handleTemporalMarkerHover = (marker, { hovering }) => {
-    onTemporalMarkerHover({ hovering, marker })
+    onTemporalMarkerHover({
+      hovering,
+      marker
+    })
   }
 
   /**
@@ -150,6 +153,7 @@ export const TimelineList = forwardRef(({
       zoomLevel,
       wrapperWidth: timelineWrapperWidth
     })
+
     temporalRangeStyle.width = determineScaledWidth(
       endPosition - startPosition,
       zoomLevel,
@@ -165,6 +169,7 @@ export const TimelineList = forwardRef(({
       zoomLevel,
       wrapperWidth: timelineWrapperWidth
     })
+
     focusedRangeStyle.width = determineScaledWidth(
       focusedIntervalEnd - focusedIntervalStart,
       zoomLevel,
@@ -186,6 +191,7 @@ export const TimelineList = forwardRef(({
       zoomLevel,
       wrapperWidth: timelineWrapperWidth
     }) + 2 // Accomodate for the 2px border on the interval
+
     focusedRangeMaskRightStyle.width = determineScaledWidth(
       generateEndTime(timeIntervals, zoomLevel) - focusedIntervalEnd,
       zoomLevel,
@@ -226,19 +232,23 @@ export const TimelineList = forwardRef(({
       {...bindTimelineGestures()}
       ref={timelineListRef}
       className={timelineListClassnames}
-      style={{
-        width: `${intervalListWidthInPixels}px`,
-        transform: `translateX(${timelinePosition.left}px)`
-      }}
+      style={
+        {
+          width: `${intervalListWidthInPixels}px`,
+          transform: `translateX(${timelinePosition.left}px)`
+        }
+      }
       role="button"
       tabIndex="0"
       data-testid="timelineList"
     >
       <section
         className="edsc-timeline-list__markers"
-        style={{
-          zIndex: timeIntervals.length + 2
-        }}
+        style={
+          {
+            zIndex: timeIntervals.length + 2
+          }
+        }
       >
         {
           temporalRangeMouseOverPosition && (

@@ -1,5 +1,9 @@
 import React from 'react'
-import { render, screen, within } from '@testing-library/react'
+import {
+  render,
+  screen,
+  within
+} from '@testing-library/react'
 import Color from 'color'
 
 import { TimelineDataSection } from '../TimelineDataSection'
@@ -113,7 +117,7 @@ describe('TimelineDataSection component', () => {
         ]
       })
 
-      // testing-library converts the hex value to rgb so we need to check as rgb
+      // Testing-library converts the hex value to rgb so we need to check as rgb
       const color = Color('#25c85b').string()
 
       const interval = screen.getAllByTestId('timeline-data-section__interval')[0]

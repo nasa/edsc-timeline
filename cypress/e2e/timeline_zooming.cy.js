@@ -9,7 +9,10 @@ const zoom5Center = 'Center: Mon, 04 Jan 2010 01:03:03 GMT'
 
 const scrollWheel = (direction) => {
   getByTestId('timelineList')
-    .trigger('wheel', { deltaY: direction, clientX: 950 })
+    .trigger('wheel', {
+      deltaY: direction,
+      clientX: 950
+    })
 
   // Wait for an event to finish before starting the a new event
   // eslint-disable-next-line cypress/no-unnecessary-waiting

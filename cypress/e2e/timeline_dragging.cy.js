@@ -16,8 +16,14 @@ describe('Timeline dragging', () => {
       getByTestId('center').should('have.text', startCenter)
 
       getByTestId('timelineList')
-        .trigger('pointerdown', { pointerId: 1, clientX: 500 })
-        .trigger('pointermove', { pointerId: 1, clientX: 550 })
+        .trigger('pointerdown', {
+          pointerId: 1,
+          clientX: 500
+        })
+        .trigger('pointermove', {
+          pointerId: 1,
+          clientX: 550
+        })
         .trigger('pointerup', { pointerId: 1 })
 
       getByTestId('center').should('have.text', backwardCenter)
@@ -30,8 +36,16 @@ describe('Timeline dragging', () => {
         getByTestId('timelineInterval').should('have.length', 61)
 
         getByTestId('timeline')
-          .trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 200 })
-          .trigger('pointermove', { pointerId: 1, clientX: 1900, clientY: 200 })
+          .trigger('pointerdown', {
+            pointerId: 1,
+            clientX: 0,
+            clientY: 200
+          })
+          .trigger('pointermove', {
+            pointerId: 1,
+            clientX: 1900,
+            clientY: 200
+          })
           .trigger('pointerup', { pointerId: 1 })
 
         getByTestId('timelineInterval').should('have.length', 91)
@@ -45,23 +59,55 @@ describe('Timeline dragging', () => {
         getByTestId('timelineInterval').should('have.length', 61)
 
         getByTestId('timeline')
-          .trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 200 })
-          .trigger('pointermove', { pointerId: 1, clientX: 1900, clientY: 200 })
+          .trigger('pointerdown', {
+            pointerId: 1,
+            clientX: 0,
+            clientY: 200
+          })
+          .trigger('pointermove', {
+            pointerId: 1,
+            clientX: 1900,
+            clientY: 200
+          })
           .trigger('pointerup', { pointerId: 1 })
 
         getByTestId('timeline')
-          .trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 200 })
-          .trigger('pointermove', { pointerId: 1, clientX: 2800, clientY: 200 })
+          .trigger('pointerdown', {
+            pointerId: 1,
+            clientX: 0,
+            clientY: 200
+          })
+          .trigger('pointermove', {
+            pointerId: 1,
+            clientX: 2800,
+            clientY: 200
+          })
           .trigger('pointerup', { pointerId: 1 })
 
         getByTestId('timeline')
-          .trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 200 })
-          .trigger('pointermove', { pointerId: 1, clientX: 2800, clientY: 200 })
+          .trigger('pointerdown', {
+            pointerId: 1,
+            clientX: 0,
+            clientY: 200
+          })
+          .trigger('pointermove', {
+            pointerId: 1,
+            clientX: 2800,
+            clientY: 200
+          })
           .trigger('pointerup', { pointerId: 1 })
 
         getByTestId('timeline')
-          .trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 200 })
-          .trigger('pointermove', { pointerId: 1, clientX: 2800, clientY: 200 })
+          .trigger('pointerdown', {
+            pointerId: 1,
+            clientX: 0,
+            clientY: 200
+          })
+          .trigger('pointermove', {
+            pointerId: 1,
+            clientX: 2800,
+            clientY: 200
+          })
           .trigger('pointerup', { pointerId: 1 })
 
         getByTestId('timelineInterval').should('have.length', 151)
@@ -74,8 +120,14 @@ describe('Timeline dragging', () => {
       getByTestId('center').should('have.text', startCenter)
 
       getByTestId('timelineList')
-        .trigger('pointerdown', { pointerId: 1, clientX: 500 })
-        .trigger('pointermove', { pointerId: 1, clientX: 450 })
+        .trigger('pointerdown', {
+          pointerId: 1,
+          clientX: 500
+        })
+        .trigger('pointermove', {
+          pointerId: 1,
+          clientX: 450
+        })
         .trigger('pointerup', { pointerId: 1 })
 
       getByTestId('center').should('have.text', forwardCenter)
@@ -88,8 +140,16 @@ describe('Timeline dragging', () => {
         getByTestId('timelineInterval').should('have.length', 61)
 
         getByTestId('timeline')
-          .trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 200 })
-          .trigger('pointermove', { pointerId: 1, clientX: -2000, clientY: 200 })
+          .trigger('pointerdown', {
+            pointerId: 1,
+            clientX: 0,
+            clientY: 200
+          })
+          .trigger('pointermove', {
+            pointerId: 1,
+            clientX: -2000,
+            clientY: 200
+          })
           .trigger('pointerup', { pointerId: 1 })
 
         getByTestId('timelineInterval').should('have.length', 91)
@@ -103,23 +163,55 @@ describe('Timeline dragging', () => {
         getByTestId('timelineInterval').should('have.length', 61)
 
         getByTestId('timeline')
-          .trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 200 })
-          .trigger('pointermove', { pointerId: 1, clientX: -1900, clientY: 200 })
+          .trigger('pointerdown', {
+            pointerId: 1,
+            clientX: 0,
+            clientY: 200
+          })
+          .trigger('pointermove', {
+            pointerId: 1,
+            clientX: -1900,
+            clientY: 200
+          })
           .trigger('pointerup', { pointerId: 1 })
 
         getByTestId('timeline')
-          .trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 200 })
-          .trigger('pointermove', { pointerId: 1, clientX: -2800, clientY: 200 })
+          .trigger('pointerdown', {
+            pointerId: 1,
+            clientX: 0,
+            clientY: 200
+          })
+          .trigger('pointermove', {
+            pointerId: 1,
+            clientX: -2800,
+            clientY: 200
+          })
           .trigger('pointerup', { pointerId: 1 })
 
         getByTestId('timeline')
-          .trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 200 })
-          .trigger('pointermove', { pointerId: 1, clientX: -2800, clientY: 200 })
+          .trigger('pointerdown', {
+            pointerId: 1,
+            clientX: 0,
+            clientY: 200
+          })
+          .trigger('pointermove', {
+            pointerId: 1,
+            clientX: -2800,
+            clientY: 200
+          })
           .trigger('pointerup', { pointerId: 1 })
 
         getByTestId('timeline')
-          .trigger('pointerdown', { pointerId: 1, clientX: 0, clientY: 200 })
-          .trigger('pointermove', { pointerId: 1, clientX: -2800, clientY: 200 })
+          .trigger('pointerdown', {
+            pointerId: 1,
+            clientX: 0,
+            clientY: 200
+          })
+          .trigger('pointermove', {
+            pointerId: 1,
+            clientX: -2800,
+            clientY: 200
+          })
           .trigger('pointerup', { pointerId: 1 })
 
         getByTestId('timelineInterval').should('have.length', 151)

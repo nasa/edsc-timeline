@@ -16,5 +16,8 @@ export const getIntervalBounds = (intervals, timestamp, offset = 0) => {
   // Subtract 1 millisecond from the end to be the last value of the previous interval
   const end = intervals[offsetStartIndex + 1] - 1
 
-  return { end, start }
+  return {
+    end,
+    start
+  }
 }
