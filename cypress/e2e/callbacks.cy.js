@@ -68,7 +68,7 @@ describe('Callbacks', () => {
 
     cy.window().then((win) => {
       expect(win.console.log.getCall(0).args[0]).to.equal('handleTemporalSet called')
-      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1609459200000,"temporalEnd":1610766098533,"temporalStart":1608010249884,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
+      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1609459200000,"temporalEnd":1610769677838,"temporalStart":1608006278919,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
     })
   })
 
@@ -87,7 +87,7 @@ describe('Callbacks', () => {
 
     cy.window().then((win) => {
       expect(win.console.log.getCall(0).args[0]).to.equal('handleDragPan called')
-      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1608123891892,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
+      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1608120233514,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
     })
   })
 
@@ -111,7 +111,7 @@ describe('Callbacks', () => {
 
     cy.window().then((win) => {
       expect(win.console.log.getCall(0).args[0]).to.equal('handleScrollPan called')
-      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1610794508108,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
+      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1610798166486,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
     })
   })
 

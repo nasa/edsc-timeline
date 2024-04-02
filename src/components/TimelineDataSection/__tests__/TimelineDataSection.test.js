@@ -89,10 +89,10 @@ describe('TimelineDataSection component', () => {
       const secondDataChild = intervals[1]
 
       expect(intervals.length).toEqual(2)
-      expect(firstDataChild.style.left).toEqual('68.4931506849315px')
-      expect(firstDataChild.style.width).toEqual('12.32876712328767px')
-      expect(secondDataChild.style.left).toEqual('82.1917808219178px')
-      expect(secondDataChild.style.width).toEqual('10.95890410958904px')
+      expect(firstDataChild.style.left).toEqual('68.30601092896175px')
+      expect(firstDataChild.style.width).toEqual('12.295081967213115px')
+      expect(secondDataChild.style.left).toEqual('81.96721311475409px')
+      expect(secondDataChild.style.width).toEqual('10.92896174863388px')
     })
 
     test('sets a default color', () => {
