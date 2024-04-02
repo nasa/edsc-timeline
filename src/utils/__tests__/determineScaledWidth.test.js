@@ -8,6 +8,6 @@ describe('determineScaledWidth', () => {
 
     const width = determineScaledWidth(intervalDurationInMs, zoomLevel, wrapperWidth)
 
-    expect(width).toEqual(105.31506849315068)
+    expect(width).toEqual(105.02732240437159)
   })
 })

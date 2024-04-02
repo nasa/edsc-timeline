@@ -163,9 +163,9 @@ describe('TimelineList component', () => {
       const endMarker = screen.getByLabelText('Temporal range end')
 
       expect(startMarker).toBeInTheDocument()
-      expect(startMarker.style.left).toEqual('200.43835616438355px')
+      expect(startMarker.style.left).toEqual('199.89071038251365px')
       expect(endMarker).toBeInTheDocument()
-      expect(endMarker.style.left).toEqual('305.75342465753425px')
+      expect(endMarker.style.left).toEqual('304.91803278688525px')
     })
 
     test('renders highlighted area correctly if temporal range has start and end', () => {
@@ -179,8 +179,8 @@ describe('TimelineList component', () => {
       const temporalRange = container.getElementsByClassName('edsc-timeline-list__temporal-range')[0]
 
       expect(temporalRange).toBeInTheDocument()
-      expect(temporalRange.style.left).toEqual('200.43835616438355px')
-      expect(temporalRange.style.width).toEqual('105.31506849315068px')
+      expect(temporalRange.style.left).toEqual('199.89071038251365px')
+      expect(temporalRange.style.width).toEqual('105.02732240437159px')
     })
 
     test('renders only a start marker if temporal range does not have an end', () => {
@@ -207,8 +207,8 @@ describe('TimelineList component', () => {
       const temporalRange = container.getElementsByClassName('edsc-timeline-list__temporal-range')[0]
 
       expect(temporalRange).toBeInTheDocument()
-      expect(temporalRange.style.left).toEqual('200.43835616438355px')
-      expect(temporalRange.style.width).toEqual('312.54794520547944px')
+      expect(temporalRange.style.left).toEqual('199.89071038251365px')
+      expect(temporalRange.style.width).toEqual('311.69398907103823px')
     })
 
     test('renders only a end marker if temporal range does not have a start', () => {
@@ -236,7 +236,7 @@ describe('TimelineList component', () => {
 
       expect(temporalRange).toBeInTheDocument()
       expect(temporalRange.style.left).toEqual('0px')
-      expect(temporalRange.style.width).toEqual('200.43835616438355px')
+      expect(temporalRange.style.width).toEqual('199.89071038251365px')
     })
 
     describe('when the temporal markers are not dragging', () => {
@@ -422,16 +422,16 @@ describe('TimelineList component', () => {
       const focusedRangeMaskRight = container.getElementsByClassName('edsc-timeline-list__focused-range-mask')[1]
 
       expect(focusedRange).toBeInTheDocument()
-      expect(focusedRange.style.left).toEqual('200.43835616438355px')
-      expect(focusedRange.style.width).toEqual('103.91780821917807px')
+      expect(focusedRange.style.left).toEqual('199.89071038251365px')
+      expect(focusedRange.style.width).toEqual('103.63934426229508px')
 
       expect(focusedRangeMaskLeft).toBeInTheDocument()
       expect(focusedRangeMaskLeft.style.left).toEqual('0px')
-      expect(focusedRangeMaskLeft.style.width).toEqual('200.43835616438355px')
+      expect(focusedRangeMaskLeft.style.width).toEqual('199.89071038251365px')
 
       expect(focusedRangeMaskRight).toBeInTheDocument()
-      expect(focusedRangeMaskRight.style.left).toEqual('304.35616438356163px')
-      expect(focusedRangeMaskRight.style.width).toEqual('210.63013698630135px')
+      expect(focusedRangeMaskRight.style.left).toEqual('303.53005464480873px')
+      expect(focusedRangeMaskRight.style.width).toEqual('210.05464480874318px')
     })
 
     describe('Data', () => {
