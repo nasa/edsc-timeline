@@ -1,6 +1,6 @@
 import { getByTestId } from '../support/getByTestId'
 
-describe('Temporal dragging', () => {
+describe('dragging', () => {
   describe('creating temporal range', () => {
     beforeEach(() => {
       cy.visit('/empty')
@@ -70,8 +70,8 @@ describe('Temporal dragging', () => {
             clientY: 10
           })
 
-        getByTestId('temporalStart').should('have.text', 'Temporal Start: 2020-12-15T04:24:38.919Z')
-        getByTestId('temporalEnd').should('have.text', 'Temporal End: 2021-01-16T04:01:17.838Z')
+        getByTestId('temporalStart').should('have.text', 'Start: 2020-12-18T16:00:41.143Z')
+        getByTestId('temporalEnd').should('have.text', 'End: 2021-01-13T00:37:01.714Z')
       })
 
       it('when mousing out of a temporal marker does not hover the marker ', () => {
@@ -114,8 +114,8 @@ describe('Temporal dragging', () => {
           })
           .trigger('pointerup', { pointerId: 1 })
 
-        getByTestId('temporalStart').should('have.text', 'Temporal Start: 2020-11-13T04:48:00.000Z')
-        getByTestId('temporalEnd').should('have.text', 'Temporal End: 2020-12-15T04:24:38.919Z')
+        getByTestId('temporalStart').should('have.text', 'Start: 2020-11-23T07:24:20.571Z')
+        getByTestId('temporalEnd').should('have.text', 'End: 2020-12-18T16:00:41.143Z')
       })
     })
   })
@@ -136,8 +136,8 @@ describe('Temporal dragging', () => {
         })
         .trigger('pointerup', { pointerId: 1 })
 
-      getByTestId('temporalStart').should('have.text', 'Temporal Start: null')
-      getByTestId('temporalEnd').should('have.text', 'Temporal End: null')
+      getByTestId('temporalStart').should('have.text', 'Start: null')
+      getByTestId('temporalEnd').should('have.text', 'End: null')
     })
 
     it('clicking on the middle of the timeline does not removes the temporal range', () => {
@@ -148,8 +148,8 @@ describe('Temporal dragging', () => {
         })
         .trigger('pointerup', { pointerId: 1 })
 
-      getByTestId('temporalStart').should('have.text', 'Temporal Start: 2020-12-15T05:30:49.884Z')
-      getByTestId('temporalEnd').should('have.text', 'Temporal End: 2021-01-16T03:01:38.533Z')
+      getByTestId('temporalStart').should('have.text', 'Start: 2020-12-15T05:30:49.884Z')
+      getByTestId('temporalEnd').should('have.text', 'End: 2021-01-16T03:01:38.533Z')
     })
   })
 
@@ -175,8 +175,8 @@ describe('Temporal dragging', () => {
         })
         .trigger('pointerup', { pointerId: 1 })
 
-      getByTestId('temporalStart').should('have.text', 'Temporal Start: 2020-11-13T04:48:00.000Z')
-      getByTestId('temporalEnd').should('have.text', 'Temporal End: 2021-01-16T03:01:38.533Z')
+      getByTestId('temporalStart').should('have.text', 'Start: 2020-11-23T07:24:20.571Z')
+      getByTestId('temporalEnd').should('have.text', 'End: 2021-01-16T03:01:38.533Z')
     })
 
     it('dragging the start marker past the end marker changes the temporal range', () => {
@@ -194,8 +194,8 @@ describe('Temporal dragging', () => {
         })
         .trigger('pointerup', { pointerId: 1 })
 
-      getByTestId('temporalStart').should('have.text', 'Temporal Start: 2021-01-16T03:01:38.533Z')
-      getByTestId('temporalEnd').should('have.text', 'Temporal End: 2021-02-18T03:22:22.703Z')
+      getByTestId('temporalStart').should('have.text', 'Start: 2021-01-16T03:01:38.533Z')
+      getByTestId('temporalEnd').should('have.text', 'End: 2021-02-08T04:02:44.571Z')
     })
 
     it('dragging the end marker changes the temporal range', () => {
@@ -213,8 +213,8 @@ describe('Temporal dragging', () => {
         })
         .trigger('pointerup', { pointerId: 1 })
 
-      getByTestId('temporalStart').should('have.text', 'Temporal Start: 2020-12-15T05:30:49.884Z')
-      getByTestId('temporalEnd').should('have.text', 'Temporal End: 2021-02-18T03:22:22.703Z')
+      getByTestId('temporalStart').should('have.text', 'Start: 2020-12-15T05:30:49.884Z')
+      getByTestId('temporalEnd').should('have.text', 'End: 2021-02-08T04:02:44.571Z')
     })
 
     it('dragging the end marker past the start marker changes the temporal range', () => {
@@ -232,8 +232,8 @@ describe('Temporal dragging', () => {
         })
         .trigger('pointerup', { pointerId: 1 })
 
-      getByTestId('temporalStart').should('have.text', 'Temporal Start: 2020-11-13T04:48:00.000Z')
-      getByTestId('temporalEnd').should('have.text', 'Temporal End: 2020-12-15T05:30:49.884Z')
+      getByTestId('temporalStart').should('have.text', 'Start: 2020-11-23T07:24:20.571Z')
+      getByTestId('temporalEnd').should('have.text', 'End: 2020-12-15T05:30:49.884Z')
     })
   })
 
@@ -257,7 +257,7 @@ describe('Temporal dragging', () => {
         })
         .trigger('pointerup', { pointerId: 1 })
 
-      getByTestId('temporalStart').should('have.text', 'Temporal Start: 2020-11-13T04:48:00.000Z')
+      getByTestId('temporalStart').should('have.text', 'Start: 2020-11-23T07:24:20.571Z')
     })
 
     it('dragging the end marker changes the temporal range', () => {
@@ -279,7 +279,7 @@ describe('Temporal dragging', () => {
         })
         .trigger('pointerup', { pointerId: 1 })
 
-      getByTestId('temporalEnd').should('have.text', 'Temporal End: 2021-02-18T03:22:22.703Z')
+      getByTestId('temporalEnd').should('have.text', 'End: 2021-02-08T04:02:44.571Z')
     })
   })
 })

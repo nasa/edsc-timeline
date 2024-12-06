@@ -17,13 +17,20 @@ describe('Callbacks', () => {
     getByTestId('timelineInterval-31').trigger('click')
 
     // Click the focus next button
-    getByTestId('timelineList')
-      .trigger('keydown', { key: 'ArrowLeft' })
+    getByTestId('timelineList').trigger('keydown', { key: 'ArrowLeft' })
 
     cy.window().then((win) => {
-      expect(win.console.log.getCall(0).args[0]).to.equal('handleFocusedIntervalClick called')
-      expect(win.console.log.getCall(1).args[0]).to.equal('handleArrowKeyPan called')
-      expect(win.console.log.getCall(1).args[1]).to.equal('{"center":1609459200000,"focusedEnd":1612137599999,"focusedStart":1609459200000,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
+      expect(win.console.log.getCall(0).args[0]).to.equal(
+        'handleFocusedIntervalClick called'
+      )
+
+      expect(win.console.log.getCall(1).args[0]).to.equal(
+        'handleArrowKeyPan called'
+      )
+
+      expect(win.console.log.getCall(1).args[1]).to.equal(
+        '{"center":1609459200000,"focusedEnd":1612137599999,"focusedStart":1609459200000,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}'
+      )
     })
   })
 
@@ -35,9 +42,17 @@ describe('Callbacks', () => {
     getByTestId('focusNext').trigger('click')
 
     cy.window().then((win) => {
-      expect(win.console.log.getCall(0).args[0]).to.equal('handleFocusedIntervalClick called')
-      expect(win.console.log.getCall(1).args[0]).to.equal('handleButtonPan called')
-      expect(win.console.log.getCall(1).args[1]).to.equal('{"center":1609459200000,"focusedEnd":1612137599999,"focusedStart":1609459200000,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
+      expect(win.console.log.getCall(0).args[0]).to.equal(
+        'handleFocusedIntervalClick called'
+      )
+
+      expect(win.console.log.getCall(1).args[0]).to.equal(
+        'handleButtonPan called'
+      )
+
+      expect(win.console.log.getCall(1).args[1]).to.equal(
+        '{"center":1609459200000,"focusedEnd":1612137599999,"focusedStart":1609459200000,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}'
+      )
     })
   })
 
@@ -46,8 +61,13 @@ describe('Callbacks', () => {
     getByTestId('zoomUp').trigger('click')
 
     cy.window().then((win) => {
-      expect(win.console.log.getCall(0).args[0]).to.equal('handleButtonZoom called')
-      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1609459200000,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":4}')
+      expect(win.console.log.getCall(0).args[0]).to.equal(
+        'handleButtonZoom called'
+      )
+
+      expect(win.console.log.getCall(0).args[1]).to.equal(
+        '{"center":1609459200000,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":4}'
+      )
     })
   })
 
@@ -67,8 +87,13 @@ describe('Callbacks', () => {
       .trigger('pointerup', { pointerId: 1 })
 
     cy.window().then((win) => {
-      expect(win.console.log.getCall(0).args[0]).to.equal('handleTemporalSet called')
-      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1609459200000,"temporalEnd":1610769677838,"temporalStart":1608006278919,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
+      expect(win.console.log.getCall(0).args[0]).to.equal(
+        'handleTemporalSet called'
+      )
+
+      expect(win.console.log.getCall(0).args[1]).to.equal(
+        '{"center":1609459200000,"temporalEnd":1610498221714,"temporalStart":1608307241143,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}'
+      )
     })
   })
 
@@ -86,8 +111,13 @@ describe('Callbacks', () => {
       .trigger('pointerup', { pointerId: 1 })
 
     cy.window().then((win) => {
-      expect(win.console.log.getCall(0).args[0]).to.equal('handleDragPan called')
-      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1608120233514,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
+      expect(win.console.log.getCall(0).args[0]).to.equal(
+        'handleDragPan called'
+      )
+
+      expect(win.console.log.getCall(0).args[1]).to.equal(
+        '{"center":1608397590857,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}'
+      )
     })
   })
 
@@ -96,33 +126,46 @@ describe('Callbacks', () => {
     getByTestId('timelineInterval-31').trigger('click')
 
     cy.window().then((win) => {
-      expect(win.console.log.getCall(0).args[0]).to.equal('handleFocusedIntervalClick called')
-      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1609459200000,"focusedEnd":1612137599999,"focusedStart":1609459200000,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
+      expect(win.console.log.getCall(0).args[0]).to.equal(
+        'handleFocusedIntervalClick called'
+      )
+
+      expect(win.console.log.getCall(0).args[1]).to.equal(
+        '{"center":1609459200000,"focusedEnd":1612137599999,"focusedStart":1609459200000,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}'
+      )
     })
   })
 
   it('calls onScrollPan', () => {
     // Scroll the timeline
-    getByTestId('timelineList')
-      .trigger('wheel', { deltaX: 47 })
+    getByTestId('timelineList').trigger('wheel', { deltaX: 47 })
 
     // Wait for the wheel event to end
     cy.wait(300)
 
     cy.window().then((win) => {
-      expect(win.console.log.getCall(0).args[0]).to.equal('handleScrollPan called')
-      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1610798166486,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}')
+      expect(win.console.log.getCall(0).args[0]).to.equal(
+        'handleScrollPan called'
+      )
+
+      expect(win.console.log.getCall(0).args[1]).to.equal(
+        '{"center":1610520809143,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}'
+      )
     })
   })
 
   it('calls onScrollZoom', () => {
     // Scroll the timeline
-    getByTestId('timelineList')
-      .trigger('wheel', { deltaY: 1 })
+    getByTestId('timelineList').trigger('wheel', { deltaY: 1 })
 
     cy.window().then((win) => {
-      expect(win.console.log.getCall(0).args[0]).to.equal('handleScrollZoom called')
-      expect(win.console.log.getCall(0).args[1]).to.equal('{"center":1609459200000,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":2}')
+      expect(win.console.log.getCall(0).args[0]).to.equal(
+        'handleScrollZoom called'
+      )
+
+      expect(win.console.log.getCall(0).args[1]).to.equal(
+        '{"center":1609459200000,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":2}'
+      )
     })
   })
 })

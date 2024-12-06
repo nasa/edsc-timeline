@@ -1,12 +1,14 @@
+@use '../../css/variables';
+
 .edsc-timeline-primary-section {
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   margin-top: 0.925rem;
-  margin-bottom: $timeline__axis-height + 0.25rem;
+  margin-bottom: variables.$const__timeline--axis-height + 0.25rem;
   z-index: 3;
-  color: $color__white;
+  color: variables.$color__white;
   width: 100%;
   pointer-events: none;
   user-select: none;
@@ -24,7 +26,7 @@
     height: 1.5rem;
     margin: 0;
     padding: 0;
-    text-shadow: 0px 0px 5px rgba($color__black, 0.75);
+    text-shadow: 0px 0px 5px rgba(variables.$color__black, 0.75);
   }
 
   &__primary {

@@ -16,7 +16,7 @@ describe('Temporal tooltips', () => {
       getByTestId('timelineList').rightclick()
 
       getByTestId('tooltip').should('have.text', '15 Dec 2020 05:30:49 to 16 Jan 2021 03:01:38')
-      getByTestId('tooltip').should('have.css', 'left', '552.507px')
+      getByTestId('tooltip').should('have.css', 'left', '696.856px')
       getByTestId('tooltip').should('have.css', 'bottom', '2px')
     })
 
@@ -25,7 +25,7 @@ describe('Temporal tooltips', () => {
       getByTestId('startMarker').rightclick()
 
       getByTestId('tooltip').should('have.text', '15 Dec 2020 05:30:49')
-      getByTestId('tooltip').should('have.css', 'left', '504.139px')
+      getByTestId('tooltip').should('have.css', 'left', '635.852px')
       getByTestId('tooltip').should('have.css', 'bottom', '2px')
     })
 
@@ -34,7 +34,7 @@ describe('Temporal tooltips', () => {
       getByTestId('endMarker').rightclick()
 
       getByTestId('tooltip').should('have.text', '16 Jan 2021 03:01:38')
-      getByTestId('tooltip').should('have.css', 'left', '600.874px')
+      getByTestId('tooltip').should('have.css', 'left', '757.86px')
       getByTestId('tooltip').should('have.css', 'bottom', '2px')
     })
   })
@@ -50,7 +50,7 @@ describe('Temporal tooltips', () => {
       getByTestId('timelineList').rightclick()
 
       getByTestId('tooltip').should('have.text', '15 Dec 2020 13:24:20 ongoing')
-      getByTestId('tooltip').should('have.css', 'left', '807.568px')
+      getByTestId('tooltip').should('have.css', 'left', '1018.55px')
       getByTestId('tooltip').should('have.css', 'bottom', '2px')
     })
 
@@ -59,7 +59,7 @@ describe('Temporal tooltips', () => {
       getByTestId('startMarker').rightclick()
 
       getByTestId('tooltip').should('have.text', '15 Dec 2020 13:24:20')
-      getByTestId('tooltip').should('have.css', 'left', '505.137px')
+      getByTestId('tooltip').should('have.css', 'left', '637.109px')
       getByTestId('tooltip').should('have.css', 'bottom', '2px')
     })
   })
@@ -75,7 +75,7 @@ describe('Temporal tooltips', () => {
       getByTestId('timelineList').rightclick()
 
       getByTestId('tooltip').should('have.text', 'Up to 16 Jan 2021 10:55:09')
-      getByTestId('tooltip').should('have.css', 'left', '300.936px')
+      getByTestId('tooltip').should('have.css', 'left', '379.559px')
       getByTestId('tooltip').should('have.css', 'bottom', '2px')
     })
 
@@ -84,7 +84,7 @@ describe('Temporal tooltips', () => {
       getByTestId('endMarker').rightclick()
 
       getByTestId('tooltip').should('have.text', '16 Jan 2021 10:55:09')
-      getByTestId('tooltip').should('have.css', 'left', '601.872px')
+      getByTestId('tooltip').should('have.css', 'left', '759.117px')
       getByTestId('tooltip').should('have.css', 'bottom', '2px')
     })
   })

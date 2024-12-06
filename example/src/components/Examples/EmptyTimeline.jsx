@@ -1,16 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState } from "react"
 
-import EDSCTimeline from '../../../../src'
-import { Output } from '../Output/Output'
+import EDSCTimeline from "../../../../src"
 
-import 'bootstrap/dist/css/bootstrap.min.css'
-import '../../styles.scss'
+import { Output } from "../Output/Output"
+import ExampleWrapper from "../ExampleWrapper/ExampleWrapper"
 
 export const EmptyTimeline = () => {
   // eslint-disable-next-line no-undef
   if (hljs) hljs.highlightAll()
 
-  const [center] = useState(new Date('2021').getTime())
+  const [center] = useState(new Date("2021").getTime())
   const [temporal, setTemporal] = useState({})
   const [focusedInterval, setFocusedInterval] = useState({})
 
@@ -19,12 +18,7 @@ export const EmptyTimeline = () => {
   const [displayedZoom, setDisplayedZoom] = useState()
 
   const handleTimelineMove = (values) => {
-    const {
-      center,
-      timelineEnd,
-      zoom,
-      timelineStart
-    } = values
+    const { center, timelineEnd, zoom, timelineStart } = values
 
     setDisplayedCenter(center)
     setTimelineRange({ end: timelineEnd, start: timelineStart })
@@ -39,27 +33,23 @@ export const EmptyTimeline = () => {
     setFocusedInterval({ end: focusedEnd, start: focusedStart })
   }
 
-  const {
-    end: temporalEnd,
-    start: temporalStart
-  } = temporal
+  const { end: temporalEnd, start: temporalStart } = temporal
 
-  const {
-    end: focusedEnd,
-    start: focusedStart
-  } = focusedInterval
+  const { end: focusedEnd, start: focusedStart } = focusedInterval
 
   const data = [
     {
-      id: 'row1',
-      title: 'Test',
-      intervals: []
-    }
+      id: "row1",
+      title: "Test",
+      intervals: [],
+    },
   ]
 
   return (
-    <section className="container">
-      <div className="timeline-example timeline-example--one">
+    <ExampleWrapper
+      pageHeading="Empty"
+      description="This example shows a timeline with only an empty row applied."
+      timeline={
         <EDSCTimeline
           data={data}
           center={center}
@@ -73,25 +63,19 @@ export const EmptyTimeline = () => {
           onTemporalSet={handleTemporalSet}
           onFocusedSet={handleFocusedSet}
         />
-      </div>
-
-      <Output
-        displayedCenter={displayedCenter}
-        zoom={displayedZoom}
-        timelineRange={timelineRange}
-        temporalStart={temporalStart}
-        temporalEnd={temporalEnd}
-        focusedStart={focusedStart}
-        focusedEnd={focusedEnd}
-      />
-
-      <div className="demo__code">
-        <p>
-          This example shows a timeline with only an empty row included.
-        </p>
-        <pre>
-          <code className="jsx">
-            {`
+      }
+      output={
+        <Output
+          displayedCenter={displayedCenter}
+          zoom={displayedZoom}
+          timelineRange={timelineRange}
+          temporalStart={temporalStart}
+          temporalEnd={temporalEnd}
+          focusedStart={focusedStart}
+          focusedEnd={focusedEnd}
+        />
+      }
+      code={`
 <EDSCTimeline
   data={[{
     id: 'row1',
@@ -99,11 +83,7 @@ export const EmptyTimeline = () => {
     intervals: []
   }]}
 />
-            `}
-          </code>
-        </pre>
-      </div>
-
-    </section>
+`}
+    />
   )
 }
