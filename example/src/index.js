@@ -15,6 +15,9 @@ import { TemporalEnd } from './components/Examples/TemporalEnd'
 import { TemporalRange } from './components/Examples/TemporalRange'
 import { TemporalStart } from './components/Examples/TemporalStart'
 
+import 'bootstrap/dist/css/bootstrap.min.css'
+import './styles.scss'
+
 const App = () => (
   <>
     <section className="container">

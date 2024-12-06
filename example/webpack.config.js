@@ -21,14 +21,7 @@ module.exports = {
         use: [
           'style-loader',
           'css-loader',
-          'sass-loader',
-          {
-            loader: 'sass-resources-loader',
-            options: {
-              // eslint-disable-next-line import/no-dynamic-require, global-require
-              resources: require(path.join(process.cwd(), '/src/css/globalUtils.js'))
-            }
-          }
+          'sass-loader'
         ]
       },
       {

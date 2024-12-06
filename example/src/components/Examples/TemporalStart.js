@@ -1,10 +1,8 @@
 import React, { useState } from 'react'
 
 import EDSCTimeline from '../../../../src'
-import { Output } from '../Output/Output'
 
-import 'bootstrap/dist/css/bootstrap.min.css'
-import '../../styles.scss'
+import { Output } from '../Output/Output'
 
 export const TemporalStart = () => {
   // eslint-disable-next-line no-undef

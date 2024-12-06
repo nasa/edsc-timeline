@@ -1,9 +1,11 @@
+@use '../../css/variables';
+
 .edsc-timeline-tools {
   flex-grow: 0;
   display: flex;
   flex-direction: row;
-  background-color: $color__black--050;
-  color: $color__black--900;
+  background-color: variables.$color__black--050;
+  color: variables.$color__black--900;
   position: sticky;
   z-index: 5;
 
@@ -11,7 +13,7 @@
     outline: 0;
     border: 0;
     background: transparent;
-    color: $color__black--700;
+    color: variables.$color__black--700;
     transition: all 0.2s ease;
 
     svg {
@@ -20,15 +22,15 @@
     }
 
     &:hover {
-      color: $color__black--900;
+      color: variables.$color__black--900;
     }
 
     &:active {
-      color: $color__black--750;
+      color: variables.$color__black--750;
     }
 
     &:disabled {
-      color: $color__black--400;
+      color: variables.$color__black--400;
       cursor: not-allowed;
     }
   }
@@ -37,7 +39,7 @@
     padding: 0.025rem 0;
     text-transform: uppercase;
     font-size: 0.725rem;
-    color: $color__black--900;
+    color: variables.$color__black--900;
     letter-spacing: 0.02rem;
     white-space: nowrap;
     text-align: center;
@@ -75,7 +77,7 @@
     justify-content: center;
     height: auto;
     padding: 0.5rem 0.75rem;
-    border-right: 1px solid $color__black--250;
+    border-right: 1px solid variables.$color__black--250;
 
     &--horizontal {
       flex-direction: row;
