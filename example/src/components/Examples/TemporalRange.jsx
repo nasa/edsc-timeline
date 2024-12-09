@@ -1,19 +1,18 @@
-import React, { useState } from "react"
+import React, { useState } from 'react'
 
-import EDSCTimeline from "../../../../src"
+import EDSCTimeline from '../../../../src'
 
-import { Output } from "../Output/Output"
-import { Container } from "react-bootstrap"
-import ExampleWrapper from "../ExampleWrapper/ExampleWrapper"
+import { Output } from '../Output/Output'
+import ExampleWrapper from '../ExampleWrapper/ExampleWrapper'
 
 export const TemporalRange = () => {
   // eslint-disable-next-line no-undef
   if (hljs) hljs.highlightAll()
 
-  const [center] = useState(new Date("2021").getTime())
+  const [center] = useState(new Date('2021').getTime())
   const [temporal, setTemporal] = useState({
-    start: new Date("2020-12-15T05:30:49.884Z").getTime(),
-    end: new Date("2021-01-16T03:01:38.533Z").getTime(),
+    start: new Date('2020-12-15T05:30:49.884Z').getTime(),
+    end: new Date('2021-01-16T03:01:38.533Z').getTime()
   })
   const [focusedInterval, setFocusedInterval] = useState({})
 
@@ -22,19 +21,31 @@ export const TemporalRange = () => {
   const [displayedZoom, setDisplayedZoom] = useState()
 
   const handleTimelineMove = (values) => {
-    const { center, timelineEnd, zoom, timelineStart } = values
+    const {
+      center: newCenter, timelineEnd, zoom, timelineStart
+    } = values
 
-    setDisplayedCenter(center)
-    setTimelineRange({ end: timelineEnd, start: timelineStart })
+    setDisplayedCenter(newCenter)
+    setTimelineRange({
+      end: timelineEnd,
+      start: timelineStart
+    })
+
     setDisplayedZoom(zoom)
   }
 
   const handleTemporalSet = ({ temporalEnd, temporalStart }) => {
-    setTemporal({ end: temporalEnd, start: temporalStart })
+    setTemporal({
+      end: temporalEnd,
+      start: temporalStart
+    })
   }
 
   const handleFocusedSet = ({ focusedEnd, focusedStart }) => {
-    setFocusedInterval({ end: focusedEnd, start: focusedStart })
+    setFocusedInterval({
+      end: focusedEnd,
+      start: focusedStart
+    })
   }
 
   const { end: temporalEnd, start: temporalStart } = temporal
@@ -43,10 +54,10 @@ export const TemporalRange = () => {
 
   const data = [
     {
-      id: "row1",
-      title: "Test",
-      intervals: [],
-    },
+      id: 'row1',
+      title: 'Test',
+      intervals: []
+    }
   ]
 
   return (
@@ -54,32 +65,37 @@ export const TemporalRange = () => {
       pageHeading="Temporal Range"
       description="This example shows a timeline with a temporal range applied."
       timeline={
-        <EDSCTimeline
-          data={data}
-          center={center}
-          focusedInterval={focusedInterval}
-          zoom={3}
-          minZoom={1}
-          maxZoom={5}
-          temporalRange={temporal}
-          onTimelineMove={handleTimelineMove}
-          onTimelineMoveEnd={handleTimelineMove}
-          onTemporalSet={handleTemporalSet}
-          onFocusedSet={handleFocusedSet}
-        />
+        (
+          <EDSCTimeline
+            data={data}
+            center={center}
+            focusedInterval={focusedInterval}
+            zoom={3}
+            minZoom={1}
+            maxZoom={5}
+            temporalRange={temporal}
+            onTimelineMove={handleTimelineMove}
+            onTimelineMoveEnd={handleTimelineMove}
+            onTemporalSet={handleTemporalSet}
+            onFocusedSet={handleFocusedSet}
+          />
+        )
       }
       output={
-        <Output
-          displayedCenter={displayedCenter}
-          zoom={displayedZoom}
-          timelineRange={timelineRange}
-          temporalStart={temporalStart}
-          temporalEnd={temporalEnd}
-          focusedStart={focusedStart}
-          focusedEnd={focusedEnd}
-        />
+        (
+          <Output
+            displayedCenter={displayedCenter}
+            zoom={displayedZoom}
+            timelineRange={timelineRange}
+            temporalStart={temporalStart}
+            temporalEnd={temporalEnd}
+            focusedStart={focusedStart}
+            focusedEnd={focusedEnd}
+          />
+        )
       }
-      code={`
+      code={
+        `
 <EDSCTimeline
   data={[{
     id: 'row1',
@@ -90,7 +106,8 @@ export const TemporalRange = () => {
     end: new Date('2021-01-16T10:55:09.343Z').getTime()
   }}
 />
-`}
+`
+      }
     />
   )
 }
