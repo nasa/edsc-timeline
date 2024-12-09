@@ -1,5 +1,12 @@
-import React from 'react';
-import { Col, Container, Row, Tab, Tabs } from "react-bootstrap";
+import PropTypes from 'prop-types'
+import React from 'react'
+import {
+  Col,
+  Container,
+  Row,
+  Tab,
+  Tabs
+} from 'react-bootstrap'
 
 const ExampleWrapper = ({
   code,
@@ -7,7 +14,7 @@ const ExampleWrapper = ({
   description,
   output,
   pageHeading,
-  timeline,
+  timeline
 }) => (
   <div className="overflow-y-scroll">
     <header className="pt-5">
@@ -46,11 +53,11 @@ const ExampleWrapper = ({
                   When callback functions are defined, the timeline provides them values
                   that represent its current position, zoom, and ranges. See the
                   {' '}
-                  <a target="_blank" href="https://github.com/nasa/edsc-timeline?tab=readme-ov-file#callback-function-return-value">README.md</a>
+                  <a target="_blank" href="https://github.com/nasa/edsc-timeline?tab=readme-ov-file#callback-function-return-value" rel="noreferrer">README.md</a>
                   {' '}
                   in the
                   {' '}
-                  <a target="_blank" href="https://github.com/nasa/edsc-timeline">@edsc/timeline</a>
+                  <a target="_blank" href="https://github.com/nasa/edsc-timeline" rel="noreferrer">@edsc/timeline</a>
                   {' '}
                   repository for more information
                   about the callback functions.
@@ -63,6 +70,15 @@ const ExampleWrapper = ({
       </Tabs>
     </Container>
   </div>
-);
+)
 
-export default ExampleWrapper;
+ExampleWrapper.propTypes = {
+  code: PropTypes.node.isRequired,
+  children: PropTypes.node.isRequired,
+  description: PropTypes.string.isRequired,
+  output: PropTypes.node.isRequired,
+  pageHeading: PropTypes.string.isRequired,
+  timeline: PropTypes.node.isRequired
+}
+
+export default ExampleWrapper

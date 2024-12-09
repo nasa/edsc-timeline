@@ -1,30 +1,35 @@
-import React from "react"
+import React from 'react'
 
-import { LinkContainer } from "react-router-bootstrap"
-import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap"
-import { Outlet } from "react-router-dom"
+import { LinkContainer } from 'react-router-bootstrap'
+import {
+  Container,
+  Nav,
+  Navbar,
+  NavDropdown
+} from 'react-bootstrap'
+import { Outlet } from 'react-router-dom'
 
 const routes = [
   {
-    to: "/empty",
-    title: "Empty",
+    to: '/empty',
+    title: 'Empty'
   },
   {
-    to: "/temporalRange",
-    title: "Temporal Range",
+    to: '/temporalRange',
+    title: 'Temporal Range'
   },
   {
-    to: "/temporalStart",
-    title: "Temporal Start",
+    to: '/temporalStart',
+    title: 'Temporal Start'
   },
   {
-    to: "/temporalEnd",
-    title: "Temporal End",
+    to: '/temporalEnd',
+    title: 'Temporal End'
   },
   {
-    to: "/callbacks",
-    title: "Callbacks",
-  },
+    to: '/callbacks',
+    title: 'Callbacks'
+  }
 ]
 
 const Layout = () => (
@@ -38,11 +43,13 @@ const Layout = () => (
               <Nav.Link>Demo</Nav.Link>
             </LinkContainer>
             <NavDropdown title="Additional Demos">
-              {routes.map(({ title, to }) => (
-                <LinkContainer key={`link__${to}`} to={to}>
-                  <Nav.Link>{title}</Nav.Link>
-                </LinkContainer>
-              ))}
+              {
+                routes.map(({ title, to }) => (
+                  <LinkContainer key={`link__${to}`} to={to}>
+                    <Nav.Link>{title}</Nav.Link>
+                  </LinkContainer>
+                ))
+              }
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>

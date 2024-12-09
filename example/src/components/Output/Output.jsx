@@ -1,18 +1,26 @@
-import React from "react"
-import PropTypes from "prop-types"
-import { startCase } from "lodash"
+import React from 'react'
+import PropTypes from 'prop-types'
+import { startCase } from 'lodash'
 
-import { RESOLUTIONS } from "../../../../src/constants"
-import { Card, Col, Container, Row, Table } from "react-bootstrap"
+import {
+  Card,
+  Col,
+  Container,
+  Row
+} from 'react-bootstrap'
+import { RESOLUTIONS } from '../../../../src/constants'
 
-import "./Output.scss"
+import './Output.scss'
 
-const OutputItemEntry = ({ borderBottom, heading, value, ...props }) => {
-  let classNames = "d-flex align-items-center p-2"
+const OutputItemEntry = ({
+  borderBottom, heading, value, ...props
+}) => {
+  let classNames = 'd-flex align-items-center p-2'
 
-  if (borderBottom) classNames += " border-bottom border-bottom-light"
+  if (borderBottom) classNames += ' border-bottom border-bottom-light'
 
   return (
+    // eslint-disable-next-line react/jsx-props-no-spreading
     <div data-testid="center" className={classNames} {...props}>
       <span className="output-item-entry__heading pl-3 font-weight-bold">
         {heading}
@@ -20,6 +28,16 @@ const OutputItemEntry = ({ borderBottom, heading, value, ...props }) => {
       <span className="text-monospace pr-3">{value}</span>
     </div>
   )
+}
+
+OutputItemEntry.defaultProps = {
+  borderBottom: false
+}
+
+OutputItemEntry.propTypes = {
+  borderBottom: PropTypes.bool,
+  heading: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired
 }
 
 const OutputItem = ({ heading, children }) => (
@@ -31,6 +49,11 @@ const OutputItem = ({ heading, children }) => (
   </Col>
 )
 
+OutputItem.propTypes = {
+  heading: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired
+}
+
 export const Output = ({
   displayedCenter,
   zoom,
@@ -38,7 +61,7 @@ export const Output = ({
   temporalStart,
   temporalEnd,
   focusedStart,
-  focusedEnd,
+  focusedEnd
 }) => {
   const { end: timelineEnd, start: timelineStart } = timelineRange
 
@@ -63,9 +86,11 @@ export const Output = ({
             <OutputItemEntry
               data-testid="timelineStart"
               heading="Start:"
-              value={`${
-                timelineStart && new Date(timelineStart).toISOString()
-              }`}
+              value={
+                `${
+                  timelineStart && new Date(timelineStart).toISOString()
+                }`
+              }
               borderBottom
             />
             <OutputItemEntry
@@ -80,9 +105,11 @@ export const Output = ({
             <OutputItemEntry
               data-testid="temporalStart"
               heading="Start:"
-              value={` ${
-                temporalStart && new Date(temporalStart).toISOString()
-              }`}
+              value={
+                ` ${
+                  temporalStart && new Date(temporalStart).toISOString()
+                }`
+              }
               borderBottom
             />
             <OutputItemEntry
@@ -117,7 +144,7 @@ Output.defaultProps = {
   temporalStart: null,
   temporalEnd: null,
   focusedStart: null,
-  focusedEnd: null,
+  focusedEnd: null
 }
 
 Output.propTypes = {
@@ -125,10 +152,10 @@ Output.propTypes = {
   zoom: PropTypes.number,
   timelineRange: PropTypes.shape({
     end: PropTypes.number,
-    start: PropTypes.number,
+    start: PropTypes.number
   }),
   temporalStart: PropTypes.number,
   temporalEnd: PropTypes.number,
   focusedStart: PropTypes.number,
-  focusedEnd: PropTypes.number,
+  focusedEnd: PropTypes.number
 }
