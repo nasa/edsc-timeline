@@ -75,7 +75,7 @@ export const Callbacks = () => {
       timeline={
         (
           <EDSCTimeline
-            eventData={data}
+            data={data}
             center={center}
             focusedInterval={focusedInterval}
             zoom={3}
