@@ -22,7 +22,7 @@ const OutputItemEntry = ({
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <div data-testid="center" className={classNames} {...props}>
-      <span className="output-item-entry__heading pl-3 font-weight-bold">
+      <span className="output-item-entry__heading pl-3 fw-bold">
         {heading}
       </span>
       <span className="text-monospace pr-3">{value}</span>

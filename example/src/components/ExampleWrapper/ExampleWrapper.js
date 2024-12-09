@@ -16,17 +16,17 @@ const ExampleWrapper = ({
   pageHeading,
   timeline
 }) => (
-  <div className="overflow-y-scroll">
+  <div>
     <header className="pt-5">
       <Container className="p-0">
-        <h2 className="h1 mb-4 font-weight-bolder">{pageHeading}</h2>
+        <h2 className="h1 mb-4 fw-bolder">{pageHeading}</h2>
         <p>{description}</p>
       </Container>
     </header>
     {children}
     <div className="timeline-example timeline-example--one mb-5 mt-5 bg-light">
       <Container className="px-0 py-2">
-        <span className="text-uppercase small fw-bold">
+        <span className="text-uppercase small fw-bolder">
           Interactive Example
         </span>
       </Container>
