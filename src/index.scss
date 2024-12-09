@@ -79,7 +79,7 @@
   &__center {
     height: 100%;
     width: 1px;
-    background-color: red;
+    background-color: variables.$color__red;
     position: absolute;
     left: 50%;
     z-index: 1;
