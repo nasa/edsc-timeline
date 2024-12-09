@@ -72,9 +72,13 @@ const ExampleWrapper = ({
   </div>
 )
 
+ExampleWrapper.defaultProps = {
+  children: null
+}
+
 ExampleWrapper.propTypes = {
   code: PropTypes.node.isRequired,
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node,
   description: PropTypes.string.isRequired,
   output: PropTypes.node.isRequired,
   pageHeading: PropTypes.string.isRequired,
