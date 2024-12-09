@@ -16,9 +16,6 @@ List impacted areas.
 
 ### Reproduction steps
 
-- **Environment for testing:**
-- **Collection to test with:**
-
 1. Step 1
 2. Step 2...
 
