@@ -34,21 +34,25 @@ const routes = [
 
 const Layout = () => (
   <>
-    <Navbar bg="light">
+    <Navbar expand="lg" bg="light">
       <Container>
-        <Navbar.Brand href="#">@edsc/timeline Demo</Navbar.Brand>
-        <Navbar.Collapse id="basic-navbar-nav" className="overflow-x-auto">
+        <Navbar.Brand href="/">@edsc/timeline Demo</Navbar.Brand>
+        <Navbar.Toggle aria-controls="navbar-nav" />
+        <Navbar.Collapse id="navbar-nav">
           <Nav className="me-auto">
             <LinkContainer to="/">
               <Nav.Link>Demo</Nav.Link>
             </LinkContainer>
-            <NavDropdown title="Additional Demos">
-              {
-                routes.map(({ title, to }) => (
-                  <LinkContainer key={`link__${to}`} to={to}>
-                    <Nav.Link>{title}</Nav.Link>
-                  </LinkContainer>
-                ))
+            <NavDropdown  id="additional-demos-dropdown" title="Additional Demos">
+            {
+                routes.map(({ title, to }) => {
+                  console.log('🚀 ~ routes.map ~ { title, to }:', { title, to })
+                  return (
+                    <NavDropdown.Item key={`link__${to}`} to={to} as={LinkContainer}>
+                      <Nav.Link>{title}</Nav.Link>
+                    </NavDropdown.Item>
+                  )
+                })
               }
             </NavDropdown>
           </Nav>
