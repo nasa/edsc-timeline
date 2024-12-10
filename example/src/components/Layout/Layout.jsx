@@ -46,7 +46,6 @@ const Layout = () => (
             <NavDropdown  id="additional-demos-dropdown" title="Additional Demos">
             {
                 routes.map(({ title, to }) => {
-                  console.log('🚀 ~ routes.map ~ { title, to }:', { title, to })
                   return (
                     <NavDropdown.Item key={`link__${to}`} to={to} as={LinkContainer}>
                       <Nav.Link>{title}</Nav.Link>
