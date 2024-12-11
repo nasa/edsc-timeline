@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-Before contributing to this project, please review [Contribution.md](https://github.com/nasa/earthdata-search/blob/master/CONTRIBUTING.md).
+Before contributing to this project, please review [Contribution.md](https://github.com/nasa/edsc-timeline/blob/master/CONTRIBUTING.md).
 
 ### Description
 A clear and concise description of what the bug is.

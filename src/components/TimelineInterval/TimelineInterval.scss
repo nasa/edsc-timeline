@@ -1,3 +1,4 @@
+@use "sass:color";
 @use '../../css/variables';
 
 .edsc-timeline-interval {
@@ -88,7 +89,7 @@
       }
 
       .edsc-timeline-interval--is-focused & {
-        border-left: 2px solid darken(variables.$color__blue, 20);
+        border-left: 2px solid color.adjust(variables.$color__blue, $lightness: -20%);
       }
 
       &:after {
@@ -99,7 +100,7 @@
         }
 
         .edsc-timeline-interval--is-focused & {
-          border-right: 2px solid darken(variables.$color__blue, 20);
+          border-right: 2px solid color.adjust(variables.$color__blue, $lightness: -20%);
         }
       }
     }
@@ -125,14 +126,14 @@
 
     .edsc-timeline-interval__interval-bottom:hover &,
     .edsc-timeline-interval--is-focused & {
-      color: lighten(variables.$color__blue, 20);
+      color: color.adjust(variables.$color__blue, $lightness: 20%);
 
       .edsc-timeline-interval--is-unfocusable & {
         color: variables.$color__black--500;
       }
 
       .edsc-timeline-interval--is-focused & {
-        color: darken(variables.$color__blue, 5);
+        color: color.adjust(variables.$color__blue, $lightness: -5%);
       }
     }
   }

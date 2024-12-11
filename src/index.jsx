@@ -225,18 +225,20 @@ export const EDSCTimeline = ({
    * Calculates the new intervals list width
    */
   const calculateNewIntervalListWidth = () => {
-    // Anytime new time intervals are calculated update the pixel width of their container
-    const duration = getIntervalsDuration(timeIntervals, zoomLevel)
+    if (timelineWrapperRef.current) {
+      // Anytime new time intervals are calculated update the pixel width of their container
+      const duration = getIntervalsDuration(timeIntervals, zoomLevel)
 
-    const newTimelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+      const newTimelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
-    const width = determineScaledWidth(
-      duration,
-      zoomLevel,
-      newTimelineWrapperWidth
-    )
+      const width = determineScaledWidth(
+        duration,
+        zoomLevel,
+        newTimelineWrapperWidth
+      )
 
-    return width
+      return width
+    }
   }
 
   // On page load, set the interval list width
@@ -1245,21 +1247,24 @@ export const EDSCTimeline = ({
 
   // Track the width of the timeline wrapper
   useEffect(() => {
+    let observerRefValue = null
     // Setup a ResizeObserver to handle updating the intervalListWidthInPixels and timelineWrapperWidth
     // when the timelineWrapperRef is changed
     const resizeObserver = new ResizeObserver(() => {
       const newIntervalListWidth = calculateNewIntervalListWidth()
       setIntervalListWidthInPixels(newIntervalListWidth)
-
       setTimelineWrapperWidth(
         timelineWrapperRef.current.getBoundingClientRect().width
       )
     })
 
-    resizeObserver.observe(timelineWrapperRef.current)
+    if (timelineWrapperRef.current) {
+      resizeObserver.observe(timelineWrapperRef.current)
+      observerRefValue = timelineWrapperRef.current
+    }
 
     return () => {
-      if (timelineWrapperRef.current) resizeObserver.unobserve(timelineWrapperRef.current)
+      if (observerRefValue) resizeObserver.unobserve(observerRefValue)
     }
   }, [timelineWrapperRef.current, zoomLevel])
 

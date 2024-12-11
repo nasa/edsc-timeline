@@ -2,7 +2,7 @@
 
 import { getByTestId } from '../support/getByTestId'
 
-describe('intervals', () => {
+describe('Focused intervals', () => {
   describe('when no temporal range exists', () => {
     beforeEach(() => {
       cy.visit('/empty')
