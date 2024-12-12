@@ -43,15 +43,13 @@ const Layout = () => (
             <LinkContainer to="/">
               <Nav.Link>Demo</Nav.Link>
             </LinkContainer>
-            <NavDropdown  id="additional-demos-dropdown" title="Additional Demos">
-            {
-                routes.map(({ title, to }) => {
-                  return (
-                    <NavDropdown.Item key={`link__${to}`} to={to} as={LinkContainer}>
-                      <Nav.Link>{title}</Nav.Link>
-                    </NavDropdown.Item>
-                  )
-                })
+            <NavDropdown id="additional-demos-dropdown" title="Additional Demos">
+              {
+                routes.map(({ title, to }) => (
+                  <NavDropdown.Item key={`link__${to}`} to={to} as={LinkContainer}>
+                    <Nav.Link>{title}</Nav.Link>
+                  </NavDropdown.Item>
+                ))
               }
             </NavDropdown>
           </Nav>

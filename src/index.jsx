@@ -225,20 +225,17 @@ export const EDSCTimeline = ({
    * Calculates the new intervals list width
    */
   const calculateNewIntervalListWidth = () => {
-    if (timelineWrapperRef.current) {
-      // Anytime new time intervals are calculated update the pixel width of their container
-      const duration = getIntervalsDuration(timeIntervals, zoomLevel)
+    const duration = getIntervalsDuration(timeIntervals, zoomLevel)
 
-      const newTimelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
+    const newTimelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
-      const width = determineScaledWidth(
-        duration,
-        zoomLevel,
-        newTimelineWrapperWidth
-      )
+    const width = determineScaledWidth(
+      duration,
+      zoomLevel,
+      newTimelineWrapperWidth
+    )
 
-      return width
-    }
+    return width
   }
 
   // On page load, set the interval list width
