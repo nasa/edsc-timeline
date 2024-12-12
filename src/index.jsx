@@ -189,11 +189,7 @@ export const EDSCTimeline = ({
       reverse: false
     })
 
-    return [
-      ...leftIntervals,
-      centerInterval,
-      ...rightIntervals
-    ]
+    return [...leftIntervals, centerInterval, ...rightIntervals]
   }
 
   // Store calculated time intervals that power the display of the timeline dates
@@ -209,15 +205,9 @@ export const EDSCTimeline = ({
     newTimeIntervals = timeIntervals,
     newZoom = zoomLevel
   }) => {
-    const {
-      end: focusedEnd,
-      start: focusedStart
-    } = newFocusedInterval
+    const { end: focusedEnd, start: focusedStart } = newFocusedInterval
 
-    const {
-      end: temporalEnd,
-      start: temporalStart
-    } = newTemporalRange
+    const { end: temporalEnd, start: temporalStart } = newTemporalRange
 
     return {
       center: newCenter,
@@ -235,12 +225,15 @@ export const EDSCTimeline = ({
    * Calculates the new intervals list width
    */
   const calculateNewIntervalListWidth = () => {
-    // Anytime new time intervals are calculated update the pixel width of their container
     const duration = getIntervalsDuration(timeIntervals, zoomLevel)
 
     const newTimelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
-    const width = determineScaledWidth(duration, zoomLevel, newTimelineWrapperWidth)
+    const width = determineScaledWidth(
+      duration,
+      zoomLevel,
+      newTimelineWrapperWidth
+    )
 
     return width
   }
@@ -261,7 +254,11 @@ export const EDSCTimeline = ({
 
     const newTimelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
-    const width = determineScaledWidth(duration, newZoom, newTimelineWrapperWidth)
+    const width = determineScaledWidth(
+      duration,
+      newZoom,
+      newTimelineWrapperWidth
+    )
 
     setIntervalListWidthInPixels(width)
   }
@@ -279,7 +276,7 @@ export const EDSCTimeline = ({
     if (timeIntervals.length > MAX_INTERVAL_BUFFER) {
       currentTimeIntervals = currentTimeIntervals.slice(
         0,
-        (currentTimeIntervals.length - INTERVAL_BUFFER)
+        currentTimeIntervals.length - INTERVAL_BUFFER
       )
     }
 
@@ -290,10 +287,7 @@ export const EDSCTimeline = ({
       reverse: true
     })
 
-    const allIntervals = [
-      ...nextIntervals,
-      ...currentTimeIntervals
-    ]
+    const allIntervals = [...nextIntervals, ...currentTimeIntervals]
 
     updateTimeIntervals(allIntervals)
 
@@ -304,7 +298,11 @@ export const EDSCTimeline = ({
 
     const newTimelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
-    translationAdjustment = -determineScaledWidth(duration, zoomLevel, newTimelineWrapperWidth)
+    translationAdjustment = -determineScaledWidth(
+      duration,
+      zoomLevel,
+      newTimelineWrapperWidth
+    )
 
     return {
       left: translationAdjustment
@@ -337,7 +335,11 @@ export const EDSCTimeline = ({
 
       const newTimelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
 
-      translationAdjustment = determineScaledWidth(duration, zoomLevel, newTimelineWrapperWidth)
+      translationAdjustment = determineScaledWidth(
+        duration,
+        zoomLevel,
+        newTimelineWrapperWidth
+      )
     }
 
     updateTimeIntervals([
@@ -414,7 +416,7 @@ export const EDSCTimeline = ({
     })
 
     // Move the timeline to the timestampPosition - offset, then subtract half the wrapper width to center that value in the timeline wrapper
-    const left = -((timestampPosition - offset) - (newTimelineWrapperWidth / 2))
+    const left = -(timestampPosition - offset - newTimelineWrapperWidth / 2)
 
     setTimelinePosition({
       ...timelinePosition,
@@ -422,17 +424,21 @@ export const EDSCTimeline = ({
     })
 
     if (onTimelineMove) {
-      onTimelineMove(buildReturnObject({
-        newCenter: timestamp,
-        newZoom
-      }))
+      onTimelineMove(
+        buildReturnObject({
+          newCenter: timestamp,
+          newZoom
+        })
+      )
     }
 
     if (onTimelineMoveEnd) {
-      onTimelineMoveEnd(buildReturnObject({
-        newCenter: timestamp,
-        newZoom
-      }))
+      onTimelineMoveEnd(
+        buildReturnObject({
+          newCenter: timestamp,
+          newZoom
+        })
+      )
     }
   }
 
@@ -458,7 +464,9 @@ export const EDSCTimeline = ({
     setIntervalListWidthInPixels(newIntervalListWidth)
 
     if (timelineWrapperRef.current) {
-      setTimelineWrapperWidth(timelineWrapperRef.current.getBoundingClientRect().width)
+      setTimelineWrapperWidth(
+        timelineWrapperRef.current.getBoundingClientRect().width
+      )
     }
 
     centerTimelineToTimestamp({ timestamp: center })
@@ -494,7 +502,7 @@ export const EDSCTimeline = ({
     const reverseX = reverseDirection ? -1 : 1
 
     const newTimelinePosition = {}
-    newTimelinePosition.left = timelinePosition.left + (deltaX * reverseX)
+    newTimelinePosition.left = timelinePosition.left + deltaX * reverseX
 
     const newTimelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
     const timelineListWidth = timelineListRef.current.getBoundingClientRect().width
@@ -503,8 +511,7 @@ export const EDSCTimeline = ({
 
     const loadMoreWindow = newTimelineWrapperWidth / 3
     const distanceFromLeftEdge = -newTimelinePosition.left
-    const distanceFromRightEdge = timelineListWidth
-      - (-newTimelinePosition.left + newTimelineWrapperWidth)
+    const distanceFromRightEdge = timelineListWidth - (-newTimelinePosition.left + newTimelineWrapperWidth)
 
     if (scrollDirection === 'backward') {
       // If the scroll position is within the window to load another page
@@ -881,16 +888,19 @@ export const EDSCTimeline = ({
   /**
    * Sets up useGesture handlers
    */
-  const bindTimelineGestures = useGesture({
-    onDrag: handleDrag,
-    onMove: handleMove,
-    onHover: handleHover,
-    onWheel: handleWheel
-  }, {
-    drag: {
-      filterTaps: true
+  const bindTimelineGestures = useGesture(
+    {
+      onDrag: handleDrag,
+      onMove: handleMove,
+      onHover: handleHover,
+      onWheel: handleWheel
+    },
+    {
+      drag: {
+        filterTaps: true
+      }
     }
-  })
+  )
 
   // When the timeline position or focused interval changes, update the calculate and update
   // the visible temporal range
@@ -959,7 +969,8 @@ export const EDSCTimeline = ({
           timeIntervals,
           zoomLevel,
           wrapperWidth: newTimelineWrapperWidth
-        }) - (newTimelineWrapperWidth / 2)
+        })
+        - newTimelineWrapperWidth / 2
       )
 
       setTimelinePosition({
@@ -996,15 +1007,9 @@ export const EDSCTimeline = ({
   const onFocusedClick = (newFocusedInterval) => {
     if (onFocusedIntervalClick) onFocusedIntervalClick(buildReturnObject({ newFocusedInterval }))
 
-    const {
-      end: newEnd,
-      start: newStart
-    } = newFocusedInterval
+    const { end: newEnd, start: newStart } = newFocusedInterval
 
-    const {
-      end,
-      start
-    } = focusedInterval
+    const { end, start } = focusedInterval
 
     // If the selected interval is already focused, remove the focus
     // Convert milliseconds to seconds before comparing the previous focused interval to the new focused interval
@@ -1033,16 +1038,10 @@ export const EDSCTimeline = ({
     let delta = 1
     if (direction === 'previous') delta = -1
 
-    const {
-      end: currentEnd,
-      start: currentStart
-    } = focusedInterval
+    const { end: currentEnd, start: currentStart } = focusedInterval
 
     // Focused intervals shouldn't be outside of the temporalRange, don't allow scrolling past the interval that contains the temporal markers
-    const {
-      end: temporalEnd,
-      start: temporalStart
-    } = temporalRange
+    const { end: temporalEnd, start: temporalStart } = temporalRange
     if (temporalStart && temporalEnd) {
       if (direction === 'previous' && temporalStart >= currentStart) return
       if (direction === 'next' && temporalEnd <= currentEnd) return
@@ -1055,10 +1054,7 @@ export const EDSCTimeline = ({
     if (onFocusedSet) onFocusedSet(buildReturnObject({ newFocusedInterval: newFocused }))
     setFocusedInterval(newFocused)
 
-    const {
-      end: newEnd,
-      start: newStart
-    } = newFocused
+    const { end: newEnd, start: newStart } = newFocused
 
     const newTimelineWrapperWidth = timelineWrapperRef.current.getBoundingClientRect().width
     const newStartPosition = getPositionByTimestamp({
@@ -1088,7 +1084,10 @@ export const EDSCTimeline = ({
         ...offsetPosition,
         ...scrollBackward()
       }
-    } else if (direction === 'next' && startIndex > timeIntervals.length - (INTERVAL_BUFFER)) {
+    } else if (
+      direction === 'next'
+      && startIndex > timeIntervals.length - INTERVAL_BUFFER
+    ) {
       offsetPosition = {
         ...offsetPosition,
         ...scrollForward()
@@ -1176,10 +1175,12 @@ export const EDSCTimeline = ({
 
       zoomToTimestamp(centeredTimestamp, newZoomLevel)
       if (onButtonZoom) {
-        onButtonZoom(buildReturnObject({
-          newCenter: centeredTimestamp,
-          newZoom: newZoomLevel
-        }))
+        onButtonZoom(
+          buildReturnObject({
+            newCenter: centeredTimestamp,
+            newZoom: newZoomLevel
+          })
+        )
       }
     }
   }
@@ -1206,7 +1207,10 @@ export const EDSCTimeline = ({
     }
 
     if (startTemporal && endTemporal && hoveringTemporalRange) {
-      text = `${determineTemporalLabel(startTemporal, 1)} to ${determineTemporalLabel(endTemporal, 1)}`
+      text = `${determineTemporalLabel(
+        startTemporal,
+        1
+      )} to ${determineTemporalLabel(endTemporal, 1)}`
     }
 
     if (hoveringTemporalMarker) {
@@ -1240,28 +1244,39 @@ export const EDSCTimeline = ({
 
   // Track the width of the timeline wrapper
   useEffect(() => {
+    let observerRefValue = null
     // Setup a ResizeObserver to handle updating the intervalListWidthInPixels and timelineWrapperWidth
     // when the timelineWrapperRef is changed
     const resizeObserver = new ResizeObserver(() => {
       const newIntervalListWidth = calculateNewIntervalListWidth()
       setIntervalListWidthInPixels(newIntervalListWidth)
-
-      setTimelineWrapperWidth(timelineWrapperRef.current.getBoundingClientRect().width)
+      setTimelineWrapperWidth(
+        timelineWrapperRef.current.getBoundingClientRect().width
+      )
     })
 
-    resizeObserver.observe(timelineWrapperRef.current)
+    if (timelineWrapperRef.current) {
+      resizeObserver.observe(timelineWrapperRef.current)
+      observerRefValue = timelineWrapperRef.current
+    }
 
     return () => {
-      if (timelineWrapperRef.current) resizeObserver.unobserve(timelineWrapperRef.current)
+      if (observerRefValue) resizeObserver.unobserve(observerRefValue)
     }
   }, [timelineWrapperRef.current, zoomLevel])
 
   // Track the width of the timeline tooltip
   useEffect(() => {
     if (temporalRangeTooltipRef.current) {
-      setTemporalRangeTooltipWidth(temporalRangeTooltipRef.current.getBoundingClientRect().width)
+      setTemporalRangeTooltipWidth(
+        temporalRangeTooltipRef.current.getBoundingClientRect().width
+      )
     }
-  }, [temporalRangeTooltipRef.current, temporalTooltipText, hoveringTemporalRange])
+  }, [
+    temporalRangeTooltipRef.current,
+    temporalTooltipText,
+    hoveringTemporalRange
+  ])
 
   // Set the position of the tooltip
   useEffect(() => {
@@ -1311,7 +1326,7 @@ export const EDSCTimeline = ({
       )
 
       // Find the middle temporal value of the range
-      const middleTemporal = start + ((end - start) / 2)
+      const middleTemporal = start + (end - start) / 2
 
       // Set the tooltip position to the middle value
       middleTooltipPosition = determineTooltipPosition({
@@ -1367,34 +1382,30 @@ export const EDSCTimeline = ({
   //  - when the user is hovering a temporal marker
   //  - when the user is hovering the temporal range
   //  - when the temporal selection will not be canceled
-  const temporalTooltipVisible = (
-    (
-      (draggingTemporalMarker === 'start' || draggingTemporalMarker === 'end')
-      || (hoveringTemporalMarker === 'start' || hoveringTemporalMarker === 'end')
-      || hoveringTemporalRange
-    )
-  )
-  && temporalTooltipText
-  && !willCancelTemporalSelection
+  const temporalTooltipVisible = (draggingTemporalMarker === 'start'
+      || draggingTemporalMarker === 'end'
+      || hoveringTemporalMarker === 'start'
+      || hoveringTemporalMarker === 'end'
+      || hoveringTemporalRange)
+    && temporalTooltipText
+    && !willCancelTemporalSelection
 
-  const tooltipSpringStyle = useSpring(
-    {
-      config: (property) => {
-        // Set the opacity to fade out
-        if (property === 'opacity') return { duration: 100 }
+  const tooltipSpringStyle = useSpring({
+    config: (property) => {
+      // Set the opacity to fade out
+      if (property === 'opacity') return { duration: 100 }
 
-        return {}
-      },
-      // Prevent spring animation when dragging a marker or the timeline
-      immediate: () => !!draggingTemporalMarker || draggingTimeline,
-      // Animate the opacity when the tooltip is visible and not dragging the timeline
-      opacity: temporalTooltipVisible && !draggingTimeline ? 1 : 0,
-      // Animate the bottom when the tooltip is visible
-      bottom: temporalTooltipVisible ? '0.125rem' : '-0.125rem',
-      // Animate the tooltip position
-      ...temporalTooltipStyle
-    }
-  )
+      return {}
+    },
+    // Prevent spring animation when dragging a marker or the timeline
+    immediate: () => !!draggingTemporalMarker || draggingTimeline,
+    // Animate the opacity when the tooltip is visible and not dragging the timeline
+    opacity: temporalTooltipVisible && !draggingTimeline ? 1 : 0,
+    // Animate the bottom when the tooltip is visible
+    bottom: temporalTooltipVisible ? '0.125rem' : '-0.125rem',
+    // Animate the tooltip position
+    ...temporalTooltipStyle
+  })
 
   return (
     <div
@@ -1402,9 +1413,7 @@ export const EDSCTimeline = ({
       ref={timelineWrapperRef}
       data-testid="timeline"
     >
-      <div
-        className="edsc-timeline__tooltips"
-      >
+      <div className="edsc-timeline__tooltips">
         <animated.div
           className="edsc-timeline__tooltip"
           ref={temporalRangeTooltipRef}
@@ -1433,9 +1442,7 @@ export const EDSCTimeline = ({
         visibleTemporalRange={visibleTemporalRange}
       />
       <div className="edsc-timeline__outer-wrapper">
-        <div
-          className="edsc-timeline__wrapper"
-        >
+        <div className="edsc-timeline__wrapper">
           {
             timeIntervals.length > 0 && (
               <TimelineList
@@ -1494,9 +1501,7 @@ EDSCTimeline.propTypes = {
       title: PropTypes.string,
       color: PropTypes.string,
       intervals: PropTypes.arrayOf(
-        PropTypes.arrayOf(
-          PropTypes.number
-        ) // [start, end, number of items in interval]
+        PropTypes.arrayOf(PropTypes.number) // [start, end, number of items in interval]
       ).isRequired
     })
   ).isRequired,

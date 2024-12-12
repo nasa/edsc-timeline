@@ -1,3 +1,6 @@
+@use "sass:color";
+@use '../../css/variables';
+
 .edsc-timeline-interval {
   display: inline-flex;
   flex-direction: column;
@@ -6,10 +9,10 @@
   height: 100%;
   background: linear-gradient(
     90deg,
-    rgba($color__blue, 0) 0%,
-    rgba($color__blue, 0) 20px,
-    rgba($color__blue, 0) calc(100% - 20px),
-    rgba($color__blue, 0) 100%
+    rgba(variables.$color__blue, 0) 0%,
+    rgba(variables.$color__blue, 0) 20px,
+    rgba(variables.$color__blue, 0) calc(100% - 20px),
+    rgba(variables.$color__blue, 0) 100%
   );
   transition: background 0.2s ease-in-out;
 
@@ -17,13 +20,13 @@
     content: '';
     display: block;
     position: absolute;
-    bottom: calc(#{$timeline__axis-height} - 3px);
+    bottom: calc(#{variables.$const__timeline--axis-height} - 3px);
     height: 7px;
     width: 7px;
     left: -3px;
-    background: $color__black--900;
+    background: variables.$color__black--900;
     border-radius: 50%;
-    box-shadow: 0 0 5px 5px rgba($color__black--050, 0.25);
+    box-shadow: 0 0 5px 5px rgba(variables.$color__black--050, 0.25);
     z-index: 0;
   }
 
@@ -41,7 +44,7 @@
 
       .edsc-timeline-interval__interval-top,
       .edsc-timeline-interval__interval-bottom {
-        border-left: 2px solid $color__blue;
+        border-left: 2px solid variables.$color__blue;
       }
     }
   }
@@ -52,13 +55,13 @@
     transition: border-color 0.2s ease-in-out;
 
     .edsc-timeline-interval--is-focused & {
-      border-left: 2px solid $color__blue;
+      border-left: 2px solid variables.$color__blue;
     }
   }
 
   &__interval-bottom {
     position: relative;
-    height: $timeline__axis-height;
+    height: variables.$const__timeline--axis-height;
     flex-grow: 0;
     outline: none;
     border-left: 2px solid transparent;
@@ -78,33 +81,33 @@
 
     &:hover {
       cursor: pointer !important;
-      border-left: 2px solid $color__blue;
+      border-left: 2px solid variables.$color__blue;
 
       .edsc-timeline-interval--is-unfocusable & {
-        background-color: $color__black--100;
-        border-left: 2px solid $color__black--500;
+        background-color: variables.$color__black--100;
+        border-left: 2px solid variables.$color__black--500;
       }
 
       .edsc-timeline-interval--is-focused & {
-        border-left: 2px solid darken($color__blue, 20);
+        border-left: 2px solid color.adjust(variables.$color__blue, $lightness: -20%);
       }
 
       &:after {
-        border-right: 2px solid $color__blue;
+        border-right: 2px solid variables.$color__blue;
 
         .edsc-timeline-interval--is-unfocusable & {
-          border-right: 2px solid $color__black--500;
+          border-right: 2px solid variables.$color__black--500;
         }
 
         .edsc-timeline-interval--is-focused & {
-          border-right: 2px solid darken($color__blue, 20);
+          border-right: 2px solid color.adjust(variables.$color__blue, $lightness: -20%);
         }
       }
     }
 
     .edsc-timeline-interval--is-focused & {
       cursor: pointer !important;
-      border-left: 2px solid $color__blue;
+      border-left: 2px solid variables.$color__blue;
     }
 
     .edsc-timeline-interval--is-unfocusable & {
@@ -123,21 +126,21 @@
 
     .edsc-timeline-interval__interval-bottom:hover &,
     .edsc-timeline-interval--is-focused & {
-      color: lighten($color__blue, 20);
+      color: color.adjust(variables.$color__blue, $lightness: 20%);
 
       .edsc-timeline-interval--is-unfocusable & {
-        color: $color__black--500;
+        color: variables.$color__black--500;
       }
 
       .edsc-timeline-interval--is-focused & {
-        color: darken($color__blue, 5);
+        color: color.adjust(variables.$color__blue, $lightness: -5%);
       }
     }
   }
 
   &__interval-section-label {
     cursor: pointer !important;
-    color: $color__black--650;
+    color: variables.$color__black--650;
     position: absolute;
     top: 0rem;
     left: 2px;
@@ -145,7 +148,7 @@
     font-size: 0.675rem;
     width: auto;
     z-index: 1;
-    text-shadow: 2px 2px 2px rgba($color__black--050, 1);
+    text-shadow: 2px 2px 2px rgba(variables.$color__black--050, 1);
     letter-spacing: -0.01rem;
     white-space: nowrap;
     z-index: 1;

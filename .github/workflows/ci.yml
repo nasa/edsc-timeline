@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
         matrix:
-          node-version: ['lts/hydrogen']
+          node-version: ['lts/jod']
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['lts/hydrogen']
+        node-version: ['lts/iron', 'lts/jod']
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -74,7 +74,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
         matrix:
-          node-version: ['lts/hydrogen']
+          node-version: ['lts/jod']
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -105,9 +105,15 @@ jobs:
         directory: 'cypress-coverage'
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  tests-passed:
+    needs: [jest, cypress]
+    runs-on: ubuntu-latest
+    steps:
+    - name: All Tests Have Passed
+      run: 'echo true'
   deploy:
     if: success() && github.ref == 'refs/heads/main' # only run on main success
-    needs: [jest, cypress] # only run after jest and cypress jobs complete
+    needs: [tests-passed] # only run after all test jobs complete
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code

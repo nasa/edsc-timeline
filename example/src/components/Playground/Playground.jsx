@@ -3,8 +3,8 @@ import React, { useState } from 'react'
 import EDSCTimeline from '../../../../src'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
-import '../../styles.scss'
 import { Output } from '../Output/Output'
+import ExampleWrapper from '../ExampleWrapper/ExampleWrapper'
 
 export const Playground = () => {
   // eslint-disable-next-line no-undef
@@ -26,34 +26,35 @@ export const Playground = () => {
 
   const handleTimelineMove = (values) => {
     const {
-      center,
-      timelineEnd,
-      zoom,
-      timelineStart
+      center: newCenter, timelineEnd, zoom, timelineStart
     } = values
 
-    setDisplayedCenter(center)
-    setTimelineRange({ end: timelineEnd, start: timelineStart })
+    setDisplayedCenter(newCenter)
+    setTimelineRange({
+      end: timelineEnd,
+      start: timelineStart
+    })
+
     setDisplayedZoom(zoom)
   }
 
   const handleTemporalSet = ({ temporalEnd, temporalStart }) => {
-    setTemporal({ end: temporalEnd, start: temporalStart })
+    setTemporal({
+      end: temporalEnd,
+      start: temporalStart
+    })
   }
 
   const handleFocusedSet = ({ focusedEnd, focusedStart }) => {
-    setFocusedInterval({ end: focusedEnd, start: focusedStart })
+    setFocusedInterval({
+      end: focusedEnd,
+      start: focusedStart
+    })
   }
 
-  const {
-    end: temporalEnd,
-    start: temporalStart
-  } = temporal
+  const { end: temporalEnd, start: temporalStart } = temporal
 
-  const {
-    end: focusedEnd,
-    start: focusedStart
-  } = focusedInterval
+  const { end: focusedEnd, start: focusedStart } = focusedInterval
 
   const data = [
     {
@@ -147,41 +148,7 @@ export const Playground = () => {
     }
   ]
 
-  return (
-    <section className="container">
-      <div className="timeline-example timeline-example--one">
-        <EDSCTimeline
-          data={data}
-          center={center}
-          focusedInterval={focusedInterval}
-          zoom={3}
-          minZoom={1}
-          maxZoom={5}
-          temporalRange={temporal}
-          onTimelineMoveEnd={handleTimelineMove}
-          onTemporalSet={handleTemporalSet}
-          onFocusedSet={handleFocusedSet}
-        />
-      </div>
-
-      <Output
-        displayedCenter={displayedCenter}
-        zoom={displayedZoom}
-        timelineRange={timelineRange}
-        temporalStart={temporalStart}
-        temporalEnd={temporalEnd}
-        focusedStart={focusedStart}
-        focusedEnd={focusedEnd}
-      />
-
-      <div className="demo__code">
-        <p>
-          This example shows a timeline with three rows of data,
-          a temporal range and a focused interval included.
-        </p>
-        <pre>
-          <code className="jsx">
-            {`
+  const code = `
 <EDSCTimeline
   data={[
     {
@@ -235,10 +202,42 @@ export const Playground = () => {
     end: new Date('2020-03-15').getTime()
   }}
 />
-            `}
-          </code>
-        </pre>
-      </div>
-    </section>
+`
+
+  const output = (
+    <Output
+      displayedCenter={displayedCenter}
+      zoom={displayedZoom}
+      timelineRange={timelineRange}
+      temporalStart={temporalStart}
+      temporalEnd={temporalEnd}
+      focusedStart={focusedStart}
+      focusedEnd={focusedEnd}
+    />
+  )
+
+  return (
+    <ExampleWrapper
+      pageHeading="Demo"
+      description="This example shows a timeline with three rows of data, a temporal range, and a focused interval applied."
+      timeline={
+        (
+          <EDSCTimeline
+            data={data}
+            center={center}
+            focusedInterval={focusedInterval}
+            zoom={3}
+            minZoom={1}
+            maxZoom={5}
+            temporalRange={temporal}
+            onTimelineMoveEnd={handleTimelineMove}
+            onTemporalSet={handleTemporalSet}
+            onFocusedSet={handleFocusedSet}
+          />
+        )
+      }
+      code={code}
+      output={output}
+    />
   )
 }
