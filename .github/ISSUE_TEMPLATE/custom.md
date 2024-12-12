@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-Please review [Contribution.md](https://github.com/nasa/earthdata-search/blob/master/CONTRIBUTING.md) before contributing to this project.
+Please review [Contribution.md](https://github.com/nasa/edsc-timeline/blob/master/CONTRIBUTING.md) before contributing to this project.
 
 ### Description
 Describe the purpose of the issue
