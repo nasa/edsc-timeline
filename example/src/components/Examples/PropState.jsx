@@ -3,30 +3,26 @@ import EDSCTimeline from '../../../../src'
 import { Output } from '../Output/Output'
 import ExampleWrapper from '../ExampleWrapper/ExampleWrapper'
 
-export const Zoom = () => {
+export const PropState = () => {
   // eslint-disable-next-line no-undef
   if (hljs) hljs.highlightAll()
 
   // State declarations
-  const [center] = useState(new Date('2021').getTime())
+  const [center, setCenter] = useState(new Date('2021').getTime())
   const [temporal, setTemporal] = useState({})
   const [focusedInterval, setFocusedInterval] = useState({})
-  const [displayedCenter, setDisplayedCenter] = useState()
   const [timelineRange, setTimelineRange] = useState({})
-  const [displayedZoom, setDisplayedZoom] = useState(5)
-  const [zoomLevel, setZoomLevel] = useState(5)
+  const [zoomLevel, setZoomLevel] = useState(2)
 
   const handleTimelineMove = (values) => {
     const {
-      center: newCenter, timelineEnd, zoom, timelineStart
+      timelineEnd, zoom, timelineStart
     } = values
-    setDisplayedCenter(newCenter)
     setTimelineRange({
       end: timelineEnd,
       start: timelineStart
     })
 
-    setDisplayedZoom(zoom)
     setZoomLevel(zoom) // Keep zoom state in sync
   }
 
@@ -52,6 +48,23 @@ export const Zoom = () => {
   const decreaseZoom = () => {
     const newZoom = Math.max(zoomLevel - 1, 1)
     setZoomLevel(newZoom)
+  }
+
+  const MS_PER_DAY = 24 * 60 * 60 * 1000
+
+  const shiftCenterLeft = () => {
+    const newCenter = center - MS_PER_DAY
+    setCenter(newCenter)
+  }
+
+  const shiftCenterRight = () => {
+    const newCenter = center + MS_PER_DAY
+    setCenter(newCenter)
+  }
+
+  const adjustZoomAndCenter = (newZoom, newCenter) => {
+    setZoomLevel(newZoom)
+    setCenter(newCenter)
   }
 
   const data = [
@@ -85,11 +98,22 @@ export const Zoom = () => {
       description={
         (
           <div>
-            <p>This example demonstrates zoom level as state passed into Timeline as a prop.</p>
+            <p>This example demonstrates zoom level and center as state passed into Timeline as a prop.</p>
             <span>
               Current zoom level:
               {' '}
               {zoomLevel}
+            </span>
+            <span style={
+              {
+                display: 'block',
+                marginBottom: '5px'
+              }
+            }
+            >
+              Current center:
+              {' '}
+              {center}
             </span>
             <div style={{ marginBottom: '10px' }}>
               <button
@@ -114,8 +138,9 @@ export const Zoom = () => {
                 onClick={decreaseZoom}
                 style={
                   {
+                    marginRight: '5px',
                     padding: '5px 10px',
-                    backgroundColor: '#6c757d',
+                    backgroundColor: '#007bff',
                     color: 'white',
                     border: 'none',
                     borderRadius: '3px',
@@ -125,6 +150,56 @@ export const Zoom = () => {
               >
                 Zoom In (-)
               </button>
+              <button
+                type="button"
+                onClick={shiftCenterLeft}
+                style={
+                  {
+                    marginRight: '5px',
+                    padding: '5px 10px',
+                    backgroundColor: '#007bff',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '3px',
+                    cursor: 'pointer'
+                  }
+                }
+              >
+                ← Day Back
+              </button>
+              <button
+                type="button"
+                onClick={shiftCenterRight}
+                style={
+                  {
+                    marginRight: '5px',
+                    padding: '5px 10px',
+                    backgroundColor: '#007bff',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '3px',
+                    cursor: 'pointer'
+                  }
+                }
+              >
+                Day Forward →
+              </button>
+              <button
+                type="button"
+                onClick={() => adjustZoomAndCenter(2, new Date('2021').getTime())}
+                style={
+                  {
+                    padding: '5px 10px',
+                    backgroundColor: '#007bff',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '3px',
+                    cursor: 'pointer'
+                  }
+                }
+              >
+                Reset Zoom and Center
+              </button>
             </div>
           </div>
         )
@@ -133,17 +208,41 @@ export const Zoom = () => {
         (
           <div>
             <Output
-              center={displayedCenter}
+              displayedCenter={center}
               timelineEnd={timelineRange.end}
               timelineStart={timelineRange.start}
-              zoom={displayedZoom}
+              zoom={zoomLevel}
             />
           </div>
         )
       }
       code={
         `
+const [center, setCenter] = useState(new Date('2021').getTime())
 const [zoomLevel, setZoomLevel] = useState(5)
+
+const increaseZoom = () => {
+  const newZoom = Math.min(zoomLevel + 1, 5)
+  setZoomLevel(newZoom)
+}
+
+const decreaseZoom = () => {
+  const newZoom = Math.max(zoomLevel - 1, 1)
+  setZoomLevel(newZoom)
+}
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000
+
+const shiftCenterLeft = () => {
+  const newCenter = center - MS_PER_DAY
+  setCenter(newCenter)
+}
+
+const shiftCenterRight = () => {
+  const newCenter = center + MS_PER_DAY
+  setCenter(newCenter)
+}
+
 <EDSCTimeline
   data={[{
     id: 'row1',
@@ -151,6 +250,7 @@ const [zoomLevel, setZoomLevel] = useState(5)
     intervals: []
   }]}
   zoom=zoomLevel
+  center=center
 />
 `
       }

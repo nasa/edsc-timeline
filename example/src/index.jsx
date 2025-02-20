@@ -16,7 +16,7 @@ import { Playground } from './components/Playground/Playground'
 import { TemporalEnd } from './components/Examples/TemporalEnd'
 import { TemporalRange } from './components/Examples/TemporalRange'
 import { TemporalStart } from './components/Examples/TemporalStart'
-import { Zoom } from './components/Examples/Zoom'
+import { PropState } from './components/Examples/PropState'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -30,7 +30,7 @@ const App = () => (
           <Route path="temporalRange" element={<TemporalRange />} />
           <Route path="temporalStart" element={<TemporalStart />} />
           <Route path="temporalEnd" element={<TemporalEnd />} />
-          <Route path="zoom" element={<Zoom />} />
+          <Route path="propState" element={<PropState />} />
           <Route path="callbacks" element={<Callbacks />} />
         </Route>
       </Routes>

@@ -621,9 +621,8 @@ export const EDSCTimeline = ({
     })
   }
 
-  // This useEffect is used to zoom timeline when the zoom or center prop change
   useEffect(() => {
-    zoomToTimestamp(propsCenter, zoom)
+    zoomToTimestamp(propsCenter, zoom, 0)
   }, [zoom, propsCenter])
 
   // Flag to allow for a cooldown period when wheel zooming

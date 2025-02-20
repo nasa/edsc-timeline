@@ -31,8 +31,8 @@ const routes = [
     title: 'Callbacks'
   },
   {
-    to: '/zoom',
-    title: 'Zoom'
+    to: '/propState',
+    title: 'Prop State'
   }
 ]
 
