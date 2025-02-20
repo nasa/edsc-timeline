@@ -20,7 +20,11 @@ const ExampleWrapper = ({
     <header className="pt-5">
       <Container className="p-0">
         <h2 className="h1 mb-4 fw-bolder">{pageHeading}</h2>
-        <p>{description}</p>
+        {
+          typeof description === 'string'
+            ? <p>{description}</p>
+            : description
+        }
       </Container>
     </header>
     {children}
@@ -79,7 +83,10 @@ ExampleWrapper.defaultProps = {
 ExampleWrapper.propTypes = {
   code: PropTypes.node.isRequired,
   children: PropTypes.node,
-  description: PropTypes.string.isRequired,
+  description: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]).isRequired,
   output: PropTypes.node.isRequired,
   pageHeading: PropTypes.string.isRequired,
   timeline: PropTypes.node.isRequired

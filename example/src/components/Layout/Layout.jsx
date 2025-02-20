@@ -29,6 +29,10 @@ const routes = [
   {
     to: '/callbacks',
     title: 'Callbacks'
+  },
+  {
+    to: '/zoom',
+    title: 'Zoom'
   }
 ]
 
