@@ -1,8 +1,8 @@
 import { getByTestId } from '../support/getByTestId'
 
 const startCenter = 'Center:Fri, 01 Jan 2021 00:00:00 GMT'
-const backwardCenter = 'Center:Sat, 19 Dec 2020 17:06:30 GMT'
-const forwardCenter = 'Center:Wed, 13 Jan 2021 06:53:29 GMT'
+const backwardCenter = 'Center:Sat, 19 Dec 2020 17:54:51 GMT'
+const forwardCenter = 'Center:Wed, 13 Jan 2021 06:05:08 GMT'
 const timelineRangeStart = 'Start:2018-07-01T00:00:00.000Z'
 const timelineRangeEnd = 'End:2023-07-01T00:00:00.000Z'
 
