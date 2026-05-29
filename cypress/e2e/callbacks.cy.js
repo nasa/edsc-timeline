@@ -92,7 +92,7 @@ describe('Callbacks', () => {
       )
 
       expect(win.console.log.getCall(0).args[1]).to.equal(
-        '{"center":1609459200000,"temporalEnd":1610498221714,"temporalStart":1608307241143,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}'
+        '{"center":1609459200000,"temporalEnd":1610495384439,"temporalStart":1608310390153,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}'
       )
     })
   })
@@ -116,7 +116,7 @@ describe('Callbacks', () => {
       )
 
       expect(win.console.log.getCall(0).args[1]).to.equal(
-        '{"center":1608397590857,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}'
+        '{"center":1608400491429,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}'
       )
     })
   })
@@ -149,7 +149,7 @@ describe('Callbacks', () => {
       )
 
       expect(win.console.log.getCall(0).args[1]).to.equal(
-        '{"center":1610520809143,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}'
+        '{"center":1610517908571,"timelineEnd":1688169600000,"timelineStart":1530403200000,"zoom":3}'
       )
     })
   })

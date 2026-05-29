@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
         matrix:
-          node-version: ['lts/jod']
+          node-version: ['lts/krypton']
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['lts/iron', 'lts/jod']
+        node-version: ['lts/krypton']
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -74,7 +74,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
         matrix:
-          node-version: ['lts/jod']
+          node-version: ['lts/krypton']
     steps:
     - name: Checkout code
       uses: actions/checkout@v4

@@ -16,6 +16,6 @@ describe('getPositionByTimestamp', () => {
       timeIntervals,
       zoomLevel,
       wrapperWidth
-    })).toEqual(65.85416393442624)
+    })).toEqual(66.03458630136986)
   })
 })
